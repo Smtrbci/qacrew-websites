@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QA Crew | Coming Soon</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --navy: #062f4f;
+      --teal: #0b8f87;
+      --teal-light: #35d0c8;
+      --text: #102033;
+      --muted: #667085;
+      --border: rgba(6, 47, 79, 0.12);
+      --white: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: "Inter", sans-serif;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(53, 208, 200, 0.28), transparent 30%),
+        radial-gradient(circle at 80% 85%, rgba(6, 47, 79, 0.16), transparent 34%),
+        linear-gradient(135deg, #eefcfb 0%, #f8fbfc 45%, #ffffff 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(6, 47, 79, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(6, 47, 79, 0.04) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,.45), transparent);
+      pointer-events: none;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 940px;
+      min-height: 82vh;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--border);
+      border-radius: 38px;
+      padding: 58px 42px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(22px);
+      box-shadow:
+        0 35px 90px rgba(6, 47, 79, 0.12),
+        inset 0 1px 0 rgba(255,255,255,.75);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      animation: cardIn .9s ease both;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(53, 208, 200, 0.16), transparent 68%);
+      top: -190px;
+      right: -170px;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(6, 47, 79, 0.12), transparent 66%);
+      bottom: -170px;
+      left: -150px;
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      max-width: 760px;
+    }
+
+    .logo {
+      width: 220px;
+      max-width: 72%;
+      margin-bottom: 22px;
+      filter: drop-shadow(0 18px 35px rgba(6,47,79,.14));
+      animation: floatLogo 4s ease-in-out infinite;
+    }
+
+    .brand {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--navy);
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      font-size: 14px;
+      color: var(--teal);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 30px 0 20px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(11, 143, 135, 0.10);
+      border: 1px solid rgba(11, 143, 135, 0.20);
+      color: var(--teal);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    h1 {
+      font-size: clamp(42px, 7vw, 74px);
+      line-height: 0.98;
+      letter-spacing: -3.5px;
+      color: var(--navy);
+      margin-bottom: 24px;
+    }
+
+    h1 span {
+      color: var(--teal);
+    }
+
+    .description {
+      color: var(--muted);
+      font-size: clamp(16px, 2vw, 19px);
+      line-height: 1.8;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    .features {
+      margin: 34px auto 28px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .feature {
+      padding: 12px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(6, 47, 79, 0.10);
+      color: var(--navy);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .loading {
+      margin: 30px auto 34px;
+      max-width: 430px;
+    }
+
+    .dots {
+      display: flex;
+      justify-content: center;
+      gap: 9px;
+      margin-bottom: 12px;
+    }
+
+    .dots span {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--teal);
+      animation: bounce 1.2s infinite ease-in-out;
+    }
+
+    .dots span:nth-child(2) {
+      animation-delay: .15s;
+    }
+
+    .dots span:nth-child(3) {
+      animation-delay: .3s;
+    }
+
+    .loading-text {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .progress {
+      height: 11px;
+      border-radius: 999px;
+      background: rgba(6, 47, 79, 0.09);
+      overflow: hidden;
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      width: 78%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--navy), var(--teal), var(--teal-light));
+      animation: progress 3s ease-in-out infinite;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      text-decoration: none;
+      padding: 15px 24px;
+      border-radius: 16px;
+      font-weight: 900;
+      font-size: 15px;
+      transition: .25s ease;
+    }
+
+    .btn-primary {
+      background: var(--navy);
+      color: white;
+      box-shadow: 0 14px 30px rgba(6, 47, 79, 0.18);
+    }
+
+    .btn-secondary {
+      color: var(--navy);
+      border: 1px solid var(--navy);
+      background: rgba(255,255,255,.45);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+    }
+
+    .btn-primary:hover {
+      background: var(--teal);
+    }
+
+    .btn-secondary:hover {
+      background: var(--navy);
+      color: white;
+    }
+
+    .social {
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    footer {
+      margin-top: 22px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    @keyframes cardIn {
+      from {
+        opacity: 0;
+        transform: translateY(22px) scale(.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes floatLogo {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    @keyframes bounce {
+      0%, 80%, 100% {
+        transform: scale(.7);
+        opacity: .45;
+      }
+      40% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes progress {
+      0% { width: 28%; }
+      50% { width: 88%; }
+      100% { width: 28%; }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 16px;
+      }
+
+      .card {
+        min-height: 92vh;
+        border-radius: 28px;
+        padding: 38px 22px;
+      }
+
+      .logo {
+        width: 170px;
+      }
+
+      h1 {
+        letter-spacing: -2px;
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="card">
+    <div class="content">
+      <img class="logo" src="logo.png" alt="QA Crew Logo">
+
+      <div class="brand">QA Crew</div>
+      <div class="subtitle">Professional QA Resources</div>
+
+      <div class="badge">🚀 Website under development</div>
+
+      <h1>
+        Building the next generation of
+        <span>QA Documentation.</span>
+      </h1>
+
+      <p class="description">
+        Premium QA templates, documentation packs, automation resources
+        and digital products for software testers will be available very soon.
+      </p>
+
+      <div class="features">
+        <div class="feature">✓ Test Case Templates</div>
+        <div class="feature">✓ Bug Reports</div>
+        <div class="feature">✓ QA Starter Packs</div>
+        <div class="feature">✓ Automation Resources</div>
+      </div>
+
+      <div class="loading">
+        <div class="dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <div class="loading-text">Building Website...</div>
+
+        <div class="progress">
+          <span></span>
+        </div>
+      </div>
+
+      <div class="buttons">
+        <a class="btn btn-primary" href="https://www.etsy.com/shop/QAcrew" target="_blank">
+          Visit Etsy
+        </a>
+
+        <a class="btn btn-secondary" href="https://qacrew.gumroad.com/l/qa-starter-pack" target="_blank">
+          Visit Gumroad
+        </a>
+      </div>
+
+      <div class="social">
+        LinkedIn • Instagram • Gumroad • Etsy
+      </div>
+
+      <footer>
+        © 2026 QA Crew. Launching Soon.
+      </footer>
+    </div>
+  </main>
+</body>
+</html>
