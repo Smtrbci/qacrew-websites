@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>QACrew Forge — Demo</title>
+<meta name="description" content="QAcrew Studio altında geliştirilen Forge demo paneli. Yakında yayında.">
+<meta name="theme-color" content="#0D0C0B">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../assets/fonts/manrope-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../css/fonts.css">
+<link rel="stylesheet" href="../css/app.css">
+<script>
+  // Yalnızca örnek panel verileri. Demo arayüzünde API bağlantısı etkin değildir.
+  window.QACREW_CONFIG = { examplesUrl: "../data/examples.json" };
+</script>
+</head>
+<body>
+<!-- ============ LOGIN ============ -->
+<section id="login" class="wrap" aria-label="Giriş">
+  <div class="login-col">
+    <a class="logo" href="#login" aria-label="QAcrew Studio Forge demo" style="justify-content:center;margin-bottom:6px">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="1.5" y="1.5" width="27" height="27" rx="8" fill="none" stroke="#B8E986" stroke-width="2.4"/><path d="M8.5 15.5l4.2 4.2 8.8-9.4" fill="none" stroke="#B8E986" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>QACrew <em>Forge</em> · <small>Studio demo</small></span>
+    </a>
+    <form class="login-card" id="loginForm" novalidate>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <h1>Forge demo paneli</h1>
+        <p class="sub">Örnek paneli görüntülemek için demo girişi yapın.</p>
+      </div>
+      <div class="field">
+        <label for="lEmail">E-posta</label>
+        <input class="input" id="lEmail" type="email" autocomplete="username" placeholder="ad@sirket.com">
+      </div>
+      <div class="field">
+        <label for="lPass">Şifre</label>
+        <input class="input" id="lPass" type="password" autocomplete="current-password" placeholder="••••••••">
+      </div>
+      <p class="err" id="lErr" role="alert" hidden></p>
+      <button class="btn btn-primary" type="submit" style="width:100%;min-height:50px">Giriş yap</button>
+    </form>
+    <div class="demo-box" role="note">
+      <b>QACrew Forge demo — yakında yayında. QAcrew Studio ürünü.</b> Bu ekrandaki giriş, panel ve araç akışları demo amaçlıdır; gerçek kullanıcı hesabı değildir. Gizli veya şirket içi verileri girmeyin.
+      <div class="row"><b>Demo hesabı</b><button class="link-btn" type="button" id="fillDemo">Bilgileri doldur</button></div>
+      <div class="row"><small>E-posta</small><code>demo@qacrew.it</code></div>
+      <div class="row"><small>Şifre</small><code>qacrew2026</code></div>
+      <small>Bu demo sürümde herhangi bir e-posta ve şifreyle de girebilirsiniz. Şifre kaydedilmez.</small>
+    </div>
+  </div>
+</section>
+
+<!-- ============ APP ============ -->
+<div id="appShell" hidden>
+  <header class="topbar">
+    <div class="wrap">
+      <a class="logo" href="#panel" aria-label="QAcrew panel">
+        <svg width="28" height="28" viewBox="0 0 30 30" aria-hidden="true"><rect x="1.5" y="1.5" width="27" height="27" rx="8" fill="none" stroke="#B8E986" stroke-width="2.4"/><path d="M8.5 15.5l4.2 4.2 8.8-9.4" fill="none" stroke="#B8E986" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>QACrew Forge</span>
+      </a>
+      <nav class="tabs" role="tablist" aria-label="Bölümler">
+        <button class="tab" role="tab" data-tab="panel" aria-selected="true">Panel</button>
+        <button class="tab" role="tab" data-tab="docs" aria-selected="false">Dokümanlar</button>
+        <button class="tab" role="tab" data-tab="tpl" aria-selected="false">Şablonlar</button>
+      </nav>
+      <div class="avatar-wrap">
+        <button class="avatar" id="avatarBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Hesap menüsü">S</button>
+        <div class="menu" id="userMenu" hidden>
+          <div class="who"><b id="whoName">Samet</b><span id="whoMail">demo@qacrew.it</span></div>
+          <button type="button" data-open-tool>Yeni doküman</button>
+          <a class="menu-link" href="../">Siteye dön</a>
+          <button type="button" id="logoutBtn">Çıkış yap</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="app wrap">
+    <div id="storeNote" class="notice" hidden></div>
+
+    <!-- Panel -->
+    <div id="view-panel">
+      <div class="page-head">
+        <div><span class="eyebrow" id="today">Bugün</span><h1 id="hello">Merhaba</h1></div>
+        <button class="btn btn-primary" type="button" data-open-tool>
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>Yeni
+        </button>
+      </div>
+      <div class="stats" id="stats"></div>
+      <div class="sec-title"><h2>Son dokümanlar</h2></div>
+      <div class="grid" id="recentGrid"></div>
+      <p class="examples-note" id="exNote" hidden>Örnekler: QAcrew Studio · Forge demo ekranlarında gösterilen hazır dokümanlar.</p>
+      <div class="grid" id="exGrid"></div>
+    </div>
+
+    <!-- Docs -->
+    <div id="view-docs" hidden>
+      <div class="page-head">
+        <div><span class="eyebrow">Arşiv</span><h1>Dokümanlar</h1></div>
+        <button class="btn btn-primary" type="button" data-open-tool>
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>Yeni
+        </button>
+      </div>
+      <div class="sec-title">
+        <div class="filters" role="group" aria-label="Türe göre filtre" id="filters"></div>
+      </div>
+      <div class="grid" id="docsGrid"></div>
+    </div>
+
+    <!-- Templates -->
+    <div id="view-tpl" hidden>
+      <div class="page-head">
+        <div><span class="eyebrow">Çıktı türleri</span><h1>Şablonlar</h1></div>
+      </div>
+      <div class="tpl-grid" id="tplGrid"></div>
+    </div>
+  </main>
+</div>
+
+<!-- ============ TOOL ============ -->
+<div class="tool" id="tool" role="dialog" aria-modal="true" aria-labelledby="toolTitle" hidden>
+  <div class="tool-bar">
+    <div class="wrap">
+      <div class="stepper" id="stepper" aria-label="Adımlar">
+        <span data-s="1"><i>1</i>Girdi</span>
+        <span data-s="2"><i>2</i>Seçenekler</span>
+        <span data-s="3"><i>3</i>Üretim</span>
+        <span data-s="4"><i>4</i>Sonuç</span>
+      </div>
+      <button class="icon-btn" type="button" id="closeTool" aria-label="Aracı kapat">
+        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="tool-body wrap">
+
+    <!-- Step 1+2: compose -->
+    <div id="stage-compose">
+      <h1 id="toolTitle" style="font-size:clamp(26px,3.6vw,36px);margin-bottom:24px">Yeni doküman üret</h1>
+      <div class="tool-cols">
+        <div class="panel">
+          <div><h2>1. Girdiyi verin</h2><p class="hint">User story, kabul kriteri, Slack mesajı ya da sürüm notu. Dosya da yükleyebilirsiniz.</p></div>
+          <div class="drop" id="drop">
+            <span id="dropText">.txt, .md veya .csv dosyasını buraya bırakın</span>
+            <span><label for="fileIn">Dosya seç</label><input id="fileIn" type="file" accept=".txt,.md,.csv,.json,text/plain,text/markdown,text/csv"></span>
+          </div>
+          <div class="field">
+            <label for="inputText">Girdi metni</label>
+            <textarea class="textarea" id="inputText" placeholder="Örn: Kullanıcı kayıtlı kartıyla ödeme yapabilmeli. Kart yoksa yeni kart ekleyebilmeli…"></textarea>
+            <div class="counter" id="charCount">0 / 12.000 karakter</div>
+          </div>
+          <div class="opt-group">
+            <span>Hazır örnekle dene</span>
+            <div class="samples" id="samples"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div><h2>2. Seçenekleri belirleyin</h2><p class="hint">Çıktının türü ve kapsamı.</p></div>
+          <div class="opt-group">
+            <span>Çıktı türü</span>
+            <div class="opts" id="typeOpts"></div>
+          </div>
+          <div class="opt-group">
+            <span>Platform</span>
+            <div class="chiprow" id="platOpts"></div>
+          </div>
+          <div class="opt-group">
+            <span>Kapsam</span>
+            <div class="opts" id="depthOpts"></div>
+          </div>
+          <div class="field">
+            <label for="projName">Proje / modül adı <span style="color:var(--muted);font-weight:500">(isteğe bağlı)</span></label>
+            <input class="input" id="projName" type="text" placeholder="Örn: Mobil uygulama · Ödeme">
+          </div>
+          <p class="err" id="composeErr" role="alert" hidden></p>
+          <button class="btn btn-primary" type="button" id="genBtn" style="min-height:52px">
+            Üret
+            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: generating -->
+    <div id="stage-gen" hidden>
+      <div class="gen" aria-live="polite">
+        <div class="orb" aria-hidden="true"><span></span></div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <h2 id="genTitle">Test senaryoları üretiliyor</h2>
+          <p style="color:var(--muted)" id="genSub">Bu işlem genellikle 20–60 saniye sürer.</p>
+        </div>
+        <ol class="gen-steps" id="genSteps"></ol>
+        <div class="gen-meta"><span id="genTime">0 sn</span><span id="genChars">Sunucu yanıtı bekleniyor</span></div>
+        <button class="btn btn-ghost" type="button" id="stopBtn">Durdur</button>
+      </div>
+    </div>
+
+    <!-- Step 4: result -->
+    <div id="stage-result" hidden>
+      <div class="res-head">
+        <div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap" id="resTags"></div>
+          <h2 id="resTitle">Sonuç</h2>
+          <p id="resSummary"></p>
+        </div>
+        <div class="res-actions" id="resActions"></div>
+      </div>
+      <div class="res-cols">
+        <div><span class="src-label">Girdi</span><div class="src" id="resSrc"></div></div>
+        <div class="out"><span class="src-label">QAcrew çıktısı</span><div id="resOut"></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="../js/prompts.js"></script>
+<script src="../js/app.js"></script>
+</body>
+</html>

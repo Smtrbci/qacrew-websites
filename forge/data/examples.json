@@ -1,0 +1,177 @@
+[
+  {
+    "createdAt": "2026-10-14T15:20:00.000Z",
+    "depth": "quick",
+    "input": "@ali ödeme sayfası yine bozuk, bazen açılmıyor. androidde oldu sanırım. wifi'dan mobil veriye geçince oluyor gibi. geri tuşu da çalışmadı. uygulama 3.8.2",
+    "platforms": [
+      "Android"
+    ],
+    "project": "Mobil · Ödeme",
+    "result": {
+      "bug": {
+        "actual": "Ekran boş kalıyor, geri tuşu tepki vermiyor",
+        "environment": "Android (sürüm belirtilmedi) · Uygulama v3.8.2",
+        "expected": "Ödeme ekranı ve kayıtlı kartlar yüklenir",
+        "frequency": "Aralıklı (Tahmini: ağ değişiminden hemen sonra)",
+        "missing_info": [
+          "Hangi Android sürümü ve cihaz modeli?",
+          "Ekran görüntüsü veya ekran kaydı var mı?",
+          "Uygulama logları alınabilir mi?"
+        ],
+        "notes": "Yeniden deneyince bazen düzeliyor.",
+        "preconditions": "Sepette en az bir ürün var, cihaz Wi-Fi'a bağlı",
+        "severity": "Kritik",
+        "steps": [
+          "Sepete ürün ekle",
+          "Wi-Fi'ı kapatıp mobil veriye geç",
+          "Ödemeye geç'e dokun"
+        ],
+        "title": "Android: Wi-Fi'dan mobil veriye geçişte ödeme ekranı boş açılıyor"
+      },
+      "summary": "Slack mesajından çıkarılan bug raporu.",
+      "title": "Ağ değişiminde ödeme ekranı boş açılıyor"
+    },
+    "summary": "Slack mesajından çıkarılan, eksik bilgileri işaretlenmiş bug raporu.",
+    "title": "Ağ değişiminde ödeme ekranı boş açılıyor",
+    "type": "bug",
+    "id": "ex-bug"
+  },
+  {
+    "createdAt": "2026-10-13T11:05:00.000Z",
+    "depth": "quick",
+    "input": "Sprint 24'te değişenler: sepet servisi, kampanya + kupon birlikte, adres formu il/ilçe. Dokunulmayanlar: profil, favoriler.",
+    "platforms": [
+      "Web",
+      "API"
+    ],
+    "project": "E-ticaret · Sprint 24",
+    "result": {
+      "items": [
+        {
+          "id": "RG-01",
+          "priority": "Yüksek",
+          "reason": "Servis yeniden yazıldı",
+          "scope": "Sepet: ekleme, silme, adet güncelleme",
+          "tests": 14
+        },
+        {
+          "id": "RG-02",
+          "priority": "Yüksek",
+          "reason": "Yeni iş kuralı",
+          "scope": "Kampanya ve kupon birlikte kullanım",
+          "tests": 9
+        },
+        {
+          "id": "RG-03",
+          "priority": "Orta",
+          "reason": "Liste değişti",
+          "scope": "Adres formu il/ilçe seçimi",
+          "tests": 7
+        },
+        {
+          "id": "RG-04",
+          "priority": "Orta",
+          "reason": "Sepet ve kampanyaya bağlı",
+          "scope": "Ödeme uçtan uca",
+          "tests": 6
+        },
+        {
+          "id": "RG-05",
+          "priority": "Düşük",
+          "reason": "Değişmedi",
+          "scope": "Profil ve favoriler (örneklem)",
+          "tests": 3
+        }
+      ],
+      "summary": "Değişen modüllere göre önceliklendirilmiş setler.",
+      "title": "Sprint 24 regresyon planı"
+    },
+    "summary": "Değişen sepet, kampanya ve adres modüllerine göre önceliklendirilmiş setler.",
+    "title": "Sprint 24 regresyon planı",
+    "type": "reg",
+    "id": "ex-reg"
+  },
+  {
+    "createdAt": "2026-10-15T09:00:00.000Z",
+    "depth": "quick",
+    "input": "US-482 Kayıtlı kartla ödeme\nKullanıcı olarak, sepetimdeki ürünler için kayıtlı kartımla ödeme yapabilmek istiyorum.\n- Kayıtlı kart yoksa yeni kart eklenebilmeli\n- 3D Secure zorunlu\n- Limit yetersizse uyarı\n- Sepet 0 TL ise Öde pasif",
+    "platforms": [
+      "iOS",
+      "Android"
+    ],
+    "project": "Mobil · Ödeme",
+    "result": {
+      "items": [
+        {
+          "expected": "Sipariş onay ekranı açılır, onay e-postası gelir",
+          "id": "TC-001",
+          "preconditions": "Kullanıcının kayıtlı kartı var, sepette ürün var",
+          "priority": "Yüksek",
+          "scenario": "Kayıtlı kartla başarılı ödeme",
+          "steps": [
+            "Sepete git",
+            "Öde'ye dokun",
+            "Kayıtlı kartı seç",
+            "3D Secure kodunu gir"
+          ],
+          "type": "Pozitif"
+        },
+        {
+          "expected": "Ödeme alınmaz, sepet korunur, bilgi mesajı gösterilir",
+          "id": "TC-002",
+          "preconditions": "Kayıtlı kart var",
+          "priority": "Yüksek",
+          "scenario": "3D Secure doğrulaması iptal edilir",
+          "steps": [
+            "Ödemeyi başlat",
+            "3D Secure ekranında İptal'e dokun"
+          ],
+          "type": "Negatif"
+        },
+        {
+          "expected": "'Kart limitiniz yetersiz' uyarısı gösterilir",
+          "id": "TC-003",
+          "preconditions": "Kart limiti sepet tutarından düşük",
+          "priority": "Orta",
+          "scenario": "Limiti yetersiz kartla ödeme",
+          "steps": [
+            "Ödemeyi başlat",
+            "Kartı seç ve onayla"
+          ],
+          "type": "Negatif"
+        },
+        {
+          "expected": "Kart kaydedilir ve ödeme tamamlanır",
+          "id": "TC-004",
+          "preconditions": "Kayıtlı kart yok",
+          "priority": "Orta",
+          "scenario": "Kayıtlı kart yokken yeni kart ekleme",
+          "steps": [
+            "Öde'ye dokun",
+            "Yeni kart ekle'yi seç",
+            "Kart bilgilerini gir",
+            "Kaydet ve öde"
+          ],
+          "type": "Pozitif"
+        },
+        {
+          "expected": "Öde butonu pasiftir",
+          "id": "TC-005",
+          "preconditions": "Sepetteki tüm ürünler %100 indirimli",
+          "priority": "Düşük",
+          "scenario": "Sepet tutarı 0 TL",
+          "steps": [
+            "Sepete git"
+          ],
+          "type": "Sınır değer"
+        }
+      ],
+      "summary": "US-482 için ödeme akışının pozitif, negatif ve sınır değer senaryoları.",
+      "title": "Kayıtlı kartla ödeme akışı"
+    },
+    "summary": "US-482 için ödeme akışının pozitif, negatif ve sınır değer senaryoları.",
+    "title": "Kayıtlı kartla ödeme akışı",
+    "type": "test",
+    "id": "ex-test"
+  }
+]
