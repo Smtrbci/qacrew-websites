@@ -56,12 +56,17 @@ p{margin:0}
 .nav a{text-decoration:none;color:var(--muted);font-size:15px;font-weight:600;padding:10px 12px;border-radius:8px}
 .nav a:hover{color:var(--fg)}
 .top-actions{display:flex;gap:10px;align-items:center}
+.language-switch{display:flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;flex:none}
+.language-switch button{min-width:34px;min-height:34px;padding:0 8px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:600 11px var(--f-mono);cursor:pointer}
+.language-switch button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink)}
+.language-switch button:hover{color:var(--fg)}
+.language-switch button[aria-pressed=true]:hover{color:var(--accent-ink)}
 .menu-btn{display:none;width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer;align-items:center;justify-content:center}
 .mobile-nav{border-top:1px solid var(--line);background:var(--bg)}
 .mobile-nav .wrap{display:flex;flex-direction:column;padding-block:12px 20px}
 .mobile-nav a{padding:14px 0;text-decoration:none;font-weight:600;border-bottom:1px solid var(--line)}
 @media (max-width:900px){.nav{display:none}.menu-btn{display:inline-flex}}
-@media (max-width:480px){.top-actions .btn{padding:0 16px}}
+@media (max-width:480px){.top-actions{gap:7px}.top-actions>.btn{display:none}.language-switch button{min-width:30px;min-height:32px;padding:0 6px}}
 
 /* Hero */
 .hero{padding-block:96px 40px;position:relative}

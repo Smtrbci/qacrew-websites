@@ -78,7 +78,8 @@
   mb.addEventListener('click',function(){
     var open=mn.hidden; mn.hidden=!open;
     mb.setAttribute('aria-expanded',String(open));
-    mb.setAttribute('aria-label',open?'Menüyü kapat':'Menüyü aç');
+    var en=document.documentElement.lang==='en';
+    mb.setAttribute('aria-label',open?(en?'Close menu':'Menüyü kapat'):(en?'Open menu':'Menüyü aç'));
   });
   mn.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){mn.hidden=true;mb.setAttribute('aria-expanded','false')})});
 })();
