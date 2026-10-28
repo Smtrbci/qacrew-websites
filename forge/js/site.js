@@ -109,7 +109,8 @@
   function setMenuOpen(open){
     mn.hidden=!open;
     mb.setAttribute('aria-expanded',String(open));
-    document.body.classList.toggle('menu-open',open);
+    // Only trap page scrolling once the separate mobile panel has a visible viewport box.
+    document.body.classList.toggle('menu-open',open&&mn.getBoundingClientRect().height>0);
     var en=document.documentElement.lang==='en';
     mb.setAttribute('aria-label',open?(en?'Close menu':'Menüyü kapat'):(en?'Open menu':'Menüyü aç'));
     var path=mb.querySelector('path');if(path)path.setAttribute('d',open?'M4 4l12 12M16 4 4 16':'M3 6h14M3 14h14');
