@@ -67,6 +67,7 @@
     document.querySelectorAll("[data-forge-lang]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.forgeLang===current))});
     try{localStorage.setItem("qacrew-forge-language",current)}catch(_){}
     busy=false;
+    window.dispatchEvent(new Event("qacrew-language-change"));
   }
   document.querySelectorAll("[data-forge-lang]").forEach(function(b){b.addEventListener("click",function(){setLanguage(b.dataset.forgeLang)})});
   var observer=new MutationObserver(function(records){if(busy)return;records.forEach(function(r){if(r.type==="characterData")translateNode(r.target);else r.addedNodes.forEach(function(n){if(n.nodeType===3)translateNode(n);else if(n.nodeType===1)walk(n)})})});

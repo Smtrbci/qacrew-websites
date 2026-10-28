@@ -48,13 +48,44 @@
         '</tbody></table>'
     }
   };
+  var englishModes={
+    test:{
+      file:'payment-flow_user-story.txt → test-cases.csv',
+      before:'US-482\nAs a user, I should be able to pay with a saved card. If I have no saved card, I should be able to add one. <mark>3D Secure</mark> should probably be required. Show a warning for an invalid card. What if the <mark>limit is insufficient?</mark> Disable the button when the cart total is 0…',
+      after:'<table class="tbl"><thead><tr><th>ID</th><th>Test case</th><th class="hide-sm">Expected result</th><th>Priority</th></tr></thead><tbody>'+
+        '<tr><td>TC-001</td><td>Successful payment with a saved card</td><td class="hide-sm">Order confirmation screen opens</td><td><span class="pill p-high">High</span></td></tr>'+
+        '<tr><td>TC-002</td><td>3D Secure verification is cancelled</td><td class="hide-sm">Payment is not completed; cart is preserved</td><td><span class="pill p-high">High</span></td></tr>'+
+        '<tr><td>TC-003</td><td>Pay with a card that has insufficient limit</td><td class="hide-sm">An “Insufficient limit” message is shown</td><td><span class="pill p-mid">Medium</span></td></tr>'+
+        '<tr><td>TC-004</td><td>Add a new card and pay</td><td class="hide-sm">Card is saved and payment is processed</td><td><span class="pill p-mid">Medium</span></td></tr>'+
+        '<tr><td>TC-005</td><td>Button when cart total is 0</td><td class="hide-sm">The “Pay” button is disabled</td><td><span class="pill p-low">Low</span></td></tr>'+
+        '</tbody></table>'
+    },
+    bug:{
+      file:'slack_#mobile-qa.txt → BUG-1093 · bug-report.csv',
+      before:'@ali the payment page is broken again. It <mark>sometimes</mark> will not open. I think it happened on Android last night. I tried again and it worked, then broke again. <mark>No screenshot</mark>, but something is definitely wrong.',
+      after:'<dl class="fields"><dt>Title</dt><dd>Android: Payment screen opens blank after network change</dd><dt>Priority</dt><dd><span class="pill p-high">Critical</span></dd><dt>Environment</dt><dd>Android 14 · Pixel 7 · App v3.8.2 (prod)</dd><dt>Steps</dt><dd><ol><li>Add an item to the cart</li><li>Switch from Wi-Fi to mobile data</li><li>Tap “Continue to payment”</li></ol></dd><dt>Expected</dt><dd>Saved cards are listed</dd><dt>Actual</dt><dd>Screen stays blank; back button does not work</dd></dl>'
+    },
+    smoke:{
+      file:'release-notes_v3.9.md → smoke-checklist.csv',
+      before:'v3.9 release notes\n- sign-in screen redesigned\n- biometric sign-in added\n- notification permissions changed\n- <mark>payment SDK updated</mark>\n- minor fixes',
+      after:'<ul class="checks"><li class="done">'+check+'App launches without crashing<span class="meta">iOS · Android</span></li><li class="done">'+check+'Sign in with email and password<span class="meta">New screen</span></li><li class="done">'+check+'Sign in with Face ID / fingerprint<span class="meta">New</span></li><li><span class="box"></span>Notification permission prompt appears at the right time<span class="meta">Changed</span></li><li><span class="box"></span>Test payment with a saved card<span class="meta">SDK updated</span></li></ul>'
+    },
+    reg:{
+      file:'changed-modules.txt → regression-set.csv',
+      before:'Changes in this sprint:\ncart service, promotion engine, address form (new province/district list)\n<mark>promotion + coupon together?</mark>\nprofile page was not touched',
+      after:'<table class="tbl"><thead><tr><th>Suite</th><th>Scope</th><th class="hide-sm">Tests</th><th>Priority</th></tr></thead><tbody><tr><td>RG-01</td><td>Cart: add, remove, quantity</td><td class="hide-sm">14</td><td><span class="pill p-high">High</span></td></tr><tr><td>RG-02</td><td>Promotion and coupon together</td><td class="hide-sm">9</td><td><span class="pill p-high">High</span></td></tr><tr><td>RG-03</td><td>Province/district selection in address form</td><td class="hide-sm">7</td><td><span class="pill p-mid">Medium</span></td></tr><tr><td>RG-04</td><td>End-to-end payment</td><td class="hide-sm">6</td><td><span class="pill p-mid">Medium</span></td></tr><tr><td>RG-05</td><td>Profile (unchanged, sample)</td><td class="hide-sm">3</td><td><span class="pill p-low">Low</span></td></tr></tbody></table>'
+    }
+  };
+  var activeMode='test';
   var before=document.getElementById('paneBefore'), after=document.getElementById('paneAfter'), file=document.getElementById('demoFile');
   function render(m){
-    var d=modes[m];
-    before.innerHTML='<span class="pane-label">Önce · ham girdi</span><div class="raw">'+d.before+'</div>';
-    after.innerHTML='<span class="pane-label">Sonra · QAcrew</span><div class="out">'+d.after+'</div>';
+    activeMode=m;
+    var en=document.documentElement.lang==='en',d=en?englishModes[m]:modes[m];
+    before.innerHTML='<span class="pane-label">'+(en?'Before · raw input':'Önce · ham girdi')+'</span><div class="raw">'+d.before+'</div>';
+    after.innerHTML='<span class="pane-label">'+(en?'After · QAcrew':'Sonra · QAcrew')+'</span><div class="out">'+d.after+'</div>';
     file.textContent=d.file;
   }
+  window.addEventListener('qacrew-language-change',function(){render(activeMode)});
   render('test');
   document.querySelectorAll('.chip').forEach(function(c){
     c.addEventListener('click',function(){
