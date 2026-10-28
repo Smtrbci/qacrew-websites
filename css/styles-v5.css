@@ -5,3 +5,4 @@
 .earned-certs{margin:16px 0 0;padding-left:18px;color:var(--muted);font-size:13px}.earned-certs li+li{margin-top:6px}.earned-certs strong{color:var(--fg)}
 
 .brand-logo{display:block;width:96px;height:70px;object-fit:contain;padding:2px;border-radius:7px;background:var(--lime)}
+#main-nav .studio-link{color:var(--lime);font-weight:600}
