@@ -1,308 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Page Title -->
-  <title>QAcrew | Coming Soon</title>
-
-  <!-- CSS Codes -->
-  <style>
-    :root {
-      --bg: #03131c;
-      --bg2: #061f2b;
-      --green: #0f8f68;
-      --green-light: #18c28f;
-      --white: #f7f7f7;
-      --muted: #d7d7d7;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      min-height: 100vh;
-      background: #02070b;
-      font-family: Arial, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--white);
-      overflow: hidden;
-    }
-
-    .screen {
-      width: 100vw;
-      height: 100vh;
-      background:
-        radial-gradient(circle at center, rgba(12, 70, 78, 0.35), transparent 45%),
-        linear-gradient(135deg, var(--bg), var(--bg2), var(--bg));
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      overflow: hidden;
-      border: 10px solid #02070b;
-    }
-
-    .camera-dot {
-      position: absolute;
-      top: 8px;
-      left: 50%;
-      width: 7px;
-      height: 7px;
-      transform: translateX(-50%);
-      background: #111;
-      border-radius: 50%;
-      z-index: 10;
-    }
-
-    .logo {
-      position: absolute;
-      top: 9%;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 32px;
-      font-weight: 900;
-      letter-spacing: -1px;
-      text-shadow: 0 4px 8px rgba(0,0,0,.45);
-      z-index: 5;
-    }
-
-    .logo span {
-      color: var(--green-light);
-    }
-
-    .content {
-      position: relative;
-      z-index: 5;
-      margin-top: 60px;
-    }
-
-    .spinner {
-      width: 86px;
-      height: 86px;
-      margin: 0 auto 38px;
-      border-radius: 50%;
-      position: relative;
-      animation: spin 2.8s linear infinite;
-    }
-
-    .spinner::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      border: 6px solid rgba(255,255,255,.08);
-      border-top-color: var(--green-light);
-      border-right-color: rgba(24,194,143,.55);
-      box-shadow:
-        0 0 22px rgba(24,194,143,.45),
-        inset 0 0 18px rgba(24,194,143,.18);
-    }
-
-    .spinner::after {
-      content: "";
-      position: absolute;
-      inset: 18px;
-      border-radius: 50%;
-      border: 4px dotted rgba(24,194,143,.85);
-      animation: spinReverse 4.5s linear infinite;
-    }
-
-    h1 {
-      font-size: clamp(42px, 7vw, 70px);
-      font-weight: 900;
-      letter-spacing: -1px;
-      margin-bottom: 22px;
-      text-shadow: 0 5px 8px rgba(0,0,0,.5);
-    }
-
-    .desc {
-      font-size: clamp(22px, 3vw, 34px);
-      line-height: 1.35;
-      font-weight: 700;
-      color: var(--muted);
-      text-shadow: 0 4px 8px rgba(0,0,0,.45);
-    }
-
-    .desc span {
-      color: var(--green-light);
-    }
-
-    .line {
-      width: 135px;
-      height: 4px;
-      background: var(--green-light);
-      margin: 32px auto 22px;
-      border-radius: 999px;
-      box-shadow: 0 0 16px rgba(24,194,143,.5);
-    }
-
-    .status {
-      color: var(--green);
-      font-size: clamp(18px, 2vw, 27px);
-      font-weight: 900;
-    }
-
-    .wave {
-      position: absolute;
-      width: 900px;
-      height: 280px;
-      border-radius: 50%;
-      opacity: .75;
-      background:
-        repeating-radial-gradient(
-          ellipse at center,
-          rgba(24,194,143,.42) 0px,
-          rgba(24,194,143,.42) 1px,
-          transparent 2px,
-          transparent 7px
-        );
-      filter: blur(.4px);
-      animation: waterWave 9s ease-in-out infinite alternate;
-    }
-
-    .wave-left {
-      left: -410px;
-      bottom: 100px;
-      transform: rotate(20deg);
-    }
-
-    .wave-left-2 {
-      left: -220px;
-      bottom: -80px;
-      transform: rotate(-10deg);
-      opacity: .42;
-      animation-duration: 12s;
-    }
-
-    .wave-right {
-      right: -390px;
-      bottom: -30px;
-      transform: rotate(-9deg);
-      opacity: .52;
-      animation-duration: 11s;
-    }
-
-    .ripple {
-      position: absolute;
-      width: 420px;
-      height: 420px;
-      border-radius: 50%;
-      border: 1px solid rgba(24,194,143,.14);
-      animation: rippleMove 10s ease-in-out infinite alternate;
-    }
-
-    .ripple.one {
-      left: 8%;
-      top: 18%;
-    }
-
-    .ripple.two {
-      right: 8%;
-      bottom: 12%;
-      width: 520px;
-      height: 520px;
-      animation-duration: 13s;
-    }
-
-    .ripple.three {
-      left: 40%;
-      bottom: -180px;
-      width: 620px;
-      height: 620px;
-      animation-duration: 15s;
-      opacity: .7;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    @keyframes spinReverse {
-      to {
-        transform: rotate(-360deg);
-      }
-    }
-
-    @keyframes waterWave {
-      from {
-        transform: translateY(0) translateX(0) rotate(18deg) scale(1);
-      }
-      to {
-        transform: translateY(-32px) translateX(24px) rotate(22deg) scale(1.04);
-      }
-    }
-
-    @keyframes rippleMove {
-      from {
-        transform: translateY(0) scale(1);
-        opacity: .35;
-      }
-      to {
-        transform: translateY(-38px) scale(1.08);
-        opacity: .75;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .screen {
-        border: 5px solid #02070b;
-      }
-
-      .logo {
-        font-size: 25px;
-      }
-
-      .spinner {
-        width: 72px;
-        height: 72px;
-      }
-
-      .spinner::after {
-        inset: 15px;
-      }
-    }
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0F3D2E">
+  <title>Samet Arabacı — QA Test &amp; Analiz Uzmanı</title>
+  <meta name="description" content="İstanbul'da mobil uygulama test uzmanı ve gereksinim analisti. Freelance QA: sürüm testi, mobil test, test senaryosu yazımı.">
+  <meta property="og:title" content="Samet Arabacı — QA Test &amp; Analysis">
+  <meta property="og:description" content="Mobile app QA specialist and requirements analyst. Open to freelance projects.">
+  <meta property="og:type" content="profile">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <script type="application/ld+json" id="person-schema">{"@context":"https://schema.org","@type":"Person","name":"Samet Arabacı","jobTitle":"QA Test & Analysis Specialist","address":{"@type":"PostalAddress","addressLocality":"Istanbul","addressCountry":"TR"},"sameAs":["[LINKEDIN LİNKİ]","https://www.instagram.com/qacrew.it"]}</script>
 </head>
-
 <body>
-  <!-- HTML Codes -->
-  <main class="screen">
-    <div class="camera-dot"></div>
-
-    <div class="logo">QA<span>crew</span></div>
-
-    <div class="ripple one"></div>
-    <div class="ripple two"></div>
-    <div class="ripple three"></div>
-
-    <div class="wave wave-left"></div>
-    <div class="wave wave-left-2"></div>
-    <div class="wave wave-right"></div>
-
-    <section class="content">
-      <div class="spinner"></div>
-
-      <h1>COMING SOON</h1>
-
-      <div class="desc">
-        A better <span>QA</span> experience<br />
-        is on the way.
+  <a class="skip" href="#main" data-i18n="skip">İçeriğe geç</a>
+  <header class="top">
+    <div class="wrap top-inner">
+      <a class="brand" href="#top" aria-label="Samet Arabacı"><span>Samet Arabacı</span><b>QA</b></a>
+      <button class="menu-toggle" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="main-nav"><span></span><span></span><span></span></button>
+      <nav id="main-nav" aria-label="Ana menü">
+        <a href="#hakkimda" data-i18n="nav.about">Hakkımda</a><a href="#deneyim" data-i18n="nav.experience">Deneyim</a><a href="#calismalar" data-i18n="nav.work">Çalışmalar</a><a href="#hizmetler" data-i18n="nav.services">Hizmetler</a><a href="#iletisim" data-i18n="nav.contact">İletişim</a>
+      </nav>
+      <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="tr" aria-pressed="true">TR</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div>
+    </div>
+  </header>
+  <main id="main">
+    <section class="hero dark" id="top" aria-labelledby="hero-title">
+      <div class="wrap">
+        <div class="report-id mono"><span><i data-i18n="hero.report">Rapor</i> <b>QA-PROFILE-001</b></span><span><i data-i18n="hero.location">Konum</i> <b data-i18n="hero.city">İstanbul, TR</b></span><span><i data-i18n="hero.languages">Dil</i> <b>TR · EN</b></span><span class="status" data-i18n="hero.open">Freelance projelere açık</span></div>
+        <div class="hero-grid">
+          <div class="hero-main"><h1 id="hero-title">Samet Arabacı<br><i data-i18n="hero.title">test &amp; analiz</i></h1><p class="role" data-i18n="hero.desc">Sağlık teknolojisinde mobil uygulama test uzmanı ve gereksinim analisti. Hataları kullanıcılardan önce buluyor, ekiplerin anlayacağı user story ve test dokümanları yazıyorum.</p><div class="ctas"><a class="btn btn-lime" href="#iletisim" data-i18n="hero.cta">Birlikte çalışalım</a><a class="btn btn-line" href="#calismalar" data-i18n="hero.work">Çalışmalarım</a></div></div>
+          <aside class="hero-side"><div class="photo-placeholder" role="img" aria-label="Samet Arabacı fotoğraf alanı"><span>SA</span></div><div class="photo-cap mono"><span data-i18n="hero.photoPlace">Kadıköy, İstanbul</span><span>2026</span></div></aside>
+        </div>
       </div>
-
-      <div class="line"></div>
-
-      <div class="status">Stay tuned for updates!</div>
     </section>
+    <section class="summary" aria-label="Özet"><div class="wrap summary-grid"><div class="sum"><span class="k" data-i18n="summary.experience">QA deneyimi</span><b class="v" data-i18n="summary.since">2023'ten beri</b></div><div class="sum"><span class="k" data-i18n="summary.domain">Alan</span><b class="v" data-i18n="summary.health">Sağlık teknolojisi</b></div><div class="sum"><span class="k">Platform</span><b class="v">iOS · Android · Web</b></div><div class="sum"><span class="k" data-i18n="summary.cert">Sertifika</span><b class="v">ISTQB CTFL · <em data-i18n="summary.progress">hazırlanıyor</em></b></div></div></section>
+    <section class="sec wrap" id="hakkimda" aria-labelledby="about-title"><div class="about"><div class="label" id="about-title" data-i18n="about.label">01 · HAKKIMDA</div><div><p class="lead" data-i18n-html="about.lead">Bir uygulamanın <i>neden</i> bozulduğunu anlamakla, onu ekibin hızla düzeltebileceği şekilde anlatmak arasında köprü kuruyorum.</p><div class="body"><p data-i18n="about.p1">Ağustos 2023'ten beri MLPCARE'de Proje Yönetim Uzmanı (QA Test &amp; Analiz) olarak çalışıyorum. Günlük işim hastaların kullandığı mobil uygulamaları test etmek, gereksinimleri analiz edip Azure DevOps'ta user story'lere dönüştürmek.</p><p data-i18n="about.p2">Test dışında hasta yönetim sistemleri için UI/UX tasarımı ve portal geçiş projelerinde de yer alıyorum. Bilgisayar programcılığı eğitimim ve e-ticaret operasyonu geçmişim, hem teknik ekiple hem de iş tarafıyla aynı dili konuşmamı sağlıyor.</p><p data-i18n="about.p3">Yan projem QAcrew'da günlük kullandığım test şablonlarını ve test dokümanı üreten bir uygulamayı diğer test uzmanlarıyla paylaşıyorum.</p></div></div></div></section>
+    <section class="sec wrap" id="deneyim" aria-labelledby="exp-title"><div class="sec-head"><div class="label" data-i18n="exp.label">02 · DENEYİM</div><div><h2 id="exp-title" data-i18n="exp.title">Test kayıtları</h2><p data-i18n="exp.subtitle">Execution log</p></div></div><div class="log" id="experience-list"></div></section>
+    <section class="sec wrap" id="yetkinlikler" aria-labelledby="skills-title"><div class="sec-head"><div class="label" data-i18n="skills.label">03 · YETKİNLİKLER</div><div><h2 id="skills-title" data-i18n="skills.title">Ne yapıyorum</h2><p data-i18n="skills.subtitle">What I do</p></div></div><div class="skills" id="skill-list"></div><div class="tools mono"><span>Azure DevOps</span><span>Excel / Google Sheets</span><span>iOS</span><span>Android</span><span>Web</span><span>[ARAÇ EKLE]</span></div></section>
+    <section class="work-section" id="calismalar" aria-labelledby="work-title"><div class="wrap sec"><div class="sec-head"><div class="label" data-i18n="work.label">04 · ÇALIŞMALAR</div><div><h2 id="work-title" data-i18n="work.title">Seçili çalışmalar</h2><p data-i18n="work.note">Şirket içi projelerde gizlilik gereği ekran görüntüsü paylaşmıyorum; ne yaptığımı ve nasıl yaklaştığımı anlatıyorum.</p></div></div><div class="work" id="work-list"></div></div></section>
+    <section class="sec wrap" id="sertifika" aria-labelledby="cert-title"><div class="sec-head"><div class="label" data-i18n="cert.label">05 · SERTİFİKA</div><div><h2 id="cert-title">ISTQB CTFL</h2></div></div><div class="cert-card"><div><h3>ISTQB Certified Tester Foundation Level (CTFL)</h3><p data-i18n="cert.desc">Sınava hazırlanıyorum. Hedef: test sürecini uluslararası standart terimlerle belgelemek.</p></div><ol class="steps" id="cert-steps"></ol></div></section>
+    <section class="services dark" id="hizmetler" aria-labelledby="services-title"><div class="wrap sec"><div class="sec-head"><div class="label" data-i18n="services.label">06 · HİZMETLER</div><div><h2 id="services-title" data-i18n="services.title">Freelance olarak nasıl yardımcı olurum</h2><p data-i18n="services.desc">Uzaktan, Türkçe veya İngilizce. Startup'lar ve küçük ürün ekipleri için.</p></div></div><div class="service-grid" id="service-list"></div></div></section>
+    <section class="sec wrap contact" id="iletisim" aria-labelledby="contact-title"><div><div class="label" data-i18n="contact.label">07 · İLETİŞİM</div><h2 id="contact-title" data-i18n-html="contact.title">Uygulamanızı <i>birlikte</i> test edelim.</h2></div><div class="contact-list"><div class="contact-row"><span data-i18n="contact.email">E-posta</span><div><span id="mail">[E-POSTA ADRESİ]</span> <button class="copy" id="copyMail" type="button" data-i18n="contact.copy">Kopyala</button></div></div><div class="contact-row"><span>LinkedIn</span><span>[LINKEDIN LİNKİ]</span></div><div class="contact-row"><span>QAcrew</span><a href="https://qacrew.etsy.com" target="_blank" rel="noopener">qacrew.etsy.com</a></div><div class="contact-row"><span>Instagram</span><a href="https://www.instagram.com/qacrew.it" target="_blank" rel="noopener">@qacrew.it</a></div><a class="btn btn-dark cv" href="#iletisim" aria-disabled="true" data-i18n="contact.cv">CV'yi görüntüle · [CV LİNKİ]</a></div></section>
   </main>
+  <footer class="footer"><div class="wrap"><span>© <span id="year"></span> Samet Arabacı · QAcrew</span><span data-i18n="footer">İstanbul'da test edildi.</span></div></footer>
+  <script src="/js/i18n.js"></script><script src="/js/main.js"></script>
 </body>
 </html>
