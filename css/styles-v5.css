@@ -6,3 +6,6 @@
 
 .brand-logo{display:block;width:96px;height:70px;object-fit:contain;padding:2px;border-radius:7px;background:var(--lime)}
 #main-nav .studio-link{color:var(--lime);font-weight:600}
+
+.text-brand .wordmark{display:flex;align-items:baseline;gap:8px}.text-brand .wordmark b{font-size:24px;line-height:1;letter-spacing:-.04em;color:var(--on-green)}.text-brand .wordmark em{font:italic 500 18px/1 var(--serif);letter-spacing:0;color:var(--lime)}
+@media(max-width:820px){.text-brand .wordmark b{font-size:22px}.text-brand .wordmark em{font-size:17px}}
