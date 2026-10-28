@@ -1,13 +1,13 @@
-/* QACrew Forge public page translations. Keeps language selection local to Forge. */
+/* QAcrew Forge public page translations. Keeps language selection local to Forge. */
 (function(){
   "use strict";
   var copy={
-    "QACrew Forge — Demo yakında yayında":"QACrew Forge — Demo coming soon",
+    "QAcrew Forge — Demo yakında yayında":"QAcrew Forge — Demo coming soon",
     "Nasıl çalışır":"How it works","Örnekler":"Examples","Yayın durumu":"Launch status","Yorumlar":"Use cases","SSS":"FAQ","Sık sorulanlar":"Frequently asked questions",
     "QAcrew Studio ↗":"QAcrew Studio ↗","Panel demosu":"Sign in","DEMO":"DEMO","QAcrew Studio ürünü · Yakında yayında":"A QAcrew Studio product · Coming soon",
     "QA dokümanlarını":"Let's shape QA documentation","birlikte şekillendirelim.":"together.",
     "Forge, QAcrew Studio çatısı altında geliştirilen QA dokümantasyon aracıdır. Bu sayfada görünen akışlar ve çıktılar ürün demosudur; gerçek kullanıcı hesabı ve üretim erişimi yakında yayına alınacaktır.":"Forge is a QA documentation tool developed under QAcrew Studio. The workflows and outputs shown here are a product demo; real user accounts and production access are coming soon.",
-    "Demo önizlemesini gör":"Explore the demo","Yakında yayında":"Coming soon","Tamamen demo":"Demo only","QAcrew Studio altında":"Part of QAcrew Studio","4 çıktı türü":"4 output types","Genel erişim yakında":"Public access coming soon",
+    "Demo önizlemesini gör":"Explore the demo","Kendi senaryonu dene":"Try your own scenario","Yakında yayında":"Coming soon","Tamamen demo":"Demo only","QAcrew Studio altında":"Part of QAcrew Studio","4 çıktı türü":"4 output types","Genel erişim yakında":"Public access coming soon",
     "odeme-akisi_user-story.txt → test-cases.csv":"payment-flow_user-story.txt → test-cases.csv","Demo · kaydırarak karşılaştırın":"Demo · drag to compare","Önce ve sonra karşılaştırma çizgisi":"Before and after comparison slider",
     "Test senaryosu":"Test cases","Bug raporu":"Bug report","Smoke checklist":"Smoke checklist","Regresyon seti":"Regression suite","Çıktı türü":"Output type",
     "Demo örneğini değiştirin; solda ham girdi, sağda temsili QA çıktısı.":"Switch the demo example; raw input is on the left and a sample QA output is on the right.",
@@ -34,7 +34,7 @@
     "Üretilen senaryoları düzenleyebilir veya şablon kaydedebilir miyim?":"Can I edit generated cases or save templates?","Kaydedilmiş sonuçlar mevcut prototipte düzenlenemez. Kişisel şablon kaydetme ve ekiple paylaşma henüz uygulanmadı.":"Saved results cannot be edited in this prototype. Saving personal templates and sharing them with a team are not implemented yet.",
     "Abonelik veya ödeme var mı?":"Are subscriptions or payments available?","Abonelik ve ödeme özellikleri henüz sunulmuyor; plan değiştirme veya iade akışı yok.":"Subscriptions and payments are not available yet; there are no plan changes or refund flows.",
     "Test dokümanlarını üretmeden önce ürünün yaklaşımını görün.":"See how the product works before generating QA documents.","QAcrew Studio altında geliştirilen Forge demo aşamasında. Genel yayın yakında.":"Forge is a demo product developed under QAcrew Studio. Public launch is coming soon.","QAcrew Studio hakkında yazın":"Contact QAcrew Studio","Önizlemeyi tekrar gör":"View the preview again",
-    "QAcrew Studio çatısı altındaki QA araçları. Forge şu an demo aşamasında.":"QA tools under the QAcrew Studio umbrella. Forge is currently a demo.","Ürün":"Product","Şablonlar":"Templates","Kaynaklar":"Resources","Etsy mağazası":"Etsy shop","İletişim":"Contact","© 2026 QACrew Forge · QAcrew Studio":"© 2026 QACrew Forge · QAcrew Studio","Forge yakında yayında":"Forge coming soon",
+    "QAcrew Studio çatısı altındaki QA araçları. Forge şu an demo aşamasında.":"QA tools under the QAcrew Studio umbrella. Forge is currently a demo.","Ürün":"Product","Şablonlar":"Templates","Kaynaklar":"Resources","Etsy mağazası":"Etsy shop","İletişim":"Contact","© 2026 QAcrew Forge · QAcrew Studio":"© 2026 QAcrew Forge · QAcrew Studio","Forge yakında yayında":"Forge coming soon",
     "Önce · ham girdi":"Before · raw input","Sonra · QAcrew":"After · QAcrew","Senaryo":"Test case","Beklenen sonuç":"Expected result","Öncelik":"Priority","Yüksek":"High","Orta":"Medium","Düşük":"Low","Başlık":"Title","Ortam":"Environment","Adımlar":"Steps","Beklenen":"Expected","Gerçekleşen":"Actual","Sepete ürün ekle":"Add a product to the cart","Wi-Fi'dan mobil veriye geç":"Switch from Wi-Fi to mobile data","\"Ödemeye geç\"e dokun":"Tap \"Continue to payment\"","Sepet: ekleme, silme, adet":"Cart: add, remove, quantity","Kampanya ve kupon birlikte":"Use a promotion and coupon together","Adres formu il/ilçe seçimi":"Select a province/district in the address form","Ödeme uçtan uca":"End-to-end payment","Profil (değişmedi, örneklem)":"Profile (unchanged, sample)","Sepet tutarı 0 iken buton":"Button when cart total is 0","\"Öde\" butonu pasiftir":"The \"Pay\" button is disabled","Kart kaydedilir, ödeme alınır":"Card is saved and payment is processed","Sipariş onay ekranı açılır":"Order confirmation screen opens","3D Secure doğrulaması iptal edilir":"3D Secure verification is cancelled","Limit yetersiz kartla ödeme":"Pay with an insufficient-limit card","Yeni kart ekleyip ödeme":"Add a new card and pay","Ödeme tamamlanmaz, sepet korunur":"Payment is not completed and the cart is preserved","\"Limit yetersiz\" uyarısı gösterilir":"An \"Insufficient limit\" message is displayed","Kart kaydedilir, ödeme tamamlanır":"Card is saved and payment is completed","Uygulama açılıyor, çökme yok":"App launches without crashing","E-posta ve şifre ile giriş":"Sign in with email and password","Face ID / parmak izi ile giriş":"Sign in with Face ID / fingerprint","Bildirim izni istemi doğru anda":"Notification permission prompt appears at the right time","Kayıtlı kartla test ödemesi":"Test payment with a saved card"
   };
   var attrs={
@@ -66,7 +66,7 @@
   }
   function setLanguage(lang){
     current=lang==="en"?"en":"tr";busy=true;document.documentElement.lang=current;walk(document.body);
-    document.title=current==="en"?copy["QACrew Forge — Demo yakında yayında"]:"QACrew Forge — Demo yakında yayında";
+    document.title=current==="en"?copy["QAcrew Forge — Demo yakında yayında"]:"QAcrew Forge — Demo yakında yayında";
     var meta=document.querySelector('meta[name="description"]');if(meta)meta.content=current==="en"?"Forge is a QA documentation tool developed under QAcrew Studio. Explore the product demo.":"QAcrew Studio altında geliştirilen Forge QA dokümantasyon aracı. Ürün demosu yakında yayında.";
     document.querySelectorAll("[data-forge-lang]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.forgeLang===current))});
     syncAccessButtons();

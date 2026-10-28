@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>QACrew Forge — Demo</title>
+<title>QAcrew Forge — Panel</title>
 <meta name="description" content="QAcrew Studio altında geliştirilen Forge demo paneli. Yakında yayında.">
 <meta name="theme-color" content="#0D0C0B">
 <meta name="color-scheme" content="dark">
@@ -29,12 +29,12 @@
     </div>
     <a class="logo" href="#login" aria-label="QAcrew Studio Forge demo" style="justify-content:center;margin-bottom:6px">
       <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="1.5" y="1.5" width="27" height="27" rx="8" fill="none" stroke="#B8E986" stroke-width="2.4"/><path d="M8.5 15.5l4.2 4.2 8.8-9.4" fill="none" stroke="#B8E986" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <span>QACrew <em>Forge</em> · <small>Studio demo</small></span>
+      <span>QAcrew <em>Forge</em> · <small>Studio</small></span>
     </a>
     <form class="login-card" id="loginForm" novalidate>
       <div style="display:flex;flex-direction:column;gap:8px">
-        <h1>Forge demo girişi</h1>
-        <p class="sub">Örnek paneli görüntülemek için demo girişi yapın.</p>
+        <h1>QAcrew Forge girişi</h1>
+        <p class="sub">Üretim aracına ve panelinize erişmek için giriş yapın.</p>
       </div>
       <div class="field">
         <label for="lEmail">E-posta</label>
@@ -48,11 +48,7 @@
       <button class="btn btn-primary" type="submit" style="width:100%;min-height:50px">Giriş yap</button>
     </form>
     <div class="demo-box" role="note">
-      <b>QACrew Forge demo — yakında yayında. QAcrew Studio ürünü.</b> Bu ekrandaki giriş, panel ve araç akışları demo amaçlıdır; gerçek kullanıcı hesabı değildir. Gizli veya şirket içi verileri girmeyin.
-      <div class="row"><b>Demo hesabı</b><button class="link-btn" type="button" id="fillDemo">Bilgileri doldur</button></div>
-      <div class="row"><small>E-posta</small><code>demo@qacrew.it</code></div>
-      <div class="row"><small>Şifre</small><code>qacrew2026</code></div>
-      <small>Bu demo sürümde herhangi bir e-posta ve şifreyle de girebilirsiniz. Şifre kaydedilmez.</small>
+      <b>QAcrew Forge · Önizleme</b> Panel ve örnek dokümanlar demo amaçlıdır. Üretim erişimi için yapılandırılmış QAcrew hesabıyla giriş yapın. Gizli veya şirket içi verileri girmeyin.
     </div>
   </div>
 </section>
@@ -63,7 +59,7 @@
     <div class="wrap">
       <a class="logo" href="#panel" aria-label="QAcrew panel">
         <svg width="28" height="28" viewBox="0 0 30 30" aria-hidden="true"><rect x="1.5" y="1.5" width="27" height="27" rx="8" fill="none" stroke="#B8E986" stroke-width="2.4"/><path d="M8.5 15.5l4.2 4.2 8.8-9.4" fill="none" stroke="#B8E986" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span>QACrew Forge</span>
+        <span>QAcrew Forge</span>
       </a>
       <nav class="tabs" role="tablist" aria-label="Bölümler">
         <button class="tab" role="tab" data-tab="panel" aria-selected="true">Panel</button>
@@ -78,7 +74,7 @@
       <div class="avatar-wrap">
         <button class="avatar" id="avatarBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Hesap menüsü">S</button>
         <div class="menu" id="userMenu" hidden>
-          <div class="who"><b id="whoName">Samet</b><span id="whoMail">demo@qacrew.it</span></div>
+          <div class="who"><b id="whoName">Samet</b><span id="whoMail">-</span></div>
           <button type="button" data-open-tool>Yeni doküman</button>
           <a class="menu-link" href="../">Siteye dön</a>
           <button type="button" id="logoutBtn">Çıkış yap</button>
@@ -228,7 +224,6 @@
 
 <div class="toast" id="toast" role="status" hidden></div>
 
-<script src="../js/prompts.js"></script>
 <script src="../js/app-i18n.js?v=20261029-4"></script>
 <script src="../js/app.js?v=20261029-4"></script>
 </body>

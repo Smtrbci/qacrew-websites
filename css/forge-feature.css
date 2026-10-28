@@ -1,4 +1,4 @@
-/* QACrew Forge homepage feature block */
+/* QAcrew Forge homepage feature block */
 .forge-feature{padding:58px 0;background:var(--paper)}
 .forge-card{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:36px;align-items:center;padding:clamp(28px,5vw,54px);border:1px solid #2c2824;border-radius:12px;background:#0d0c0b;color:#f4efe8;box-shadow:0 16px 40px #092b2218}
 .forge-copy .eyebrow{color:var(--lime)}

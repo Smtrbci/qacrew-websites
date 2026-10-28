@@ -34,44 +34,24 @@
   var store={mode:"local",col:null};
   var sample=null, downloads=null;
 
-  // ---------- bağımsız mod (Claude dışında): HTTP üretim ucu + paketli örnekler ----------
+  // ---------- Sunucu tarafında üretim ve paketli örnekler ----------
   var CFG=window.QACREW_CONFIG||{};
   function httpSample(){
-    if(!CFG.apiUrl)return null;
-    return {json:async function(prompt,opts){
+    return {json:async function(opts){
       opts=opts||{};var r,d=null;
-      try{r=await fetch(CFG.apiUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({job:currentJob}),signal:opts.signal})}
+      try{r=await fetch("/api/generate",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({job:currentJob}),signal:opts.signal})}
       catch(e){throw {code:e&&e.name==="AbortError"?"cancelled":"upstream_error"}}
       try{d=await r.json()}catch(e){}
-      if(!r.ok||!d)throw {code:(d&&d.code)||"upstream_error"};
+      if(!r.ok||!d)throw {code:(d&&d.error)||"upstream_error",message:d&&d.message};
       if(opts.onText)opts.onText({text:JSON.stringify(d.result),delta:""});
       return d.result;
     }};
   }
-  function standalone(){
-    if(!sample)sample=httpSample();
-    if(store.mode!=="db"&&!state.examples.length&&CFG.examplesUrl){
-      fetch(CFG.examplesUrl).then(function(r){return r.json()}).then(function(list){state.examples=list.map(function(x){x.example=true;return x});renderAll()}).catch(function(){});
-    }
-  }
-
   // ---------- capabilities ----------
   var capsReady=(async function(){
-    if(!window.claude||!claude.use){standalone();renderNotice();return}
-    try{
-      var r=await Promise.all([claude.use("db"),claude.use("user"),claude.use("sample"),claude.use("downloads")]);
-      var db=r[0],user=r[1];sample=r[2];downloads=r[3];
-      var id=user?await user.id():null;
-      if(db&&id){
-        store.mode="db";store.col=db.collection("data/users/"+id);
-        store.col.onSnapshot(function(snap){
-          state.works=snap.docs.map(function(d){var x=Object.assign({},d.data());x.id=d.id;return x}).sort(function(a,b){return (b.createdAt||"").localeCompare(a.createdAt||"")});
-          renderAll();
-        },function(){store.mode="local";loadLocal();renderAll()});
-        db.collection("examples").get().then(function(s){state.examples=s.docs.map(function(d){var x=Object.assign({},d.data());x.id=d.id;x.example=true;return x});renderAll()}).catch(function(){});
-      }
-    }catch(e){}
-    standalone();renderNotice();
+    sample=httpSample();
+    if(CFG.examplesUrl)fetch(CFG.examplesUrl).then(function(r){return r.json()}).then(function(list){state.examples=list.map(function(x){x.example=true;return x});renderAll()}).catch(function(){});
+    renderNotice();
   })();
   function localKey(){return "qacrew.works."+(state.email||"anon")}
   function loadLocal(){try{state.works=JSON.parse(lsGet(localKey())||"[]")}catch(e){state.works=[]}}
@@ -86,14 +66,13 @@
 
   // ---------- login ----------
   function nameFrom(email){var n=(email.split("@")[0]||"").split(/[._-]/)[0]||"Kullanıcı";return n.charAt(0).toLocaleUpperCase("tr-TR")+n.slice(1)}
-  $("fillDemo").onclick=function(){$("lEmail").value="demo@qacrew.it";$("lPass").value="qacrew2026";$("lPass").focus()};
-  $("loginForm").addEventListener("submit",function(e){
+  $("loginForm").addEventListener("submit",async function(e){
     e.preventDefault();
     var em=$("lEmail").value.trim(),pw=$("lPass").value,er=$("lErr");
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){er.textContent="Geçerli bir e-posta adresi girin.";er.hidden=false;$("lEmail").focus();return}
-    if(pw.length<4){er.textContent="Şifre en az 4 karakter olmalı.";er.hidden=false;$("lPass").focus();return}
-    er.hidden=true;$("lPass").value="";
-    signIn(em);
+    er.hidden=true;var btn=$("loginForm").querySelector('[type="submit"]');btn.disabled=true;
+    try{var res=await fetch("/api/session",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:em,password:pw})});var data=await res.json();if(!res.ok)throw new Error(data.message||"E-posta veya şifre hatalı.");$("lPass").value="";signIn(data.user.email);if(new URLSearchParams(location.search).has("try")){openTool();history.replaceState(null,"",location.pathname)}}
+    catch(err){er.textContent=err.message||"Giriş yapılamadı. Tekrar deneyin.";er.hidden=false}finally{btn.disabled=false}
   });
   function signIn(em){
     state.email=em;lsSet("qacrew.session",em);
@@ -113,7 +92,7 @@
     updateCount();renderOpts();
     if(state.email){updateWelcome(nameFrom(state.email));renderAll();renderNotice();if(!$('tool').hidden&&state.viewing)showResult(state.viewing,true)}
   });
-  $("logoutBtn").onclick=function(){lsDel("qacrew.session");state.email=null;$("userMenu").hidden=true;$("appShell").hidden=true;$("login").hidden=false;$("lEmail").focus()};
+  $("logoutBtn").onclick=async function(){try{await fetch("/api/session",{method:"DELETE",credentials:"same-origin"})}catch(e){}lsDel("qacrew.session");state.email=null;$("userMenu").hidden=true;$("appShell").hidden=true;$("login").hidden=false;$("lEmail").focus()};
   $("avatarBtn").onclick=function(e){e.stopPropagation();var m=$("userMenu");m.hidden=!m.hidden;this.setAttribute("aria-expanded",String(!m.hidden))};
   document.addEventListener("click",function(e){if(!e.target.closest(".avatar-wrap")){$("userMenu").hidden=true;$("avatarBtn").setAttribute("aria-expanded","false")}});
 
@@ -233,7 +212,7 @@
   $("typeOpts").addEventListener("click",function(){setStep(2)});
 
   // ---------- tool: generate ----------
-  // Prompt şablonları ../js/prompts.js içinde (sunucu da aynı dosyayı kullanır)
+  // Üretim promptu yalnızca Worker içinde oluşturulur.
   var currentJob=null;
   var STEPS={
     test:["Girdi okunuyor","Kabul kriterleri ayrıştırılıyor","Senaryolar yazılıyor","Önceliklendiriliyor","Doküman hazırlanıyor"],
@@ -259,8 +238,8 @@
   }
   function errCopy(c){
     return ({not_granted:"Üretim için izin verilmedi. İzin vermeden yeni doküman üretilemez.",
-      sampling_disabled:"QAcrew Studio · Forge şu an demo modunda. Gerçek üretim yakında açılacak.",
-      rate_limited:"Çok fazla istek gönderildi. Biraz bekleyip tekrar deneyin.",
+      sampling_disabled:"Üretim servisi şu an kapalı",
+      rate_limited:"Günlük deneme hakkın doldu, yarın tekrar dene",
       session_expired:"Oturumunuzun süresi doldu. Yeniden giriş yapıp tekrar deneyin.",
       prompt_too_large:"Girdi çok uzun. Metni kısaltıp tekrar deneyin.",
       refused:"Bu girdi için doküman üretilemedi. Girdiyi değiştirip tekrar deneyin.",
@@ -272,16 +251,16 @@
     if(text.length<20){showComposeErr("Biraz daha ayrıntı gerekiyor: en az 20 karakterlik bir girdi yazın veya örnek seçin.");$("inputText").focus();return}
     if(text.length>12000){showComposeErr("Girdi 12.000 karakteri geçemez.");return}
     await capsReady;
-    if(!sample){showComposeErr("QAcrew Studio · Forge demo modunda; gerçek doküman üretimi yakında açılacak.");return}
+    if(!sample){showComposeErr("Üretim servisi şu an kapalı");return}
     $("composeErr").hidden=true;
     var job={type:state.type,plats:state.plats.slice(),depth:state.depth,project:$("projName").value.trim(),input:text};currentJob=job;
     stage("gen");setStep(3);
     var onLen=startGenUI();
     ctl=new AbortController();
     try{
-      var res=await sample.json(QAPrompts.build(job),{signal:ctl.signal,cache:false,modelTier:job.depth==="deep"?"complex":"default",onText:function(u){onLen(u.text.length)}});
+      var res=await sample.json({signal:ctl.signal,cache:false,onText:function(u){onLen(u.text.length)}});
       clearInterval(timer);ctl=null;
-      if(!QAPrompts.isValidResult(job.type,res))throw {code:"invalid_json"};
+      if(!res||typeof res!=="object")throw {code:"invalid_json"};
       state.current={id:null,type:job.type,platforms:job.plats,depth:job.depth,project:job.project,input:job.input,title:String(res.title||TYPES[job.type].label).slice(0,90),summary:String(res.summary||""),result:res,createdAt:new Date().toISOString(),saved:false};
       showResult(state.current,false);
     }catch(e){
@@ -289,7 +268,6 @@
       stage("compose");setStep(2);
       if(e&&e.code==="cancelled"){showComposeErr("Üretim durduruldu.");return}
       showComposeErr(errCopy(e&&e.code));
-      if(e&&(e.code==="not_granted"||e.code==="sampling_disabled")){sample=null;renderNotice()}
     }
   }
   $("genBtn").onclick=generate;
@@ -388,6 +366,6 @@
 
   // ---------- boot ----------
   renderOpts();updateCount();
-  var sess=lsGet("qacrew.session");
-  if(sess){capsReady.then(function(){signIn(sess)});signIn(sess)}
+  lsDel("qacrew.session");
+  fetch("/api/session",{credentials:"same-origin"}).then(function(r){return r.ok?r.json():null}).then(function(data){if(!data||!data.user)return;signIn(data.user.email);if(new URLSearchParams(location.search).has("try")){openTool();history.replaceState(null,"",location.pathname)}}).catch(function(){});
 })();

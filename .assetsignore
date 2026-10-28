@@ -1,0 +1,10 @@
+.git/**
+.env*
+.dev.vars*
+.assetsignore
+wrangler.jsonc
+package.json
+package-lock.json
+worker/**
+tests/**
+README-deploy.md
