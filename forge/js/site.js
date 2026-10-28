@@ -106,11 +106,16 @@
   });
 
   var mb=document.getElementById('menuBtn'), mn=document.getElementById('mobileNav');
-  mb.addEventListener('click',function(){
-    var open=mn.hidden; mn.hidden=!open;
+  function setMenuOpen(open){
+    mn.hidden=!open;
     mb.setAttribute('aria-expanded',String(open));
+    document.body.classList.toggle('menu-open',open);
     var en=document.documentElement.lang==='en';
     mb.setAttribute('aria-label',open?(en?'Close menu':'Menüyü kapat'):(en?'Open menu':'Menüyü aç'));
-  });
-  mn.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){mn.hidden=true;mb.setAttribute('aria-expanded','false')})});
+    var path=mb.querySelector('path');if(path)path.setAttribute('d',open?'M4 4l12 12M16 4 4 16':'M3 6h14M3 14h14');
+  }
+  mb.addEventListener('click',function(){setMenuOpen(mn.hidden)});
+  mn.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){setMenuOpen(false)})});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!mn.hidden)setMenuOpen(false)});
+  window.addEventListener('resize',function(){if(window.innerWidth>900&&!mn.hidden)setMenuOpen(false)});
 })();
