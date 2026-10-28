@@ -8,7 +8,8 @@
   function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
   function lsDel(k){try{localStorage.removeItem(k)}catch(e){}}
   function toast(msg){var t=$("toast");t.textContent=msg;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(function(){t.hidden=true},2600)}
-  function fmtDate(iso){try{return new Date(iso).toLocaleDateString("tr-TR",{day:"numeric",month:"short",year:"numeric"})}catch(e){return ""}}
+  function locale(){return document.documentElement.lang==="en"?"en-GB":"tr-TR"}
+  function fmtDate(iso){try{return new Date(iso).toLocaleDateString(locale(),{day:"numeric",month:"short",year:"numeric"})}catch(e){return ""}}
   function uid(){return "w"+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
   var CHECK='<svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
@@ -77,8 +78,9 @@
   function saveLocal(){lsSet(localKey(),JSON.stringify(state.works))}
   function renderNotice(){
     var n=$("storeNote"),msgs=[];
-    if(!sample)msgs.push("Forge şu an demo modunda. Örnek dokümanları inceleyebilirsiniz; gerçek üretim yakında açılacak.");
-    if(store.mode!=="db")msgs.push("Kayıtlar yalnızca bu tarayıcıda tutuluyor.");
+    var en=document.documentElement.lang==="en";
+    if(!sample)msgs.push(en?"Forge is currently in demo mode. Explore the sample documents; real generation is coming soon.":"Forge şu an demo modunda. Örnek dokümanları inceleyebilirsiniz; gerçek üretim yakında açılacak.");
+    if(store.mode!=="db")msgs.push(en?"Documents are stored only in this browser.":"Kayıtlar yalnızca bu tarayıcıda tutuluyor.");
     n.hidden=!msgs.length;n.textContent=msgs.join(" ");
   }
 
@@ -99,11 +101,18 @@
     $("login").hidden=true;$("appShell").hidden=false;
     var nm=nameFrom(em);
     $("avatarBtn").textContent=nm.charAt(0);$("whoName").textContent=nm;$("whoMail").textContent=em;
-    var h=new Date().getHours();
-    $("hello").textContent=(h<12?"Günaydın, ":h<18?"İyi günler, ":"İyi akşamlar, ")+nm;
-    $("today").textContent=new Date().toLocaleDateString("tr-TR",{weekday:"long",day:"numeric",month:"long"});
+    updateWelcome(nm);
     showTab("panel");renderAll();renderNotice();
   }
+  function updateWelcome(name){
+    var h=new Date().getHours(),en=document.documentElement.lang==="en";
+    $("hello").textContent=(en?(h<12?"Good morning, ":h<18?"Good afternoon, ":"Good evening, "):(h<12?"Günaydın, ":h<18?"İyi günler, ":"İyi akşamlar, "))+name;
+    $("today").textContent=new Date().toLocaleDateString(locale(),{weekday:"long",day:"numeric",month:"long"});
+  }
+  window.addEventListener("qacrew-language-change",function(){
+    updateCount();renderOpts();
+    if(state.email){updateWelcome(nameFrom(state.email));renderAll();renderNotice();if(!$('tool').hidden&&state.viewing)showResult(state.viewing,true)}
+  });
   $("logoutBtn").onclick=function(){lsDel("qacrew.session");state.email=null;$("userMenu").hidden=true;$("appShell").hidden=true;$("login").hidden=false;$("lEmail").focus()};
   $("avatarBtn").onclick=function(e){e.stopPropagation();var m=$("userMenu");m.hidden=!m.hidden;this.setAttribute("aria-expanded",String(!m.hidden))};
   document.addEventListener("click",function(e){if(!e.target.closest(".avatar-wrap")){$("userMenu").hidden=true;$("avatarBtn").setAttribute("aria-expanded","false")}});
@@ -127,10 +136,10 @@
     var thisWeek=ws.filter(function(w){return now-new Date(w.createdAt).getTime()<wk}).length;
     var mins=ws.reduce(function(a,w){return a+Math.max(5,countItems(w)*4)},0);
     var S=[
-      {k:"Kaydedilen doküman",v:ws.length,d:'<b>+'+thisWeek+'</b> bu hafta'},
-      {k:"Üretilen test senaryosu",v:items,d:"test + regresyon setleri"},
-      {k:"Yüksek öncelikli madde",v:high,d:bugs+" bug raporu dahil"},
-      {k:"Tasarruf edilen süre",v:mins>=60?(Math.round(mins/6)/10).toLocaleString("tr-TR")+" sa":mins+" dk",d:"madde başına ~4 dk elle yazım"}
+      {k:"Kaydedilen doküman",v:ws.length,d:'<b>+'+thisWeek+'</b> '+(locale()==="en-GB"?"this week":"bu hafta")},
+      {k:"Üretilen test senaryosu",v:items,d:locale()==="en-GB"?"test + regression suites":"test + regresyon setleri"},
+      {k:"Yüksek öncelikli madde",v:high,d:bugs+(locale()==="en-GB"?" bug reports included":" bug raporu dahil")},
+      {k:"Tasarruf edilen süre",v:mins>=60?(Math.round(mins/6)/10).toLocaleString(locale())+(locale()==="en-GB"?" hr":" sa"):mins+(locale()==="en-GB"?" min":" dk"),d:locale()==="en-GB"?"~4 min of manual writing per item":"madde başına ~4 dk elle yazım"}
     ];
     $("stats").innerHTML=S.map(function(s){return '<div class="stat"><span class="k">'+s.k+'</span><span class="v">'+s.v+'</span><span class="d">'+s.d+'</span></div>'}).join("");
   }
@@ -145,7 +154,7 @@
         rows+=w.type==="smoke"?'<div class="r"><span class="dt c-low" style="width:12px;height:12px;border-radius:3px"></span><span class="ln"></span></div>':'<div class="r"><span class="ln s"></span><span class="ln"></span><span class="dt '+c+'"></span></div>';
       });
     }
-    return '<div class="thumb" aria-hidden="true"><div class="tt"><span>'+TYPES[w.type].tag+'</span><span>'+countItems(w)+(w.type==="bug"?" rapor":" madde")+'</span></div>'+rows+'</div>';
+    return '<div class="thumb" aria-hidden="true"><div class="tt"><span>'+TYPES[w.type].tag+'</span><span>'+countItems(w)+(w.type==="bug"?(locale()==="en-GB"?" reports":" rapor"):(locale()==="en-GB"?" items":" madde"))+'</span></div>'+rows+'</div>';
   }
   function card(w){
     return '<button class="card" type="button" data-work="'+esc(w.id)+'"'+(w.example?' data-ex="1"':'')+'>'+thumb(w)+
@@ -159,7 +168,8 @@
     var ex=state.examples;$("exNote").hidden=!ex.length;$("exGrid").innerHTML=ex.map(card).join("");
     var f=state.filter,list=state.works.filter(function(w){return f==="all"||w.type===f});
     $("docsGrid").innerHTML=(list.length?"":'<div class="empty">Bu türde doküman yok.</div>')+list.map(card).join("")+ADD;
-    var fl=[["all","Tümü"]].concat(Object.keys(TYPES).map(function(k){return [k,TYPES[k].label]}));
+    var en=locale()==="en-GB",typeNames=en?{test:"Test cases",bug:"Bug report",smoke:"Smoke checklist",reg:"Regression suite"}:null;
+    var fl=[["all",en?"All":"Tümü"]].concat(Object.keys(TYPES).map(function(k){return [k,en?typeNames[k]:TYPES[k].label]}));
     $("filters").innerHTML=fl.map(function(x){var n=x[0]==="all"?state.works.length:state.works.filter(function(w){return w.type===x[0]}).length;return '<button class="fchip" type="button" data-filter="'+x[0]+'" aria-pressed="'+(f===x[0])+'">'+x[1]+' · '+n+'</button>'}).join("");
   }
   function renderTpl(){
@@ -187,7 +197,7 @@
     var d=e.target.closest("[data-depth]");if(d){state.depth=d.dataset.depth;renderOpts();return}
     var s=e.target.closest("[data-sample]");if(s){var smp=SAMPLES[+s.dataset.sample];$("inputText").value=smp.text;state.type=smp.type;updateCount();renderOpts();$("composeErr").hidden=true}
   });
-  function updateCount(){var n=$("inputText").value.length;$("charCount").textContent=n.toLocaleString("tr-TR")+" / 12.000 karakter";$("charCount").style.color=n>12000?"var(--fail)":""}
+  function updateCount(){var en=locale()==="en-GB",n=$("inputText").value.length;$("charCount").textContent=n.toLocaleString(locale())+(en?" / 12,000 characters":" / 12.000 karakter");$("charCount").style.color=n>12000?"var(--fail)":""}
   $("inputText").addEventListener("input",updateCount);
   function readFile(f){
     if(!f)return;
@@ -307,7 +317,7 @@
   }
   function showResult(w,readonly){
     stage("result");setStep(4);
-    $("resTags").innerHTML='<span class="pill p-acc">'+esc(TYPES[w.type].short)+'</span>'+(w.platforms||[]).map(function(p){return '<span class="pill p-mute">'+esc(p)+'</span>'}).join("")+(w.example?'<span class="pill p-mute">Örnek</span>':'')+'<span class="pill p-mute">'+countItems(w)+(w.type==="bug"?" rapor":" madde")+'</span>';
+    $("resTags").innerHTML='<span class="pill p-acc">'+esc(TYPES[w.type].short)+'</span>'+(w.platforms||[]).map(function(p){return '<span class="pill p-mute">'+esc(p)+'</span>'}).join("")+(w.example?'<span class="pill p-mute">'+(locale()==="en-GB"?"Sample":"Örnek")+'</span>':'')+'<span class="pill p-mute">'+countItems(w)+(w.type==="bug"?(locale()==="en-GB"?" reports":" rapor"):(locale()==="en-GB"?" items":" madde"))+'</span>';
     $("resTitle").textContent=w.title;$("resSummary").textContent=w.summary||"";
     $("resSrc").textContent=w.input||"";
     $("resOut").innerHTML=renderResult(w);

@@ -42,6 +42,14 @@ button{font-family:inherit}
 #login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding-block:48px;position:relative;overflow:hidden}
 #login::before{content:"";position:absolute;inset:-30% -10% auto;height:80%;background:radial-gradient(ellipse 45% 55% at 50% 30%,rgba(184,233,134,.13),transparent 70%);pointer-events:none}
 .login-col{width:100%;max-width:440px;display:flex;flex-direction:column;gap:18px;position:relative}
+.login-utility{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.home-shortcut{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 12px;border:1px solid var(--line-2);border-radius:999px;color:var(--muted);font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap}
+.home-shortcut:hover{border-color:var(--accent);color:var(--fg)}
+.language-switch{display:flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--line-2);border-radius:999px;flex:none}
+.language-switch button{min-width:30px;min-height:30px;padding:0 6px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:600 10px var(--f-mono);cursor:pointer}
+.language-switch button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink)}
+.language-switch button:hover{color:var(--fg)}
+.language-switch button[aria-pressed=true]:hover{color:var(--accent-ink)}
 .login-card{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:36px 32px;display:flex;flex-direction:column;gap:22px;box-shadow:0 40px 120px -50px rgba(184,233,134,.35)}
 .login-card h1{font-size:30px}
 .login-card .sub{color:var(--muted)}
@@ -66,6 +74,7 @@ button{font-family:inherit}
 .tab:hover{color:var(--fg)}
 .tab[aria-selected=true]{color:var(--fg);background:var(--surface-2)}
 .avatar-wrap{position:relative}
+.panel-home{min-height:38px;padding-inline:12px}
 .avatar{width:40px;height:40px;border-radius:50%;background:var(--accent-soft);border:1px solid rgba(184,233,134,.4);color:var(--accent);font:800 15px var(--f-display);cursor:pointer;display:flex;align-items:center;justify-content:center}
 .menu{position:absolute;right:0;top:50px;background:var(--surface);border:1px solid var(--line);border-radius:14px;min-width:230px;padding:8px;box-shadow:0 20px 60px rgba(0,0,0,.5);z-index:50}
 .menu .who{padding:10px 12px 12px;border-bottom:1px solid var(--line);margin-bottom:6px}
@@ -73,7 +82,7 @@ button{font-family:inherit}
 .menu .who span{color:var(--muted);font-size:13px;word-break:break-all}
 .menu button{width:100%;text-align:left;background:none;border:0;color:var(--fg);padding:11px 12px;border-radius:8px;font:600 14px var(--f-body);cursor:pointer}
 .menu button:hover{background:var(--surface-2)}
-@media (max-width:560px){.topbar .logo span{display:none}.topbar .wrap{gap:12px}}
+@media (max-width:560px){.topbar .logo span{display:none}.topbar .wrap{gap:7px}.panel-home{min-height:34px;padding-inline:8px;font-size:11px}.topbar .language-switch{padding:2px}.topbar .language-switch button{min-width:26px;min-height:28px;padding:0 4px}.avatar{width:34px;height:34px}}
 
 /* ---------- Dashboard ---------- */
 main.app{padding-block:40px 80px}

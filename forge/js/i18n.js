@@ -4,7 +4,7 @@
   var copy={
     "QACrew Forge — Demo yakında yayında":"QACrew Forge — Demo coming soon",
     "Nasıl çalışır":"How it works","Örnekler":"Examples","Yayın durumu":"Launch status","Yorumlar":"Use cases","SSS":"FAQ","Sık sorulanlar":"Frequently asked questions",
-    "QAcrew Studio ↗":"QAcrew Studio ↗","Panel demosu":"Demo workspace","DEMO":"DEMO","QAcrew Studio ürünü · Yakında yayında":"A QAcrew Studio product · Coming soon",
+    "QAcrew Studio ↗":"QAcrew Studio ↗","Panel demosu":"Sign in","DEMO":"DEMO","QAcrew Studio ürünü · Yakında yayında":"A QAcrew Studio product · Coming soon",
     "QA dokümanlarını":"Let's shape QA documentation","birlikte şekillendirelim.":"together.",
     "Forge, QAcrew Studio çatısı altında geliştirilen QA dokümantasyon aracıdır. Bu sayfada görünen akışlar ve çıktılar ürün demosudur; gerçek kullanıcı hesabı ve üretim erişimi yakında yayına alınacaktır.":"Forge is a QA documentation tool developed under QAcrew Studio. The workflows and outputs shown here are a product demo; real user accounts and production access are coming soon.",
     "Demo önizlemesini gör":"Explore the demo","Yakında yayında":"Coming soon","Tamamen demo":"Demo only","QAcrew Studio altında":"Part of QAcrew Studio","4 çıktı türü":"4 output types","Genel erişim yakında":"Public access coming soon",
@@ -60,16 +60,22 @@
     while(walker.nextNode())nodes.push(walker.currentNode);
     nodes.forEach(translateNode);translateAttrs(root);
   }
+  function syncAccessButtons(){
+    var signedIn=false;try{signedIn=!!localStorage.getItem("qacrew.session")}catch(_){}
+    document.querySelectorAll("[data-forge-access]").forEach(function(el){el.hidden=signedIn});
+  }
   function setLanguage(lang){
     current=lang==="en"?"en":"tr";busy=true;document.documentElement.lang=current;walk(document.body);
     document.title=current==="en"?copy["QACrew Forge — Demo yakında yayında"]:"QACrew Forge — Demo yakında yayında";
     var meta=document.querySelector('meta[name="description"]');if(meta)meta.content=current==="en"?"Forge is a QA documentation tool developed under QAcrew Studio. Explore the product demo.":"QAcrew Studio altında geliştirilen Forge QA dokümantasyon aracı. Ürün demosu yakında yayında.";
     document.querySelectorAll("[data-forge-lang]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.forgeLang===current))});
+    syncAccessButtons();
     try{localStorage.setItem("qacrew-forge-language",current)}catch(_){}
     busy=false;
     window.dispatchEvent(new Event("qacrew-language-change"));
   }
   document.querySelectorAll("[data-forge-lang]").forEach(function(b){b.addEventListener("click",function(){setLanguage(b.dataset.forgeLang)})});
+  window.addEventListener("storage",function(e){if(e.key==="qacrew.session")syncAccessButtons()});
   var observer=new MutationObserver(function(records){if(busy)return;records.forEach(function(r){if(r.type==="characterData")translateNode(r.target);else r.addedNodes.forEach(function(n){if(n.nodeType===3)translateNode(n);else if(n.nodeType===1)walk(n)})})});
   observer.observe(document.body,{subtree:true,childList:true,characterData:true});
   var preferred="tr";try{preferred=localStorage.getItem("qacrew-forge-language")||"tr"}catch(_){}

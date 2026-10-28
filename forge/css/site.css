@@ -249,6 +249,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;color:var(--mute
 .logo span em{color:var(--accent)}
 .studio-link{color:var(--accent)!important}
 .studio-link:hover{background:var(--accent-soft)}
+[data-forge-access][hidden]{display:none!important}
 @media (max-width:560px){
   .hero-inner{width:100%;min-width:0}
   .hero h1{font-size:clamp(38px,10.8vw,54px);line-height:1;letter-spacing:-.035em;max-width:100%;overflow-wrap:anywhere}
