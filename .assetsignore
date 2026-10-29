@@ -7,4 +7,9 @@ package.json
 package-lock.json
 worker/**
 tests/**
+e2e/**
+docs/**
+test-results/**
+playwright-report/**
+playwright.config.js
 README-deploy.md

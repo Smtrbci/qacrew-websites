@@ -22,6 +22,7 @@
     <nav class="nav" aria-label="Bölümler">
       <a href="#nasil">Nasıl çalışır</a>
       <a href="#ornekler">Örnekler</a>
+      <a href="#pulse">Pulse</a>
       <a href="#fiyatlar">Yayın durumu</a>
       <a href="#yorumlar">Yorumlar</a>
       <a href="#sss">SSS</a>
@@ -43,6 +44,7 @@
   <div class="wrap">
     <a href="#nasil">Nasıl çalışır</a>
     <a href="#ornekler">Örnekler</a>
+    <a href="#pulse">Pulse</a>
     <a href="#fiyatlar">Yayın durumu</a>
     <a href="#yorumlar">Yorumlar</a>
     <a href="#sss">Sık sorulanlar</a>
@@ -204,6 +206,80 @@
           </div>
           <figcaption><b>API test seti</b><span>Status kodu, yetki, doğrulama ve negatif senaryolar</span></figcaption>
         </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="pulse" class="pulse-section" aria-labelledby="pulse-title">
+    <div class="wrap">
+      <div class="sec-head pulse-head">
+        <span class="eyebrow pulse-eyebrow">// yakında · erken erişim</span>
+        <h2 id="pulse-title">Siz test edin, raporu Pulse yazsın.</h2>
+        <p class="lead">QAcrew Pulse, Android beta/debug uygulamasındaki test oturumunu arka planda izleyip crash, ANR, yavaşlık ve son adımları kaydetmeyi hedefliyor. Oturum bitince bunları bug raporu ve performans özetine dönüştürecek; canlı sürüm için tasarlanmıyor.</p>
+      </div>
+
+      <div class="steps pulse-steps" aria-label="Pulse kullanım akışı">
+        <article class="step">
+          <span class="step-num">ADIM 01</span>
+          <h3>Telefonu bağla</h3>
+          <p>Android test telefonunuzu hazırlayıp beta/debug uygulamasına bağlayacaksınız.</p>
+        </article>
+        <article class="step">
+          <span class="step-num">ADIM 02</span>
+          <h3>Beta uygulamada test et</h3>
+          <p>Uygulamayı normal şekilde denerken Pulse oturum verilerini arka planda toplamayı hedefleyecek.</p>
+        </article>
+        <article class="step">
+          <span class="step-num">ADIM 03</span>
+          <h3>Oturum bitince hazır rapor</h3>
+          <p>Oturum sonunda bug raporu ve performans özeti hazırlanması planlanıyor.</p>
+        </article>
+      </div>
+
+      <div class="pulse-captures">
+        <h3>Neyi kaydetmesi planlanıyor?</h3>
+        <ul class="pulse-signal-list">
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3.8 18h16.4L12 3Z"/><path d="M12 9v4m0 3h.01"/></svg><span>Crash</span></li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="M8 9h8m-8 4h5m5-12v4M6 3v4"/></svg><span>ANR</span></li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19h18M5 16V9m5 7V5m5 11v-4m5 4V3"/></svg><span>Ekran açılış süresi</span></li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span>Yavaş API çağrısı</span></li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v14H5zM9 9h6v6H9z"/><path d="M9 2v3m6-3v3M9 19v3m6-3v3M2 9h3m14 0h3M2 15h3m14 0h3"/></svg><span>RAM / FPS</span></li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z"/><path d="M9 8h6m-6 4h6m-6 4h3"/></svg><span>Adım geçmişi</span></li>
+        </ul>
+      </div>
+
+      <div class="pulse-preview" aria-label="Pulse örnek görünümü">
+        <div class="pulse-example">
+          <div class="pulse-example-head"><span class="pulse-example-label">Örnek görünüm</span><span>ANDROID BETA · OTURUM ÖRNEĞİ</span></div>
+          <pre class="pulse-log" tabindex="0" aria-label="Örnek oturum kayıtları">14:02:11  PaymentActivity açıldı 3.2 sn
+14:02:14  POST /payments 1.8 sn · yavaş
+14:02:19  CRASH NullPointerException
+14:02:19  Son adım: Ödemeyi onayla</pre>
+        </div>
+        <article class="pulse-report">
+          <span class="pulse-report-label">Örnek bug raporu · taslak</span>
+          <h3>Ödeme ekranı açılışı yavaş, ardından çöküyor</h3>
+          <dl>
+            <dt>Ortam</dt><dd>Android beta · örnek oturum</dd>
+            <dt>Adımlar</dt><dd>Ödeme ekranını aç → Ödemeyi onayla</dd>
+            <dt>Gerçekleşen</dt><dd>Ekran 3,2 sn sonra açılıyor; onayda NullPointerException oluşuyor.</dd>
+            <dt>Performans özeti</dt><dd>POST /payments yanıtı 1,8 sn sürdü.</dd>
+          </dl>
+        </article>
+      </div>
+
+      <div class="pulse-roadmap" aria-labelledby="pulse-roadmap-title">
+        <div class="pulse-roadmap-heading"><h3 id="pulse-roadmap-title">Yol haritası</h3><span>ERKEN ERİŞİM</span></div>
+        <ul>
+          <li><span><b>Faz 1</b><span>Log / crash metnini yapıştır, rapor üret</span></span><span class="pulse-status">Geliştiriliyor</span></li>
+          <li><span><b>Faz 2</b><span>Android, bilgisayara bağlı kayıt (ADB)</span></span><span class="pulse-status">Planlanıyor</span></li>
+          <li><span><b>Faz 3</b><span>Beta sürümler için SDK, canlı panel</span><span class="pulse-future-note">Hedef: Network içerikleri varsayılan olarak maskelenir; kişisel veri toplanmaz. iOS desteği ileride değerlendirilecek.</span></span><span class="pulse-status">Araştırma</span></li>
+        </ul>
+      </div>
+
+      <div class="pulse-cta-row">
+        <p>Pulse geliştirme sürecini takip etmek ister misiniz?</p>
+        <a class="btn pulse-cta" href="mailto:info@qacrew.it?subject=QAcrew%20Pulse%20erken%20eri%C5%9Fim">İlgileniyorum, haber ver <span aria-hidden="true">→</span></a>
       </div>
     </div>
   </section>
