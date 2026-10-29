@@ -11,6 +11,7 @@ test("Pulse section is visible after examples and before launch status", async (
   await expect(page.getByRole("heading", { name: "Siz test edin, raporu Pulse yazsın." })).toBeVisible();
   await expect(page.getByText("Örnek görünüm", { exact: true })).toBeVisible();
   await expect(page.locator("#pulse .pulse-status")).toHaveText(["Geliştiriliyor", "Planlanıyor", "Araştırma"]);
+  await expect(page.locator("#pulse .pulse-preview")).toHaveCSS("display", "grid");
 });
 
 test("Pulse menu link navigates to the section on desktop and mobile", async ({ page, isMobile }) => {
