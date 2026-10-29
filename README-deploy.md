@@ -11,6 +11,8 @@ The project is configured as a Cloudflare Worker with Static Assets. `wrangler.j
 5. In **Builds & deployments**, set the deployment command to `npx wrangler deploy` (or configure the Git integration to deploy this Wrangler project). The first deploy applies the Durable Object migration.
 6. Redeploy, then use the configured email and password at `/forge/app/`.
 
+The public read-only preview login is `demo@qacrew.it` / `qacrew2026`. It can browse examples but the Worker rejects document-generation requests for this account. Keep your configured `FORGE_LOGIN_EMAIL` and `FORGE_LOGIN_PASSWORD` private for production access.
+
 Do not put secrets in source code, GitHub, client-side config, or a committed `.env` file. For local development, copy `.env.example` to `.dev.vars` and fill it locally; `.dev.vars` is ignored by Git and excluded from Worker assets.
 
 Cloudflare Workers HTTP requests can remain active while the client connection stays open; this Worker additionally aborts the Anthropic request after 125 seconds. The server-only `/api/public-try` route is present but returns 503 unless `ENABLE_PUBLIC_TRY=true`; it then requires a Turnstile token, quick scope, at most 1,500 input characters, and one persistent daily attempt per IP. No public-try UI is enabled.

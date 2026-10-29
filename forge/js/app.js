@@ -30,7 +30,7 @@
   ];
 
   // ---------- state ----------
-  var state={email:null,works:[],examples:[],type:"test",plats:["Web"],depth:"quick",current:null,filter:"all",viewing:null};
+  var state={email:null,demo:false,works:[],examples:[],type:"test",plats:["Web"],depth:"quick",current:null,filter:"all",viewing:null};
   var store={mode:"local",col:null};
   var sample=null, downloads=null;
 
@@ -39,6 +39,7 @@
   function httpSample(){
     return {json:async function(opts){
       opts=opts||{};var r,d=null;
+      if(state.demo)throw {code:"demo_read_only",message:"Demo hesabı yalnızca örnekleri görüntüleyebilir; gerçek üretim kapalıdır."};
       try{r=await fetch("/api/generate",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({job:currentJob}),signal:opts.signal})}
       catch(e){throw {code:e&&e.name==="AbortError"?"cancelled":"upstream_error"}}
       try{d=await r.json()}catch(e){}
@@ -59,6 +60,7 @@
   function renderNotice(){
     var n=$("storeNote"),msgs=[];
     var en=document.documentElement.lang==="en";
+    if(state.demo)msgs.push(en?"You are using a read-only demo account. Document generation is disabled.":"Salt okunur demo hesabındasınız. Gerçek doküman üretimi kapalıdır.");
     if(!sample)msgs.push(en?"Forge is currently in demo mode. Explore the sample documents; real generation is coming soon.":"Forge şu an demo modunda. Örnek dokümanları inceleyebilirsiniz; gerçek üretim yakında açılacak.");
     if(store.mode!=="db")msgs.push(en?"Documents are stored only in this browser.":"Kayıtlar yalnızca bu tarayıcıda tutuluyor.");
     n.hidden=!msgs.length;n.textContent=msgs.join(" ");
@@ -66,16 +68,17 @@
 
   // ---------- login ----------
   function nameFrom(email){var n=(email.split("@")[0]||"").split(/[._-]/)[0]||"Kullanıcı";return n.charAt(0).toLocaleUpperCase("tr-TR")+n.slice(1)}
+  $("fillDemo").addEventListener("click",function(){$("lEmail").value=$("demoEmail").textContent.trim();$("lPass").value=$("demoPassword").textContent.trim();$("lEmail").focus()});
   $("loginForm").addEventListener("submit",async function(e){
     e.preventDefault();
     var em=$("lEmail").value.trim(),pw=$("lPass").value,er=$("lErr");
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){er.textContent="Geçerli bir e-posta adresi girin.";er.hidden=false;$("lEmail").focus();return}
     er.hidden=true;var btn=$("loginForm").querySelector('[type="submit"]');btn.disabled=true;
-    try{var res=await fetch("/api/session",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:em,password:pw})});var data=await res.json();if(!res.ok)throw new Error(data.message||"E-posta veya şifre hatalı.");$("lPass").value="";signIn(data.user.email);if(new URLSearchParams(location.search).has("try")){openTool();history.replaceState(null,"",location.pathname)}}
+    try{var res=await fetch("/api/session",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:em,password:pw})});var data=await res.json();if(!res.ok)throw new Error(data.message||"E-posta veya şifre hatalı.");$("lPass").value="";signIn(data.user.email,data.user.demo);if(new URLSearchParams(location.search).has("try")&&!data.user.demo){openTool();history.replaceState(null,"",location.pathname)}}
     catch(err){er.textContent=err.message||"Giriş yapılamadı. Tekrar deneyin.";er.hidden=false}finally{btn.disabled=false}
   });
-  function signIn(em){
-    state.email=em;lsSet("qacrew.session",em);
+  function signIn(em,isDemo){
+    state.email=em;state.demo=isDemo===true;lsSet("qacrew.session",em);
     if(store.mode!=="db")loadLocal();
     $("login").hidden=true;$("appShell").hidden=false;
     var nm=nameFrom(em);
@@ -92,7 +95,7 @@
     updateCount();renderOpts();
     if(state.email){updateWelcome(nameFrom(state.email));renderAll();renderNotice();if(!$('tool').hidden&&state.viewing)showResult(state.viewing,true)}
   });
-  $("logoutBtn").onclick=async function(){try{await fetch("/api/session",{method:"DELETE",credentials:"same-origin"})}catch(e){}lsDel("qacrew.session");state.email=null;$("userMenu").hidden=true;$("appShell").hidden=true;$("login").hidden=false;$("lEmail").focus()};
+  $("logoutBtn").onclick=async function(){try{await fetch("/api/session",{method:"DELETE",credentials:"same-origin"})}catch(e){}lsDel("qacrew.session");state.email=null;state.demo=false;$("userMenu").hidden=true;$("appShell").hidden=true;$("login").hidden=false;$("lEmail").focus()};
   $("avatarBtn").onclick=function(e){e.stopPropagation();var m=$("userMenu");m.hidden=!m.hidden;this.setAttribute("aria-expanded",String(!m.hidden))};
   document.addEventListener("click",function(e){if(!e.target.closest(".avatar-wrap")){$("userMenu").hidden=true;$("avatarBtn").setAttribute("aria-expanded","false")}});
 
@@ -237,6 +240,7 @@
     return function(n){if(n){$("genChars").textContent=n.toLocaleString("tr-TR")+" karakter yazıldı";if(idx<steps.length-1){idx=steps.length-1;paint()}}};
   }
   function errCopy(c){
+    if(c==="demo_read_only")return document.documentElement.lang==="en"?"The demo account can only view examples; real generation is disabled.":"Demo hesabı yalnızca örnekleri görüntüleyebilir; gerçek üretim kapalıdır.";
     return ({not_granted:"Üretim için izin verilmedi. İzin vermeden yeni doküman üretilemez.",
       sampling_disabled:"Üretim servisi şu an kapalı",
       rate_limited:"Günlük deneme hakkın doldu, yarın tekrar dene",
@@ -244,9 +248,11 @@
       prompt_too_large:"Girdi çok uzun. Metni kısaltıp tekrar deneyin.",
       refused:"Bu girdi için doküman üretilemedi. Girdiyi değiştirip tekrar deneyin.",
       invalid_json:"Sunucu yanıtı okunamadı. Yeniden üretmeyi deneyin.",
-      empty_completion:"Sunucu boş yanıt döndü. Girdiyi biraz daha açıklayıcı yazıp tekrar deneyin."})[c]||"Üretim sunucusuna ulaşılamadı. Bağlantınızı kontrol edip tekrar deneyin.";
+      empty_completion:"Sunucu boş yanıt döndü. Girdiyi biraz daha açıklayıcı yazıp tekrar deneyin.",
+      demo_read_only:"Demo hesabı yalnızca örnekleri görüntüleyebilir; gerçek üretim kapalıdır."})[c]||"Üretim sunucusuna ulaşılamadı. Bağlantınızı kontrol edip tekrar deneyin.";
   }
   async function generate(){
+    if(state.demo){showComposeErr(document.documentElement.lang==="en"?"The demo account can only view examples; real generation is disabled.":"Demo hesabı yalnızca örnekleri görüntüleyebilir; gerçek üretim kapalıdır.");return}
     var text=$("inputText").value.trim();
     if(text.length<20){showComposeErr("Biraz daha ayrıntı gerekiyor: en az 20 karakterlik bir girdi yazın veya örnek seçin.");$("inputText").focus();return}
     if(text.length>12000){showComposeErr("Girdi 12.000 karakteri geçemez.");return}
@@ -367,5 +373,5 @@
   // ---------- boot ----------
   renderOpts();updateCount();
   lsDel("qacrew.session");
-  fetch("/api/session",{credentials:"same-origin"}).then(function(r){return r.ok?r.json():null}).then(function(data){if(!data||!data.user)return;signIn(data.user.email);if(new URLSearchParams(location.search).has("try")){openTool();history.replaceState(null,"",location.pathname)}}).catch(function(){});
+  fetch("/api/session",{credentials:"same-origin"}).then(function(r){return r.ok?r.json():null}).then(function(data){if(!data||!data.user)return;signIn(data.user.email,data.user.demo);if(new URLSearchParams(location.search).has("try")&&!data.user.demo){openTool();history.replaceState(null,"",location.pathname)}}).catch(function(){});
 })();

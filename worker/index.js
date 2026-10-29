@@ -1,6 +1,7 @@
 import { buildPrompt, parseModelJson, validResult, validateJob } from "./prompts.js";
 
 const encoder = new TextEncoder();
+const DEMO_LOGIN = { email: "demo@qacrew.it", password: "qacrew2026" };
 const json = (data, status = 200, extra = {}) => new Response(JSON.stringify(data), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", ...extra } });
 const failure = (status, code, message) => json({ error: code, message }, status);
 
@@ -81,10 +82,10 @@ async function consume(env, identity, limit, windowMs) {
   return response.json();
 }
 async function handleSession(request, env) {
-  if (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32 || !env.FORGE_LOGIN_EMAIL || !env.FORGE_LOGIN_PASSWORD) return failure(503, "sampling_disabled", "Giriş servisi şu an yapılandırılmamış.");
+  if (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32) return failure(503, "sampling_disabled", "Giriş servisi şu an yapılandırılmamış.");
   if (request.method === "GET") {
     const user = await sessionUser(request, env);
-    return user ? json({ user: { email: user.email } }) : failure(401, "unauthorized", "Oturum açın.");
+    return user ? json({ user: { email: user.email, demo: user.demo === true } }) : failure(401, "unauthorized", "Oturum açın.");
   }
   if (!originAllowed(request)) return failure(403, "invalid_request", "İstek kaynağı geçersiz.");
   if (request.method === "DELETE") return json({ ok: true }, 200, { "set-cookie": secureCookie(request, "", 0) });
@@ -95,16 +96,21 @@ async function handleSession(request, env) {
   if (!loginRate.allowed) return failure(429, "rate_limited", "Çok fazla giriş denemesi. Bir dakika sonra tekrar dene.");
   const body = await bodyJson(request, 4096);
   if (body.tooLarge || body.invalid || !body.value || typeof body.value.email !== "string" || typeof body.value.password !== "string") return failure(400, "invalid_request", "E-posta ve şifre gerekli.");
-  if (body.value.email.toLowerCase() !== env.FORGE_LOGIN_EMAIL.toLowerCase() || body.value.password !== env.FORGE_LOGIN_PASSWORD) return failure(401, "unauthorized", "E-posta veya şifre hatalı.");
+  const email = body.value.email.toLowerCase();
+  const isDemo = email === DEMO_LOGIN.email && body.value.password === DEMO_LOGIN.password;
+  const isConfiguredUser = env.FORGE_LOGIN_EMAIL && env.FORGE_LOGIN_PASSWORD && email === env.FORGE_LOGIN_EMAIL.toLowerCase() && body.value.password === env.FORGE_LOGIN_PASSWORD;
+  if (!isDemo && !isConfiguredUser) return failure(401, "unauthorized", "E-posta veya şifre hatalı.");
   const exp = Date.now() + 12 * 60 * 60 * 1000;
-  const token = await sign({ email: env.FORGE_LOGIN_EMAIL.toLowerCase(), exp }, env.SESSION_SECRET);
-  return json({ user: { email: env.FORGE_LOGIN_EMAIL.toLowerCase() } }, 200, { "set-cookie": secureCookie(request, token, 12 * 60 * 60) });
+  const sessionEmail = isDemo ? DEMO_LOGIN.email : email;
+  const token = await sign({ email: sessionEmail, demo: isDemo, exp }, env.SESSION_SECRET);
+  return json({ user: { email: sessionEmail, demo: isDemo } }, 200, { "set-cookie": secureCookie(request, token, 12 * 60 * 60) });
 }
 
 async function handleGenerate(request, env) {
   if (request.method !== "POST" || !originAllowed(request)) return failure(400, "invalid_request", "İstek geçersiz.");
   const user = await sessionUser(request, env);
   if (!user) return failure(401, "unauthorized", "Üretim için giriş yapın.");
+  if (user.demo === true) return failure(403, "demo_read_only", "Demo hesabı yalnızca örnekleri görüntüleyebilir; gerçek üretim kapalıdır.");
   const body = await bodyJson(request, 64 * 1024);
   if (body.tooLarge) return failure(413, "prompt_too_large", "İstek 64 KB sınırını aşıyor.");
   if (body.invalid || !body.value || Object.keys(body.value).length !== 1 || !Object.hasOwn(body.value, "job")) return failure(400, "invalid_request", "İstek gövdesi geçersiz.");

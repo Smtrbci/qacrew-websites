@@ -10,7 +10,7 @@
 <link rel="icon" href="../assets/favicon.svg?v=green-1" type="image/svg+xml">
 <link rel="preload" href="../assets/fonts/manrope-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="../css/fonts.css">
-<link rel="stylesheet" href="../css/app.css">
+<link rel="stylesheet" href="../css/app.css?v=demo-login-credentials-1">
 <script>
   // Yalnızca örnek panel verileri. Demo arayüzünde API bağlantısı etkin değildir.
   window.QACREW_CONFIG = { examplesUrl: "../data/examples.json" };
@@ -48,7 +48,11 @@
       <button class="btn btn-primary" type="submit" style="width:100%;min-height:50px">Giriş yap</button>
     </form>
     <div class="demo-box" role="note">
-      <b>QAcrew Forge · Önizleme</b> Panel ve örnek dokümanlar demo amaçlıdır. Üretim erişimi için yapılandırılmış QAcrew hesabıyla giriş yapın. Gizli veya şirket içi verileri girmeyin.
+      <b>QAcrew Forge · Demo hesabı</b>
+      <p>Bu ortak hesap yalnızca örnek paneli görüntüler; gerçek doküman üretimi kapalıdır. Gizli veya şirket içi veri girmeyin.</p>
+      <div class="row"><span>E-posta</span><code id="demoEmail">demo@qacrew.it</code></div>
+      <div class="row"><span>Şifre</span><code id="demoPassword">qacrew2026</code></div>
+      <button class="link-btn" type="button" id="fillDemo">Giriş bilgilerini doldur</button>
     </div>
   </div>
 </section>
@@ -224,7 +228,7 @@
 
 <div class="toast" id="toast" role="status" hidden></div>
 
-<script src="../js/app-i18n.js?v=20261029-4"></script>
-<script src="../js/app.js?v=20261029-4"></script>
+<script src="../js/app-i18n.js?v=demo-login-credentials-1"></script>
+<script src="../js/app.js?v=demo-login-credentials-1"></script>
 </body>
 </html>
