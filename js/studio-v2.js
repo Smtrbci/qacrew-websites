@@ -22,16 +22,29 @@
   const toggle = document.querySelector('.menu-toggle');
   const nav = document.querySelector('#main-nav');
   if (toggle && nav) {
-    const close = () => { toggle.setAttribute('aria-expanded', 'false'); nav.classList.remove('is-open'); };
-    toggle.addEventListener('click', () => { const open = toggle.getAttribute('aria-expanded') !== 'true'; toggle.setAttribute('aria-expanded', String(open)); nav.classList.toggle('is-open', open); });
+    const close = (restore = false) => {
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', document.documentElement.lang === 'en' ? 'Open menu' : 'Menüyü aç');
+      nav.classList.remove('is-open');
+      document.body.classList.remove('menu-open');
+      if (restore) toggle.focus();
+    };
+    toggle.addEventListener('click', () => {
+      const open = toggle.getAttribute('aria-expanded') !== 'true';
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? (document.documentElement.lang === 'en' ? 'Close menu' : 'Menüyü kapat') : (document.documentElement.lang === 'en' ? 'Open menu' : 'Menüyü aç'));
+      nav.classList.toggle('is-open', open);
+      document.body.classList.toggle('menu-open', open);
+    });
     nav.addEventListener('click', event => { if (event.target.closest('a')) close(); });
-    document.addEventListener('keydown', event => { if (event.key === 'Escape') close(); });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') close(true); });
+    window.addEventListener('resize', () => { if (window.innerWidth > 760) close(); });
   }
   const applyLanguage = lang => {
     const dict = copy[lang] || copy.tr;
     document.documentElement.lang = lang;
     if (nav) nav.setAttribute('aria-label', lang === 'en' ? 'Main menu' : 'Ana menü');
-    if (toggle) toggle.setAttribute('aria-label', toggle.dataset['menuLabel' + (lang === 'en' ? 'En' : 'Tr')]);
+    if (toggle) toggle.setAttribute('aria-label', toggle.getAttribute('aria-expanded') === 'true' ? (lang === 'en' ? 'Close menu' : 'Menüyü kapat') : toggle.dataset['menuLabel' + (lang === 'en' ? 'En' : 'Tr')]);
     document.querySelectorAll('[data-i18n]').forEach(el => { const value = dict[el.dataset.i18n]; if (value !== undefined) el.innerHTML = value; });
     document.querySelectorAll('[data-i18n-aria]').forEach(el => { const value = dict[el.dataset.i18nAria]; if (value !== undefined) el.setAttribute('aria-label', value); });
     document.title = dict.title;
