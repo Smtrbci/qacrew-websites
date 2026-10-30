@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0B0C0F">
+  <meta name="color-scheme" content="dark">
+  <title>QAcrew Game — AhaPath</title>
+  <meta name="description" content="AhaPath is an offline mobile puzzle game with 50 stages and 250 logic puzzles. Follow the QAcrew Game development journal.">
+  <link rel="icon" href="../favicon-qa.svg" type="image/svg+xml">
+  <link rel="preload" href="../forge/assets/fonts/manrope-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../forge/css/fonts.css">
+  <link rel="stylesheet" href="./game.css">
+  <link rel="stylesheet" href="./game-theme.css">
+</head>
+<body>
+<a class="skip" href="#main">İçeriğe geç</a>
+<header class="top"><div class="wrap top-inner">
+  <a class="brand" href="../" aria-label="QAcrew Studio ana sayfa"><span class="wordmark"><b>QAcrew</b><em>Game</em></span></a>
+  <div class="game-header-actions"><div class="game-language" role="group" aria-label="Language"><button type="button" data-game-lang="tr" aria-pressed="true">TR</button><button type="button" data-game-lang="en" aria-pressed="false">EN</button></div><button class="menu-toggle" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="game-nav"><span></span><span></span><span></span></button></div>
+  <nav id="game-nav" aria-label="Game menüsü"><a href="#oyun">AhaPath</a><a href="#oynanis">Nasıl oynanır</a><a href="#ekranlar">Oyun ekranları</a><a href="#gunluk">Geliştirme günlüğü</a><a href="../">QAcrew Studio ↗</a></nav>
+</div></header>
+<main id="main">
+  <section class="hero" id="oyun"><div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow"><i></i> QAcrew Game Studio <span>/</span> Mobil oyun geliştirme</p>
+      <h1 data-game-en-html="A new discovery<br>at every <em>stage.</em>">Her aşamada<br>yeni bir <em>keşif.</em></h1>
+      <p class="lead">Örüntüleri fark et. Mantığını kur. Yolunu aç.</p>
+      <p class="body">AhaPath, sayı ve şekil dizilerinden farklı mantık kurallarına uzanan çevrimdışı bir bulmaca oyunu. Her aşama yeni bir fikir, her doğru cevap yeni bir “aha!” anı.</p>
+      <div class="actions"><a class="button primary" href="#ekranlar">Oyunun içinden gör <span>↓</span></a><a class="button text-button" href="#gunluk">Geliştirme günlüğü ↗</a></div>
+      <div class="store-actions" aria-label="Uygulama mağazaları">
+        <button class="store-button" type="button" data-store-notice><svg class="store-icon apple" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.7 12.8c0-2.1 1.7-3.1 1.8-3.2-1-1.5-2.6-1.7-3.2-1.7-1.4-.1-2.7.8-3.4.8-.7 0-1.8-.8-3-.8-1.6 0-3.1.9-3.9 2.3-1.7 2.9-.4 7.2 1.2 9.5.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.7-.7 3.2-.7 1.5 0 1.9.7 3.2.7 1.3 0 2.1-1.2 2.9-2.4.9-1.3 1.2-2.6 1.2-2.7-.1 0-2.9-1.1-2.9-4.1ZM14.5 6.4c.6-.8 1.1-1.9 1-3-.9 0-2.1.6-2.8 1.4-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.5 2.8-1.3Z"/></svg><span><small>İNDİRMEK İÇİN</small><b>App Store</b></span></button>
+        <button class="store-button" type="button" data-store-notice><svg class="store-icon play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2.8v18.4L20 12 4 2.8Z" fill="currentColor"/><path d="m4 2.8 10 9.2M4 21.2l10-9.2" fill="none" stroke="#0b0c0f" stroke-width="1.3"/></svg><span><small>ÇOK YAKINDA</small><b>Google Play</b></span></button>
+      </div>
+      <div class="platform"><i></i> iOS ve Android için geliştiriliyor</div>
+    </div>
+    <div class="hero-art" aria-label="AhaPath oynanışından gerçek görüntü">
+      <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><span class="coord">01 / 50<br>İLK IŞIK</span>
+      <div class="phone"><div class="speaker"></div><img src="./../assets/ahapath/gameplay.png" alt="AhaPath oyununda şekil dizisi bulmacası ve cevap seçenekleri"></div>
+      <div class="float-card"><b>✳</b><span><small>ŞU AN OYUNDA</small><strong>Aşama 1 · İlk Işık</strong></span><i>↗</i></div>
+    </div>
+  </div>
+  <div class="wrap hero-meta"><span>50 AŞAMA</span><b>·</b><span>250 BULMACA</span><b>·</b><span>8 DİL</span><b>·</b><span>ÇEVRİMDIŞI</span><i></i><small>BİR OYUN · SÜREN BİR YOLCULUK</small></div>
+  </section>
+
+  <section class="intro wrap"><div class="index"><b>01</b><i></i> OYUNUN FİKRİ</div><div><h2>Bir sonraki adımı<br><em>sen bul.</em></h2><p>Sayılar, şekiller, yönler ve gizli kurallar… AhaPath’te her bölüm küçük bir keşif. Başlangıçta örüntüyü tanırsın; ilerledikçe yeni kuralları bir araya getirirsin.</p><div class="sequence"><span>2</span><b>→</b><span>4</span><b>→</b><span>6</span><b>→</b><span class="unknown">?</span><small>HER BULMACA BİR İPUCU BIRAKIR</small></div></div></section>
+
+  <section class="play-loop" id="oynanis"><div class="wrap play-loop-grid"><div class="loop-copy"><div class="index"><b>02</b><i></i> BİR BULMACA NASIL AKAR?</div><h2>Fark et.<br><em>Çöz. İlerle.</em></h2><p>Her bölüm tek bir soruyla başlar. Örüntüyü keşfet, seçeneklerden cevabını seç ve yeni bir kurala doğru ilerle.</p><div class="loop-steps"><div><b>01</b><span>Örüntüyü incele</span></div><div><b>02</b><span>Kuralı keşfet</span></div><div><b>03</b><span>Cevabını seç</span></div></div></div><div class="puzzle-card" aria-label="AhaPath örnek bulmacası"><div class="puzzle-top"><span>AŞAMA 01 · BÖLÜM 03</span><b>♥ ♥ ♥ ♡</b></div><p class="puzzle-prompt">Eksik sayıyı tamamla</p><div class="puzzle-sequence"><span>1</span><i>›</i><span>3</span><i>›</i><span>6</span><i>›</i><span>10</span><i>›</i><b>?</b></div><div class="puzzle-answers"><span>13</span><span>14</span><b>15</b><span>16</span></div><small>ÖRNEK OYUN AKIŞI · TASARIM ÖNİZLEMESİ</small></div></div></section>
+
+  <section class="features"><div class="wrap feature-grid">
+    <article class="feature feature-dark"><small>A / 01</small><i>↗</i><h3>İlerledikçe<br>zorlaşan yol.</h3><p>50 aşama boyunca yeni bulmaca türleri ve giderek büyüyen örüntülerle karşılaş.</p><div class="level-line"><span>01</span><i></i><i></i><i></i><i></i><b>50</b></div></article>
+    <article class="feature"><small>A / 02</small><i class="mint">⌘</i><h3>Her yerde<br>oynamaya hazır.</h3><p>İnternet bağlantısı olmadan oyna. İlerlemen cihazında saklanır.</p><label>OFFLINE BY DESIGN</label></article>
+    <article class="feature"><small>A / 03</small><i class="gold">◎</i><h3>Kendi dilinde<br>keşfet.</h3><p>Türkçe ve İngilizceden İspanyolcaya, Çinceye uzanan 8 dil seçeneği.</p><label>8 LANGUAGE EDITIONS</label></article>
+  </div></section>
+
+  <section class="journey"><div class="wrap"><div class="section-head journey-head"><div class="index"><b>03</b><i></i> KEŞİF YOLU</div><div><h2 data-game-en-html="A new milestone<br><em>every five levels.</em>">Her beş bölümde<br><em>yeni bir eşik.</em></h2><p>İlk aşamalarda örüntüleri tanı. İlerledikçe birden fazla kuralı birlikte çöz ve sıradaki aşamaların kilidini aç.</p></div></div><div class="journey-track"><article class="journey-stop current"><span>01—05</span><i>✳</i><h3>İlk ışık</h3><p>Sayı ve şekillerle mantık kurmaya başla.</p><small>İLK ADIMLAR</small></article><article class="journey-stop"><span>06—25</span><i>⌁</i><h3>Yeni kurallar</h3><p>Farklı örüntüleri bir arada takip et.</p><small>KEŞİF DERİNLEŞİR</small></article><article class="journey-stop"><span>26—50</span><i>↗</i><h3>Ustalığa doğru</h3><p>250 bulmacalık yolun son aşamalarına ilerle.</p><small>YOLCULUK SÜRÜYOR</small></article></div><div class="journey-note"><b>50</b><span>aşama</span><i>×</i><b>5</b><span>bölüm / aşama</span><i>→</i><strong>250 bulmaca</strong></div></div></section>
+
+  <section class="language-band"><div class="wrap language-inner"><div><div class="index"><b>04</b><i></i> KENDİ DİLİNDE OYNA</div><h2>Keşif, <em>her dilde.</em></h2><p>AhaPath sekiz dil seçeneğiyle geliyor. Oyun çevrimdışı oynanır; ilerlemen cihazında saklanır.</p></div><div class="language-list" aria-label="Desteklenen diller"><span>Türkçe</span><span>English</span><span>Español</span><span>Русский</span><span>हिन्दी</span><span>Bahasa Indonesia</span><span>Português (Brasil)</span><span>简体中文</span></div></div></section>
+
+  <section class="screens wrap" id="ekranlar">
+    <div class="section-head"><div class="index"><b>02</b><i></i> OYUNDAN GÖRÜNTÜLER</div><div><h2>Yol, ekranda<br><em>şekilleniyor.</em></h2><p>AhaPath’in mevcut mobil sürümünden gerçek ekranlar.</p></div></div>
+    <div class="screen-grid">
+      <figure><div class="screen-image stage"><div class="stage-ui"><div class="stage-ui-top"><span>‹</span><b>AŞAMALAR</b><i>01—50</i></div><div class="stage-row active"><span>01</span><div><small>AŞAMA 01</small><b>5 bölüm</b></div><strong>›</strong></div><div class="stage-row"><span>02</span><div><small>AŞAMA 02</small><b>5 bölüm</b></div><strong>⌁</strong></div><div class="stage-row locked"><span>03</span><div><small>AŞAMA 03</small><b>5 bölüm</b></div><strong>⌑</strong></div><div class="stage-progress"><i></i></div><small class="stage-ui-foot">AHA PATH · UI ÖNİZLEMESİ</small></div></div><figcaption><small>01 / AŞAMA SEÇİMİ · TASARIM ÖNİZLEMESİ</small><b>İlerlemeni takip et, yeni aşamaları aç.</b></figcaption></figure>
+      <figure><div class="screen-image play"><img src="./../assets/ahapath/gameplay.png" alt="AhaPath oyununda şekil örüntüsü bulmacası" loading="lazy"></div><figcaption><small>02 / BULMACA</small><b>Örüntüyü bul. Cevabını seç. Devam et.</b></figcaption></figure>
+    </div>
+  </section>
+
+  <section class="devlog" id="gunluk"><div class="wrap">
+    <div class="section-head log-head"><div class="index"><b>03</b><i></i> GELİŞTİRME GÜNLÜĞÜ</div><div><h2>Yolculuktan<br><em>notlar.</em></h2><p>AhaPath’i geliştirirken nelerin değiştiğini buradan paylaşacağım.</p></div></div>
+    <article class="log-entry">
+      <div class="date"><b>31</b><span>EKİM<br>2026</span><i></i><small>GÜNCELLEME 01</small></div>
+      <div class="log-copy"><div class="tags"><span>OYUN GELİŞTİRME</span><span>iOS · ANDROID</span></div><h3>Aşama seçimi ve mobil sürümler güncellendi.</h3><p>Aşama kartlarından doğrudan o aşamanın beş bölümüne geçiş eklendi. Kilitli aşamalar ilerleme sırasını koruyor; aşama adları da ilerledikçe değişen bulmaca türlerini yansıtıyor. Güncel, normal ilerleme sürümü iOS simülatöründe ve Android emülatöründe açıldı.</p><div class="log-meta"><span><i></i> Aktif geliştirme</span><span>50 aşama <b>·</b> 250 bulmaca</span></div></div>
+      <div class="log-art"><div class="route"><i></i><i></i><i></i><i></i><b>50</b></div><span>AHA<br><em>PATH</em></span><small>HER AŞAMADA YENİ BİR KEŞİF</small></div>
+    </article>
+    <div class="next"><b>✳</b><p><strong>Sıradaki durak?</strong> Bulmaca içerik incelemesi, oyun akışı ve mağaza hazırlıkları. Yeni gelişmeleri bu günlükte paylaşacağım.</p><span><i></i> DEVAM EDİYOR</span></div>
+  </div></section>
+
+  <section class="closing"><div class="wrap closing-inner"><div><small>QAcrew GAME STUDIO</small><h2>Her yolculuk<br>bir adımla başlar.</h2></div><div><p>AhaPath’in gelişimini buradan takip et. Yeni bir keşif ekledikçe bu sayfaya not düşeceğim.</p><a class="button primary" href="#gunluk">Geliştirme notlarına git ↑</a></div><b class="ghost-mark">AhaPath<span>✳</span></b></div></section>
+</main>
+<footer><div class="wrap footer-inner"><a class="brand" href="../"><span class="wordmark"><b>QAcrew</b><em>Game</em></span></a><span>AhaPath · QAcrew Game</span><a href="../">QAcrew Studio’ya dön ↗</a><small>© 2026 QAcrew</small></div></footer>
+<dialog class="store-dialog" aria-labelledby="store-dialog-title"><button class="dialog-close" type="button" aria-label="Kapat">×</button><span class="dialog-mark" aria-hidden="true">✳</span><p class="dialog-kicker">AHAPATH · QAcrew GAME</p><h2 id="store-dialog-title">Yakında yayınlanıyor</h2><p class="dialog-copy">AhaPath şu anda test ve geliştirme aşamasında. Mağaza sayfaları, oyun yayınlanmaya hazır olduğunda burada yer alacak.</p><span class="dialog-status"><i></i> Test aşamasında · Yayın hazırlığı sürüyor</span><button class="button primary dialog-ok" type="button">Tamam</button></dialog>
+<script src="./game.js" defer></script>
+</body>
+</html>
