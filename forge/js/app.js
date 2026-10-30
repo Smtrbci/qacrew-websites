@@ -69,16 +69,32 @@
   // ---------- login ----------
   function nameFrom(email){var n=(email.split("@")[0]||"").split(/[._-]/)[0]||"Kullanıcı";return n.charAt(0).toLocaleUpperCase("tr-TR")+n.slice(1)}
   $("fillDemo").addEventListener("click",function(){$("lEmail").value=$("demoEmail").textContent.trim();$("lPass").value=$("demoPassword").textContent.trim();$("lEmail").focus()});
+  function isDemoLogin(email,password){return email.toLowerCase()===$("demoEmail").textContent.trim().toLowerCase()&&password===$("demoPassword").textContent.trim()}
+  function enterReadOnlyDemo(){
+    $("lPass").value="";
+    lsSet("qacrew.demo-preview","1");
+    signIn($("demoEmail").textContent.trim(),true);
+    if(new URLSearchParams(location.search).has("try"))history.replaceState(null,"",location.pathname);
+  }
   $("loginForm").addEventListener("submit",async function(e){
     e.preventDefault();
     var em=$("lEmail").value.trim(),pw=$("lPass").value,er=$("lErr");
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){er.textContent="Geçerli bir e-posta adresi girin.";er.hidden=false;$("lEmail").focus();return}
     er.hidden=true;var btn=$("loginForm").querySelector('[type="submit"]');btn.disabled=true;
-    try{var res=await fetch("/api/session",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:em,password:pw})});var data=await res.json();if(!res.ok)throw new Error(data.message||"E-posta veya şifre hatalı.");$("lPass").value="";signIn(data.user.email,data.user.demo);if(new URLSearchParams(location.search).has("try")&&!data.user.demo){openTool();history.replaceState(null,"",location.pathname)}}
+    try{
+      var res;
+      try{res=await fetch("/api/session",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:em,password:pw})})}
+      catch(_){if(isDemoLogin(em,pw)){enterReadOnlyDemo();return}throw new Error("Giriş servisine ulaşılamadı. Bağlantıyı kontrol edip tekrar deneyin.")}
+      var raw=await res.text(),data=null;
+      try{data=raw?JSON.parse(raw):null}catch(_){}
+      if(res.ok&&data&&data.user){$("lPass").value="";signIn(data.user.email,data.user.demo);if(new URLSearchParams(location.search).has("try")&&!data.user.demo){openTool();history.replaceState(null,"",location.pathname)}}
+      else if(isDemoLogin(em,pw)){enterReadOnlyDemo()}
+      else throw new Error(data&&data.message||("Giriş servisi geçerli yanıt vermedi (HTTP "+res.status+")."));
+    }
     catch(err){er.textContent=err.message||"Giriş yapılamadı. Tekrar deneyin.";er.hidden=false}finally{btn.disabled=false}
   });
   function signIn(em,isDemo){
-    state.email=em;state.demo=isDemo===true;lsSet("qacrew.session",em);
+    state.email=em;state.demo=isDemo===true;lsSet("qacrew.session",em);if(state.demo)lsSet("qacrew.demo-preview","1");else lsDel("qacrew.demo-preview");
     if(store.mode!=="db")loadLocal();
     $("login").hidden=true;$("appShell").hidden=false;
     var nm=nameFrom(em);
@@ -95,7 +111,7 @@
     updateCount();renderOpts();
     if(state.email){updateWelcome(nameFrom(state.email));renderAll();renderNotice();if(!$('tool').hidden&&state.viewing)showResult(state.viewing,true)}
   });
-  $("logoutBtn").onclick=async function(){try{await fetch("/api/session",{method:"DELETE",credentials:"same-origin"})}catch(e){}lsDel("qacrew.session");state.email=null;state.demo=false;$("userMenu").hidden=true;$("appShell").hidden=true;$("login").hidden=false;$("lEmail").focus()};
+  $("logoutBtn").onclick=async function(){try{await fetch("/api/session",{method:"DELETE",credentials:"same-origin"})}catch(e){}lsDel("qacrew.session");lsDel("qacrew.demo-preview");state.email=null;state.demo=false;$("userMenu").hidden=true;$("appShell").hidden=true;$("login").hidden=false;$("lEmail").focus()};
   $("avatarBtn").onclick=function(e){e.stopPropagation();var m=$("userMenu");m.hidden=!m.hidden;this.setAttribute("aria-expanded",String(!m.hidden))};
   document.addEventListener("click",function(e){if(!e.target.closest(".avatar-wrap")){$("userMenu").hidden=true;$("avatarBtn").setAttribute("aria-expanded","false")}});
 
@@ -373,5 +389,5 @@
   // ---------- boot ----------
   renderOpts();updateCount();
   lsDel("qacrew.session");
-  fetch("/api/session",{credentials:"same-origin"}).then(function(r){return r.ok?r.json():null}).then(function(data){if(!data||!data.user)return;signIn(data.user.email,data.user.demo);if(new URLSearchParams(location.search).has("try")&&!data.user.demo){openTool();history.replaceState(null,"",location.pathname)}}).catch(function(){});
+  fetch("/api/session",{credentials:"same-origin"}).then(async function(r){var raw=await r.text(),data=null;try{data=raw?JSON.parse(raw):null}catch(_){}return r.ok?data:null}).then(function(data){if(data&&data.user){signIn(data.user.email,data.user.demo);if(new URLSearchParams(location.search).has("try")&&!data.user.demo){openTool();history.replaceState(null,"",location.pathname)}return}if(lsGet("qacrew.demo-preview")==="1")signIn($("demoEmail").textContent.trim(),true)}).catch(function(){if(lsGet("qacrew.demo-preview")==="1")signIn($("demoEmail").textContent.trim(),true)});
 })();
