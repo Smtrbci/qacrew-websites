@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Game">
+  <rect x="2" y="2" width="60" height="60" rx="17" fill="#181A1F" stroke="#30343C" stroke-width="2"/>
+  <path d="M43 19a19 19 0 1 0 4 20H32" fill="none" stroke="#7CE2C3" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="46" cy="39" r="4.5" fill="#FFD477"/>
+  <path d="m46 28 1.8 5.2L53 35l-5.2 1.8L46 42l-1.8-5.2L39 35l5.2-1.8L46 28Z" fill="#FFD477"/>
+</svg>

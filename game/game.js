@@ -47,7 +47,7 @@ function setLanguage(lang) {
     if (lang === 'en') for (const [tr, en] of Object.entries(translations)) value = value.replaceAll(tr, en);
     el.setAttribute('aria-label', value);
   });
-  document.title = lang === 'en' ? 'QAcrew Game — AhaPath' : 'QAcrew Game — AhaPath';
+  document.title = 'Game';
   document.querySelector('meta[name="description"]')?.setAttribute('content', lang === 'en' ? 'AhaPath is an offline mobile puzzle game with 50 stages and 250 logic puzzles. Follow the QAcrew Game development journal.' : 'AhaPath, 50 aşama ve 250 mantık bulmacasıyla çevrimdışı oynanan mobil bir keşif oyunu. QAcrew Game geliştirme günlüğü.');
   try { localStorage.setItem('qacrew-studio-language', lang); } catch (_) {}
 }
