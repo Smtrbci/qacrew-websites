@@ -321,3 +321,6 @@ html[data-theme=light]:has(.forge-page) .pane-before .raw mark{color:#B8E986!imp
 html[data-theme=light]:has(.forge-page) .pane-before .pane-label,
 html[data-theme=light]:has(.forge-page) .pulse-example-label{background:#B8E986!important;color:#000!important;border-color:#B8E986!important}
 html[data-theme=light]:has(.forge-page) .pulse-example-head{color:#B8E986!important}
+
+html[data-theme=light]:has(.forge-page) .cta-box .hero-cta .btn,
+html[data-theme=light]:has(.forge-page) .cta-box .hero-cta .btn:hover{background:#F3EDE3!important;color:#000!important;border:1px solid #B8E986!important}
