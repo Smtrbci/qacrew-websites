@@ -324,3 +324,22 @@ html[data-theme=light]:has(.forge-page) .pulse-example-head{color:#B8E986!import
 
 html[data-theme=light]:has(.forge-page) .cta-box .hero-cta .btn,
 html[data-theme=light]:has(.forge-page) .cta-box .hero-cta .btn:hover{background:#F3EDE3!important;color:#000!important;border:1px solid #B8E986!important}
+
+/* Forge mobile header: remove horizontal overflow without shrinking touch controls. */
+@media(max-width:560px){
+  html:has(.forge-page),html:has(.forge-page) body{max-width:100%;overflow-x:clip}
+  html:has(.forge-page) .top .wrap{width:100%;min-width:0;height:64px;gap:6px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+  html:has(.forge-page) .logo{min-width:0;gap:6px;font-size:16px;letter-spacing:-.03em;white-space:nowrap}
+  html:has(.forge-page) .logo svg{width:26px;height:26px}
+  html:has(.forge-page) .studio-top-link{display:none}
+  html:has(.forge-page) .top-actions{min-width:0;margin-left:auto;gap:4px}
+  html:has(.forge-page) .language-switch{gap:0;padding:2px}
+  html:has(.forge-page) .language-switch button{min-width:27px;min-height:30px;padding:0 4px}
+  html:has(.forge-page) .top-actions>.portal-theme-toggle{flex:none;width:44px;height:44px;margin:0 0 0 1px}
+  html:has(.forge-page) .top-actions>.menu-btn{flex:none;width:44px;height:44px}
+}
+@media(max-width:340px){
+  html:has(.forge-page) .top .wrap{gap:4px;padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px))}
+  html:has(.forge-page) .logo{font-size:15px}
+  html:has(.forge-page) .language-switch button{min-width:25px;padding:0 3px}
+}
