@@ -128,3 +128,23 @@ footer{background:#08090c;color:var(--muted)}.footer-inner{min-height:76px}.foot
 @keyframes route-node{0%,100%{transform:scale(.86);filter:drop-shadow(0 0 1px #7DE3C3)}50%{transform:scale(1.28);filter:drop-shadow(0 0 8px #7DE3C3)}}
 @media(max-width:700px){.hero-route{inset:0 0 3%;height:92%;opacity:.82}}
 @media(prefers-reduced-motion:reduce){.hero-route .route-trace,.hero-route circle{animation:none}.hero-route .route-trace{stroke-dasharray:12 18}}
+
+/* A more expressive AhaPath puzzle constellation around the gameplay preview. */
+.orbit-a{animation:orbit-turn-a 34s linear infinite;transform-origin:center}
+.orbit-b{animation:orbit-turn-b 26s linear infinite;transform-origin:center}
+.phone{animation:phone-drift 6s ease-in-out infinite}
+.hero-route{inset:0;width:100%;height:100%;filter:drop-shadow(0 0 12px #7DE3C355)}
+.hero-route .constellation{stroke:#7DE3C3;stroke-width:1.4;stroke-dasharray:3 8;opacity:.38;animation:constellation-flow 12s linear infinite}
+.hero-route .constellation-arc{stroke-width:1;stroke-dasharray:1 10;opacity:.27;animation-direction:reverse}
+.hero-route .logic-tile{transform-box:fill-box;transform-origin:center;animation:tile-float 4.5s ease-in-out infinite}
+.hero-route .logic-tile rect{fill:#101722;fill-opacity:.94;stroke:#7DE3C3;stroke-width:1.5;filter:drop-shadow(0 0 8px #7DE3C344)}
+.hero-route .logic-tile text{fill:#F5F6F8;font:700 19px "JetBrains Mono",monospace;text-anchor:middle}
+.hero-route .logic-tile path{stroke:#7DE3C3;stroke-width:2;stroke-linecap:round;opacity:.7}
+.hero-route .tile-two{animation-delay:-1.1s}.hero-route .tile-three{animation-delay:-2.2s}.hero-route .tile-four{animation-delay:-3.3s}
+@keyframes orbit-turn-a{from{transform:rotate(-27deg)}to{transform:rotate(333deg)}}
+@keyframes orbit-turn-b{from{transform:rotate(30deg)}to{transform:rotate(-330deg)}}
+@keyframes phone-drift{0%,100%{transform:translateY(0) rotate(4deg)}50%{transform:translateY(-9px) rotate(2.4deg)}}
+@keyframes tile-float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-11px) rotate(2deg)}}
+@keyframes constellation-flow{to{stroke-dashoffset:-88}}
+@media(max-width:700px){.hero-route .logic-tile rect{stroke-width:2}.hero-route .logic-tile text{font-size:21px}.phone{animation-duration:7s}}
+@media(prefers-reduced-motion:reduce){.orbit-a,.orbit-b,.phone,.hero-route .logic-tile,.hero-route .constellation,.hero-route .route-trace,.hero-route circle{animation:none!important}.hero-route .route-trace{stroke-dasharray:12 18}}
