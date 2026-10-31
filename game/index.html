@@ -2,6 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="utf-8">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem("qacrew-theme")||"dark"}catch(_){document.documentElement.dataset.theme="dark"}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0B0C0F">
   <meta name="color-scheme" content="dark">
@@ -12,8 +13,9 @@
   <link rel="stylesheet" href="../forge/css/fonts.css">
   <link rel="stylesheet" href="./game.css">
   <link rel="stylesheet" href="./game-theme.css">
+  <link rel="stylesheet" href="/css/portal-theme.css">
 </head>
-<body>
+<body class="game-page">
 <a class="skip" href="#main">İçeriğe geç</a>
 <header class="top"><div class="wrap top-inner">
   <a class="brand" href="../" aria-label="QAcrew Studio ana sayfa"><span class="wordmark"><b>QAcrew</b><em>Game</em></span></a>
@@ -80,5 +82,6 @@
 <footer><div class="wrap footer-inner"><a class="brand" href="../"><span class="wordmark"><b>QAcrew</b><em>Game</em></span></a><span>AhaPath · QAcrew Game</span><a href="../">QAcrew Studio’ya dön ↗</a><small>© 2026 QAcrew</small></div></footer>
 <dialog class="store-dialog" aria-labelledby="store-dialog-title"><button class="dialog-close" type="button" aria-label="Kapat">×</button><span class="dialog-mark" aria-hidden="true">✳</span><p class="dialog-kicker">AHAPATH · QAcrew GAME</p><h2 id="store-dialog-title">Yakında yayınlanıyor</h2><p class="dialog-copy">AhaPath şu anda test ve geliştirme aşamasında. Mağaza sayfaları, oyun yayınlanmaya hazır olduğunda burada yer alacak.</p><span class="dialog-status"><i></i> Test aşamasında · Yayın hazırlığı sürüyor</span><button class="button primary dialog-ok" type="button">Tamam</button></dialog>
 <script src="./game.js" defer></script>
+<script src="/js/portal-theme.js" defer></script>
 </body>
 </html>

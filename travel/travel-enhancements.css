@@ -1,0 +1,86 @@
+/* QAcrew Forge type scale with the BuduTrip app palette retained. */
+:root{
+  --font-display:'Bricolage Grotesque','Avenir Next','Segoe UI',system-ui,sans-serif;
+  --font-body:'Manrope','Avenir Next','Segoe UI',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --travel-bg:#f6f1e9;--travel-paper:#fffefa;--travel-ink:#1f2a37;--travel-muted:#626d7a;--travel-line:#e8e0d3;
+  color-scheme:light;
+}
+html{scroll-padding-top:88px}
+body{background:var(--travel-bg);color:var(--travel-ink);font-family:var(--font-body);font-size:16px;line-height:1.6}
+h1,h2,h3,.section-heading h2,.intro h2,.route-copy h2,.promise h2{font-family:var(--font-display);font-weight:700;letter-spacing:-.035em;text-wrap:balance}
+.hero h1{font-size:clamp(46px,6.2vw,78px);line-height:1.02;letter-spacing:-.045em}
+.section-heading h2,.intro h2,.route-copy h2,.promise h2{font-size:clamp(34px,4.6vw,56px);line-height:1.06}
+.hero-lede,.intro-text,.route-copy>p,.promise p:not(.eyebrow){font-size:15px;line-height:1.75}
+.eyebrow,.step-caption,.illustration-caption,.hero-bottom,.scroll-cue,.footer-note,.map-label,.days-illustration small{font-family:var(--font-mono);letter-spacing:.06em}
+.brand{gap:10px;font-family:var(--font-body);letter-spacing:0}
+.brand .wordmark{display:flex;align-items:baseline;gap:2px;white-space:nowrap}
+.brand .wordmark b{font:500 24px/1 var(--font-mono);letter-spacing:-.04em;color:#b8e986}
+.brand .wordmark em{font:italic 700 30px/1 var(--font-body);letter-spacing:-.045em;color:var(--travel-ink)}
+.footer .wordmark em{color:#f6f1e9}
+.topbar{z-index:10}
+.header-tools{display:flex;align-items:center;gap:8px}
+.travel-language{display:flex;align-items:center;gap:2px;padding:3px;border:1px solid #c3c9c1;border-radius:999px;background:var(--travel-paper)}
+.travel-language button{min-width:34px;min-height:34px;padding:0 8px;border:0;border-radius:999px;background:transparent;color:var(--travel-muted);font:600 11px var(--font-mono);cursor:pointer}
+.travel-language button[aria-pressed=true]{background:#b8e986;color:#1f2a37}
+.theme-toggle{display:inline-grid;place-items:center;flex:none;width:42px;height:42px;border:1px solid #c3c9c1;border-radius:50%;background:var(--travel-paper);color:var(--travel-ink);font:500 21px/1 var(--font-body);cursor:pointer}
+.theme-toggle:hover{border-color:#0e9f9a;color:#087f7b}
+.theme-toggle:focus-visible,.travel-language button:focus-visible{outline:3px solid #0e9f9a;outline-offset:2px}
+.studio-link{font-weight:700!important;color:#087f7b!important}
+.mobile-nav .studio-link{border-top:1px solid var(--travel-line);margin-top:4px}
+.travel-principles{background:var(--travel-bg)}
+.travel-principles .section-heading{max-width:760px;margin:0 auto 36px}
+.principle-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.principle-grid article{position:relative;display:flex;flex-direction:column;gap:12px;min-height:214px;padding:23px;border:1px solid var(--travel-line);border-radius:18px;background:var(--travel-paper);overflow:hidden}
+.principle-grid article>span{color:#087f7b;font:500 10px var(--font-mono);letter-spacing:.06em}
+.principle-grid article>b{max-width:19ch;font:700 20px/1.2 var(--font-display);letter-spacing:-.025em}
+.principle-grid article>p{max-width:32ch;color:var(--travel-muted);font-size:13px;line-height:1.65}
+.principle-grid article>i{position:absolute;right:17px;bottom:12px;color:#0e9f9a18;font:500 56px var(--font-body);font-style:normal}
+.travel-note{margin-top:18px;color:var(--travel-muted);font:400 11px/1.6 var(--font-mono)}
+html[data-theme=dark]{color-scheme:dark;--travel-bg:#1f2a37;--travel-paper:#273544;--travel-ink:#f6f1e9;--travel-muted:#c1c9d1;--travel-line:#3b4a59}
+html[data-theme=dark] body{background:var(--travel-bg);color:var(--travel-ink)}
+html[data-theme=dark] .topbar{background:#1f2a37}
+html[data-theme=dark] .brand .wordmark em{color:#f6f1e9}
+html[data-theme=dark] .nav{color:#c1c9d1}
+html[data-theme=dark] .travel-language,html[data-theme=dark] .theme-toggle{background:#273544;border-color:#3b4a59;color:#f6f1e9}
+html[data-theme=dark] .travel-language button{color:#c1c9d1}
+html[data-theme=dark] .travel-language button[aria-pressed=true]{background:#b8e986;color:#1f2a37}
+html[data-theme=dark] .theme-toggle:hover{border-color:#0e9f9a;color:#0e9f9a}
+html[data-theme=dark] .studio-link{color:#b8e986!important}
+html[data-theme=dark] .hero-visual{box-shadow:0 0 0 1px #3b4a59}
+html[data-theme=dark] .visual-note{background:#273544f2;color:#f6f1e9;border:1px solid #3b4a59}
+html[data-theme=dark] .visual-note small,html[data-theme=dark] .hero-proof p{color:#c1c9d1}
+html[data-theme=dark] .hero-proof strong{color:#f6f1e9}
+html[data-theme=dark] .steps,html[data-theme=dark] .route-section,html[data-theme=dark] .travel-principles{background:#1f2a37}
+html[data-theme=dark] .step-card,html[data-theme=dark] .principle-grid article{background:#273544;border-color:#3b4a59;color:#f6f1e9}
+html[data-theme=dark] .step-card>p,html[data-theme=dark] .principle-grid article>p{color:#c1c9d1}
+html[data-theme=dark] .step-caption,html[data-theme=dark] .illustration-caption{color:#c1c9d1}
+html[data-theme=dark] .route-facts li{border-color:#3b4a59}
+html[data-theme=dark] .route-facts small,html[data-theme=dark] .route-copy>p:not(.eyebrow,.illustration-caption){color:#c1c9d1}
+html[data-theme=dark] .phone-wrap{background:#273544}
+html[data-theme=dark] .phone{box-shadow:0 25px 60px #0008}
+html[data-theme=dark] .promise{background:#0e9f9a;color:#f6f1e9}
+html[data-theme=dark] .promise h2 em{color:#b8e986}
+html[data-theme=dark] .promise p:not(.eyebrow){color:#f6f1e9}
+html[data-theme=dark] .footer{color:#c1c9d1}
+html[data-theme=dark] .footer-note,html[data-theme=dark] .footer p{color:#c1c9d1}
+@media(max-width:900px){.brand .wordmark b{font-size:22px}.brand .wordmark em{font-size:27px}.principle-grid{gap:12px}.principle-grid article{padding:18px}}
+@media(max-width:640px){.topbar{justify-content:space-between;gap:8px}.brand{gap:7px}.brand-mark{display:none}.brand .wordmark b{font-size:24px}.brand .wordmark em{font-size:30px}.brand-mark{width:33px;height:33px;border-radius:11px}.brand-mark svg{width:22px;height:22px}.header-tools{gap:5px}.travel-language button{min-width:31px;min-height:32px;padding-inline:6px;font-size:10px}.theme-toggle,.menu-toggle{width:40px;height:40px}.menu-toggle{margin:0;background:var(--travel-paper);border:1px solid var(--travel-line)}.menu-toggle span{background:var(--travel-ink)}.mobile-nav{top:64px;z-index:9;background:var(--travel-paper);border:1px solid var(--travel-line)}.mobile-nav a{min-height:48px;display:flex;align-items:center}.principle-grid{grid-template-columns:1fr}.principle-grid article{min-height:174px;padding:20px}.travel-principles .section-heading{text-align:left;margin-bottom:23px}.footer-brand .wordmark b{font-size:20px}.footer-brand .wordmark em{font-size:24px}}
+@media(prefers-reduced-motion:reduce){.theme-toggle,.travel-language button{transition:none!important}}
+@media(max-width:640px){.brand .wordmark b{font-size:24px}.brand .wordmark em{font-size:30px}}
+html[data-theme=dark] .hero h1 em,html[data-theme=dark] .intro h2 em,html[data-theme=dark] .section-heading h2 em,html[data-theme=dark] .route-copy h2 em{color:#58c4bc}
+html[data-theme=dark] .hero-lede,html[data-theme=dark] .hero-proof p{color:#d2dce3}
+html[data-theme=dark] .hero-proof strong{color:#fffefa}
+
+/* Text-only QAcrew Travel wordmark and a quiet route-inspired closing texture. */
+.brand{gap:0}
+.brand-mark{display:none!important}
+.promise{isolation:isolate}
+.promise::before,.promise::after{content:"";position:absolute;z-index:-1;pointer-events:none}
+.promise::before{width:min(66vw,760px);height:min(66vw,760px);right:-16%;top:50%;transform:translateY(-50%) rotate(-18deg);border:1px solid rgba(31,42,55,.13);border-radius:47% 53% 48% 52%;box-shadow:0 0 0 34px rgba(31,42,55,.035),0 0 0 68px rgba(31,42,55,.025),0 0 0 106px rgba(31,42,55,.018)}
+.promise::after{width:18px;height:18px;right:17%;top:22%;border:5px solid var(--coral);border-radius:50%;box-shadow:-160px 210px 0 -5px var(--teal),-310px -75px 0 -6px var(--coral)}
+.promise-inner{z-index:1}
+html[data-theme=dark] .promise::before{border-color:rgba(246,241,233,.15);box-shadow:0 0 0 34px rgba(246,241,233,.04),0 0 0 68px rgba(246,241,233,.028),0 0 0 106px rgba(246,241,233,.02)}
+html[data-theme=dark] .promise::after{box-shadow:-160px 210px 0 -5px #b8e986,-310px -75px 0 -6px #ff6b57}
+html[data-theme=dark] .promise{background:#0e9f9a}
+@media(max-width:640px){.promise::before{width:112vw;height:112vw;right:-51%;top:53%}.promise::after{right:14%;top:15%;width:14px;height:14px;box-shadow:-95px 180px 0 -4px var(--teal),-170px -38px 0 -5px var(--coral)}}

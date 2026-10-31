@@ -2,6 +2,7 @@
 <html lang="tr">
 <head>
   <meta charset="utf-8">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem("qacrew-theme")||"light"}catch(_){document.documentElement.dataset.theme="light"}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0F3D2E">
   <title>Samet Arabacı — QA Test &amp; Analiz Uzmanı</title>
@@ -13,11 +14,12 @@
   <link rel="icon" href="/favicon-qa.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/forge/css/fonts.css">
   <link rel="stylesheet" href="/css/styles-v6.css?v=mobile-nav-photo-1">
+  <link rel="stylesheet" href="/css/portal-theme.css">
   <script type="application/ld+json" id="person-schema">{"@context":"https://schema.org","@type":"Person","name":"Samet Arabacı","jobTitle":"QA Test & Analysis Specialist","address":{"@type":"PostalAddress","addressLocality":"Istanbul","addressCountry":"TR"},"sameAs":["https://www.linkedin.com/in/smtrbci/","https://www.instagram.com/qacrew.it"],"image":"/assets/img/samet-arabaci-800.webp"}</script>
 </head>
-<body>
+<body class="portfolio-page">
   <a class="skip" href="#main" data-i18n="skip">İçeriğe geç</a>
   <header class="top">
     <div class="wrap top-inner">
@@ -51,5 +53,6 @@
   </main>
   <footer class="footer"><div class="wrap"><span>© <span id="year"></span> Samet Arabacı · QAcrew</span><span data-i18n="footer">İstanbul'da test edildi.</span></div></footer>
   <script src="/js/i18n-v2.js"></script><script src="/js/main-v2.js"></script>
+<script src="/js/portal-theme.js" defer></script>
 </body>
 </html>

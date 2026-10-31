@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem("qacrew-theme")||"light"}catch(_){document.documentElement.dataset.theme="light"}</script>
+  <meta name="theme-color" content="#f6f1e9">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Şehir gezini günlere böl, yürüyüş rotanı kolayca planla. QAcrew Travel ile otelinden başlayan kişisel gezi planını oluştur.">
+  <title>QAcrew Travel — Şehrini yürüyerek keşfet</title>
+  <link rel="stylesheet" href="../forge/css/fonts.css">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./travel-enhancements.css">
+  <script defer src="./site.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">İçeriğe geç</a>
+  <header class="topbar wrap">
+    <a class="brand" href="#top" aria-label="QAcrew Travel ana sayfa">
+      <span class="wordmark"><b data-brand>QAcrew</b><em>Travel</em></span>
+    </a>
+    <nav class="nav" aria-label="Ana menü">
+      <a href="#nasil-calisir">Nasıl çalışır?</a><a href="#ozellikler">Özellikler</a><a href="#rota">Örnek rota</a><a class="studio-link" href="/">QAcrew Studio ↗</a>
+    </nav>
+    <a class="button button-small button-coral nav-cta" href="#nasil-calisir">Yolculuğu keşfet <span aria-hidden="true">↗</span></a>
+    <div class="header-tools"><div class="travel-language" role="group" aria-label="Dil seçimi"><button type="button" data-travel-lang="tr" aria-pressed="true">TR</button><button type="button" data-travel-lang="en" aria-pressed="false">EN</button></div><button class="theme-toggle" type="button" data-theme-toggle aria-label="Koyu temaya geç" title="Koyu tema"><span aria-hidden="true">☾</span></button><button class="menu-toggle" aria-label="Menüyü aç" aria-expanded="false" aria-controls="mobile-nav"><span></span><span></span></button></div>
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Mobil menü" hidden><a href="#nasil-calisir">Nasıl çalışır?</a><a href="#ozellikler">Özellikler</a><a href="#rota">Örnek rota</a><a class="studio-link" href="/">QAcrew Studio ↗</a></nav>
+  </header>
+  <main id="main">
+    <section class="hero wrap" id="top">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-dot"></span> Şehri kendi ritminde keşfet</p>
+        <h1>Günlerini planla,<br><em>şehri yürüyerek</em> gez.</h1>
+        <p class="hero-lede">Otelini ve görmek istediğin yerleri seç. <span>QAcrew Travel</span> gezini günlere bölsün, her gün için yürüyüş rotanı oluştursun.</p>
+        <div class="hero-actions"><a class="button button-coral" href="#nasil-calisir">Nasıl çalıştığını gör <span aria-hidden="true">↓</span></a><a class="text-link" href="#rota">Bir günlük rotayı incele <span aria-hidden="true">↗</span></a></div>
+        <div class="hero-proof"><div class="avatar-stack" aria-hidden="true"><span>İ</span><span>İ</span><span>✳</span></div><p><strong>Otelinden başlar.</strong><br>Günün sonunda yine oteline döner.</p></div>
+      </div>
+      <div class="hero-visual" aria-label="Otel, şehir durakları ve gezi rotası illüstrasyonu">
+        <div class="visual-note note-top"><span class="note-icon">✦</span><span><b>Senin şehrin</b><small>Senin seçtiğin duraklar</small></span></div>
+        <svg class="route-art" viewBox="0 0 650 540" role="img" aria-label="Başlangıç otelinden şehrin duraklarına uzanan rota">
+          <path class="map-water" d="M454 0h196v190c-73 10-126-21-145-75C488 74 470 36 454 0Z"/><path class="map-park" d="M0 325c63-60 114-39 153 5s38 103-13 137H0Z"/><path class="map-park park-two" d="M529 439c43-40 90-32 121-2v103H497c1-43 11-76 32-101Z"/>
+          <g class="map-lines"><path d="M27 150 154 98l74 71 98-87 92 57 103-44M57 264l116-56 99 63 118-62 97 64 114-40M22 392l136-70 107 81 121-55 117 71 101-61M132 33l21 490M282 18l-9 484M439 19l-18 503M561 16l-12 499"/></g>
+          <path class="route-shadow" d="M142 358C168 285 180 205 260 191s99 42 158 27c59-14 65-98 120-80 56 17 29 95-14 136-48 47-97 87-167 69s-121-39-181 15"/>
+          <path class="route-line" d="M142 358C168 285 180 205 260 191s99 42 158 27c59-14 65-98 120-80 56 17 29 95-14 136-48 47-97 87-167 69s-121-39-181 15"/>
+          <g class="stop stop-hotel" transform="translate(115 345)"><rect width="58" height="58" rx="19"/><path d="M15 36V22h28v14M15 30h28M19 26h8v4h-8zM43 26h-8v4h8z"/></g>
+          <g class="stop" transform="translate(230 162)"><circle r="25"/><text y="6">1</text></g><g class="stop" transform="translate(414 215)"><circle r="25"/><text y="6">2</text></g>
+          <g class="stop stop-food" transform="translate(548 138)"><circle r="25"/><path d="M-7-10v20m-4-20v7c0 5 8 5 8 0v-7m14 0c-8 0-8 15 0 15zm0 0v5"/></g><g class="stop" transform="translate(370 345)"><circle r="25"/><text y="6">3</text></g>
+          <text class="map-label" x="206" y="112">ŞEHİRDE KEŞFET</text><text class="map-label small" x="179" y="430">yürüyüş rotan</text>
+        </svg>
+        <div class="visual-note note-bottom"><span class="hotel-mini">⌂</span><span><b>Başlangıç ve bitiş</b><small>Otelin: Hotel Suadiye</small></span><span class="mini-check">✓</span></div>
+        <span class="sun-stamp" aria-hidden="true">YAVAŞLA<br>VE BAK <b>✳</b></span>
+      </div>
+      <div class="hero-bottom"><span>Şehri keşfetmenin daha sakin bir yolu</span><span class="scroll-cue">AŞAĞI KAYDIR <b>↓</b></span></div>
+    </section>
+
+    <section class="intro section-pad" id="nasil-calisir"><div class="wrap intro-grid"><div><p class="eyebrow">BİR PLAN, DAHA AZ KARMAŞA</p><h2>“Nereye gitsem?”<br><em>sorusunu bırak.</em></h2></div><p class="intro-text">Seyahat listendeki yerleri tek tek günlere yerleştirmek zorunda değilsin. QAcrew Travel, görmek istediklerini ve konakladığın oteli bir araya getirip şehir gezini yürüyüş günlerine dönüştürür.</p></div></section>
+
+    <section class="steps section-pad" id="ozellikler"><div class="wrap"><div class="section-heading"><p class="eyebrow">ÜÇ ADIMDA YOLA ÇIK</p><h2>Planı kur. <em>Şehre karış.</em></h2><p>Gezinin kontrolü sende; rotanın hesabı QAcrew Travel'da.</p></div>
+      <div class="step-grid">
+        <article class="step-card"><div class="step-meta"><span>01</span><span class="step-icon">⌖</span></div><div class="step-illustration city-illustration"><span class="city-sun"></span><div class="city-skyline"><i></i><i></i><i></i><i></i><i></i></div><span class="city-pin">●</span></div><h3>Otelini seç</h3><p>Şehrini ve nerede kaldığını belirle. Her günün başlangıç noktası belli olsun.</p><span class="step-caption">ŞEHİR + OTEL</span></article>
+        <article class="step-card"><div class="step-meta"><span>02</span><span class="step-icon">✳</span></div><div class="step-illustration places-illustration"><div class="place-pill"><span>▥</span> Müze <b>+</b></div><div class="place-pill offset"><span>⌁</span> Sahil <b>+</b></div><div class="place-pill"><span>♧</span> Park <b>✓</b></div></div><h3>Görmek istediklerini ekle</h3><p>Müzeleri, meydanları, parkları ve istersen yeme içme duraklarını seç.</p><span class="step-caption">YERLER + KÜÇÜK KEŞİFLER</span></article>
+        <article class="step-card"><div class="step-meta"><span>03</span><span class="step-icon">↗</span></div><div class="step-illustration days-illustration"><div><small>GEZİ SÜREN</small><strong>4 <i>gün</i></strong></div><div class="days-bars"><i></i><i></i><i></i><i></i></div><span>Her güne bir rota</span></div><h3>Günlerini planla</h3><p>Kaç günün olduğunu ve güne kaçta başlamak istediğini seç. Planın hazır.</p><span class="step-caption">GÜN GÜN YÜRÜYÜŞ</span></article>
+      </div>
+    </div></section>
+
+    <section class="travel-principles section-pad"><div class="wrap"><div class="section-heading"><p class="eyebrow">ROTANIN MANTIĞI</p><h2>Otelinden başla.<br><em>Kendi temponda keşfet.</em></h2><p>Planın, seçtiğin duraklar ve ayırdığın günler etrafında şekillenir.</p></div><div class="principle-grid"><article><span>01 / BAŞLANGIÇ</span><b>Her gün aynı güvenli nokta.</b><p>Otelini belirle; günlük planın başlangıç ve dönüş noktasını bilsin.</p><i aria-hidden="true">⌂</i></article><article><span>02 / SEÇİMLER</span><b>Yalnızca görmek istediklerin.</b><p>Müze, park, sahil veya meydanları kendi seyahat listenden ekle.</p><i aria-hidden="true">✳</i></article><article><span>03 / TEMPO</span><b>Gün sayısı senin kararın.</b><p>Kaç gün ayıracağını ve güne ne zaman başlayacağını sen belirlersin.</p><i aria-hidden="true">◷</i></article></div><p class="travel-note">QAcrew Travel tanıtım önizlemesidir; rota görseli temsili bir arayüz çizimidir.</p></div></section>
+
+    <section class="route-section section-pad" id="rota"><div class="wrap route-grid"><div class="route-copy"><p class="eyebrow">İSTANBUL · 1. GÜN</p><h2>Şehir bir harita değil,<br><em>yaşanan bir yol.</em></h2><p>Güne otelinden başla. Duraklarını sırayla keşfet. İstersen bir müzede oyalan; rota günün ritmine eşlik etsin.</p><ul class="route-facts"><li><span>01</span><span><b>Başlangıç</b><small>Hotel Suadiye</small></span><span class="fact-icon">⌂</span></li><li><span>02</span><span><b>Keşif durağı</b><small>Topkapı Sarayı Müzesi</small></span><span class="fact-icon teal">▥</span></li><li><span>03</span><span><b>Günün sonu</b><small>Otele dönüş rotası</small></span><span class="fact-icon">↩</span></li></ul><p class="illustration-caption">ÖRNEK ARAYÜZ GÖRSELİ · UYGULAMANIN GERÇEK HARİTASI DEĞİLDİR</p></div>
+      <div class="phone-wrap"><div class="phone"><div class="phone-island"></div><div class="phone-status"><span>9:41</span><span>● ● ▰</span></div><div class="phone-header"><span class="phone-back">‹</span><span><b>İstanbul</b><small>4 gün · Hotel Suadiye çıkışlı</small></span><span class="phone-bookmark">♡</span></div><div class="phone-map"><svg viewBox="0 0 360 270" preserveAspectRatio="xMidYMid slice"><rect width="360" height="270" fill="#e9e3d6"/><path d="M260-10h140v310H305c-36-40-20-91-45-133-23-40-6-108 0-167Z" fill="#bee3df"/><path d="m-5 50 105 32 55-59 50 70 61-18 45 54-42 78-95-22-63 64-76-54-80 31" fill="none" stroke="#fff" stroke-width="7"/><path d="M26 221c35-74 50-128 110-128s48 60 102 22 36 75-18 92-75-8-103 24" fill="none" stroke="#087f7b" stroke-width="5"/><path d="M26 221c35-74 50-128 110-128s48 60 102 22 36 75-18 92-75-8-103 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-dasharray="5 7"/><text x="32" y="115">SULTANAHMET</text><text x="139" y="55">GÜLHANE PARKI</text><text x="251" y="214">KENNEDY CAD.</text><circle cx="136" cy="93" r="14" fill="#0e9f9a" stroke="#fff" stroke-width="4"/><text class="pin-num" x="132" y="98">1</text><rect x="19" y="207" width="28" height="28" rx="9" fill="#1f2a37" stroke="#fff" stroke-width="3"/><text class="hotel-symbol" x="24" y="227">⌂</text></svg><span class="map-credit">Google Maps</span></div><div class="phone-days"><span>1. gün</span><span>2. gün</span><span>3. gün</span></div><div class="phone-summary">1. gün · 1 durak · yürüyüş rotan</div><div class="phone-stop"><span class="stop-time">09:00</span><span class="stop-badge">⌂</span><span><b>Hotel Suadiye</b><small>Güne buradan başla</small></span></div><div class="phone-connector"></div><div class="phone-stop place-stop"><span class="stop-time">11:51</span><span class="stop-number">1</span><span><b>Topkapı Sarayı Müzesi</b><small>Şehrin hikâyelerine uğra</small></span></div><div class="phone-end"><span>↩</span> Sonra oteline dön</div></div><div class="phone-orbit orbit-one"></div><div class="phone-orbit orbit-two"></div><span class="map-sticker">BİR GÜN<br>DAHA AZ<br>ACELE <b>✳</b></span></div>
+    </div></section>
+
+    <section class="promise section-pad"><div class="wrap promise-inner"><span class="promise-mark">✳</span><p class="eyebrow">HER ŞEY YERİNDE, HER ŞEY YOLUNDA</p><h2>Daha çok görmek için değil.<br><em>Daha güzel gezmek için.</em></h2><p>Yürüyüş odaklı günlük rotalar. Otelinden başlayan plan. Kendi seçtiğin duraklar.<br>Şehrin tadını çıkarmaya alan bırakan bir yolculuk.</p><a class="button button-ink" href="#top">Yolculuğa dön <span>↑</span></a><span class="promise-scribble" aria-hidden="true">şehir senin</span></div></section>
+  </main>
+  <footer class="footer wrap"><a class="brand footer-brand" href="#top"><span class="wordmark"><b>QAcrew</b><em>Travel</em></span></a><p>Şehrin sokaklarında görüşürüz. <span>✳</span></p><span class="footer-note">© <span id="year">2026</span> QAcrew Travel · Bir yolculuk fikri</span></footer>
+</body>
+</html>

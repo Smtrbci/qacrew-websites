@@ -1,0 +1,168 @@
+/* Shared accessible day/night toggle and per-portal theme overrides. */
+.portal-theme-toggle{display:inline-grid;place-items:center;flex:none;width:42px;height:42px;margin-left:8px;border:1px solid currentColor;border-radius:10px;background:transparent;color:inherit;font:500 20px/1 Manrope,system-ui,sans-serif;cursor:pointer;opacity:.92}
+.portal-theme-toggle:hover{opacity:1;transform:translateY(-1px)}
+.portal-theme-toggle:focus-visible{outline:3px solid #B8E986;outline-offset:2px}
+@media(max-width:760px){.portal-theme-toggle{width:44px;height:44px;margin-left:0;order:3}.top-inner>.lang,.top-inner>.language-switch{order:2}.top-inner>.menu-toggle{order:4}}
+@media(prefers-reduced-motion:reduce){.portal-theme-toggle{transition:none!important;transform:none!important}}
+/* Studio: Forge type system and green / cream day-night palettes. */
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)){color-scheme:dark;--paper:#f4f3ee;--white:#1b211d;--ink:#edf2ec;--muted:#a9b8ad;--line:#354239;--green:#103d30;--green-deep:#092b22}
+html[data-theme=light]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)){color-scheme:light}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) body{background:#111513;color:var(--ink)}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .top,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .hero,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .templates,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .closing{background:var(--green);color:var(--paper)}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .proof{background:var(--green-deep);color:#d5e0d9}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .outputs,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .about{background:#19231d;color:var(--ink)}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .section-head h2,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .pricing h2,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .faq h2,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .about h2,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .promise h2{color:#edf2ec}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .section-head>div>p,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .pricing>p:last-child,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .about-row>div>p:not(.eyebrow),
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .faq details p,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .promise div>p:last-child{color:#bac6bd}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .steps article,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .output-grid article,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .demo-card,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .pricing-note{background:#1b211d;color:#edf2ec;border-color:#354239}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .steps h3,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .output-grid h3,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .pricing-note b{color:#edf2ec}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .steps p,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .output-grid p{color:#bac6bd}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .demo-head{background:#202a24;color:#edf2ec;border-color:#354239}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .demo-meta{border-color:#354239;color:#bac6bd}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) table th,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) table td{border-color:#354239;color:#edf2ec}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .demo-note{color:#bac6bd}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .travel-card{background:#1b211d;border-color:#354239;color:#edf2ec}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .travel-card>div>p:not(.eyebrow){color:#bac6bd}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .steps article,html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .output-grid article,html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .demo-card{background:var(--white);color:var(--ink);border-color:var(--line)}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .outputs,html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .about{background:#19231d}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .body,html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .log-row ul{color:#c7d2ca}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .language-switch,html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .menu-toggle{background:var(--green);color:var(--paper)}
+/* Forge: light palette while keeping its familiar shape and lime accent. */
+html[data-theme=light]:has(.forge-page){color-scheme:light;--bg:#F3EDE2;--surface:#FFFCF5;--surface-2:#EEE7DA;--line:#D8CDBD;--fg:#211A14;--muted:#70665B;--accent:#B8E986;--accent-ink:#1A0E05;--accent-soft:rgba(184,233,134,.28)}
+html[data-theme=light]:has(.forge-page) .top{background:rgba(243,237,226,.96)}
+html[data-theme=light]:has(.forge-page) .nav a,html[data-theme=light]:has(.forge-page) .mobile-nav a{color:var(--muted)}
+html[data-theme=light]:has(.forge-page) .hero::after{opacity:.24}
+/* Game: AhaPath colors stay in its own palette. */
+html[data-theme=light]:has(.game-page){color-scheme:light;--green:#F4F3EE;--deep:#E9EEE8;--lime:#0E9F9A;--brand:#1F2A37;--paper:#1F2A37;--ink:#F4F3EE;--panel:#fff;--raised:#e9eee8;--line:#d4ddd7;--muted:#596b62;--mint:#0E9F9A;--gold:#E58B36}
+html[data-theme=light]:has(.game-page) html,html[data-theme=light]:has(.game-page) body{background:var(--green);color:var(--paper)}
+html[data-theme=light]:has(.game-page) .top{background:rgba(244,243,238,.96)}
+html[data-theme=light]:has(.game-page) .top nav{background:var(--green)}
+html[data-theme=light]:has(.game-page) .top nav a{color:var(--muted)}
+html[data-theme=light]:has(.game-page) .hero-art .phone{box-shadow:0 20px 60px #12201a22}
+html[data-theme=light]:has(.game-page) .feature-dark,html[data-theme=light]:has(.game-page) .closing{background:#1F2A37;color:#F4F3EE}
+/* Portfolio: green branded hero with readable light surfaces, or dark reading surfaces. */
+html[data-theme=dark]:has(.portfolio-page){color-scheme:dark;--bg:#111513;--surface:#1b211d;--surface-2:#202a24;--line:#354239;--fg:#edf2ec;--muted:#b3c0b7;--green:#103d30;--green-deep:#092b22;--on-green:#f4f3ee;--on-green-muted:#c9d6ce}
+html[data-theme=dark]:has(.portfolio-page) body{background:var(--bg);color:var(--fg)}
+html[data-theme=dark]:has(.portfolio-page) .summary,html[data-theme=dark]:has(.portfolio-page) .case,html[data-theme=dark]:has(.portfolio-page) .skill,html[data-theme=dark]:has(.portfolio-page) .cert-card{background:var(--surface);border-color:var(--line)}
+html[data-theme=dark]:has(.portfolio-page) .work-section{background:#19231d}
+html[data-theme=dark]:has(.portfolio-page) .body,html[data-theme=dark]:has(.portfolio-page) .log-row ul{color:#c7d2ca}
+html[data-theme=light]:has(.portfolio-page){color-scheme:light}
+html[data-theme=dark]:has(.portfolio-page) .hero h1 em{color:#b8e986}
+html[data-theme=dark]:has(.portfolio-page) .hero .intro{color:#d5e0d9}
+@media(max-width:760px){.top-inner>.portal-theme-toggle{order:3}.top-inner>.menu-toggle{order:4}}
+
+/* Studio dark mode: dark reading surfaces, cream text, and green branded bands. */
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .top{border-color:#315e4b}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .templates .template-row p:not(.eyebrow),html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .closing-row>div>p:last-child{color:#d0ddd5}
+html[data-theme=light]:has(.forge-page) .cta-box{color:var(--accent-ink)}
+html[data-theme=light]:has(.forge-page) .cta-box .btn-primary{background:#1A0E05;color:#F3EDE2}
+html[data-theme=light]:has(.forge-page) .cta-box .btn-line{border-color:rgba(26,14,5,.4);color:#1A0E05}
+html[data-theme=light]:has(.forge-page) .pulse-eyebrow,html[data-theme=light]:has(.forge-page) .pulse-eyebrow::before{color:#517b35;background-color:#517b35}
+html[data-theme=light]:has(.forge-page) .pulse-status{background:rgba(81,123,53,.14);color:#416a2d}
+html[data-theme=light]:has(.forge-page) .pulse-cta{background:#B8E986;color:#1A0E05}
+@media(max-width:1180px){html:has(.forge-page) .top .wrap{gap:12px}html:has(.forge-page) .nav{gap:0}html:has(.forge-page) .nav a{padding:8px 7px;font-size:13px;white-space:nowrap;flex:none}html:has(.forge-page) .logo{flex:none;white-space:nowrap}html:has(.forge-page) .top-actions{flex:none;gap:7px}}
+@media(max-width:1100px){html:has(.forge-page) .nav{display:none}html:has(.forge-page) .menu-btn{display:inline-flex}html:has(.forge-page) .top .wrap{justify-content:flex-start}html:has(.forge-page) .top-actions{margin-left:auto}}
+/* Forge primary navigation: keep the header calm and use the existing full menu for secondary links. */
+.forge-page .nav a{white-space:nowrap;flex:none}
+.forge-page .nav a[href="#yorumlar"],.forge-page .nav>.studio-link{display:none}
+/* Keep lime as the action color in Forge light mode; use a deeper green for small text accents. */
+html[data-theme=light]:has(.forge-page) .eyebrow,html[data-theme=light]:has(.forge-page) .pulse-eyebrow{color:#456C31}
+html[data-theme=light]:has(.forge-page) .eyebrow::before,html[data-theme=light]:has(.forge-page) .pulse-eyebrow::before{background:#6B934D}
+html[data-theme=light]:has(.forge-page) .hero h1 em,html[data-theme=light]:has(.forge-page) .logo span em{color:#527C37}
+html[data-theme=light]:has(.forge-page) .status-tag b{color:#416A2D}
+html[data-theme=light]:has(.forge-page) .step-no,html[data-theme=light]:has(.forge-page) .output-grid article>span{color:#416A2D}
+html[data-theme=light]:has(.forge-page) .logo svg rect,html[data-theme=light]:has(.forge-page) .logo svg path{stroke:#527C37}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .forge-feature,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .game-feature,
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .travel-feature{background:#111513}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .travel-card{background:#1b211d;border-color:#354239;color:#edf2ec}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .travel-card h2{color:#edf2ec}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .travel-card .eyebrow{color:#b8e986}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .travel-card p:not(.eyebrow){color:#bac6bd}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .travel-card-art{background:#202a24;border-color:#354239;color:#edf2ec}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .travel-card-art span,html[data-theme=dark]:not(:has(.game-page)) .travel-card-art b{border-color:#b8e986;color:#b8e986}
+html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .travel-card-art small{color:#bac6bd}
+
+/* Forge light mode: improve raw-input contrast and make the Studio link easy to find. */
+html[data-theme=light]:has(.forge-page) .raw{color:#4C443B}
+html[data-theme=light]:has(.forge-page) .raw mark{color:#805900;text-decoration-color:#B28B32}
+html[data-theme=light]:has(.forge-page) .pane-before{background:#E9E1D3}
+html[data-theme=light]:has(.forge-page) .pane-before .pane-label{background:#D8CDBD;color:#554A3F}
+html[data-theme=light]:has(.forge-page) .pane-after .pane-label{background:#E2EED5;color:#416A2D}
+html[data-theme=light]:has(.forge-page) .cta-box .btn-dark{background:#1A0E05;color:#F3EDE2}
+html[data-theme=light]:has(.forge-page) .studio-top-link{color:#416A2D}
+.studio-top-link{display:inline-flex;align-items:center;min-height:42px;padding-inline:6px;color:var(--accent);font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap}
+.studio-top-link:hover{color:var(--fg)}
+@media(max-width:760px){.studio-top-link{min-height:44px;font-size:12px}}
+/* Studio's QAcrew menu groups links to the Forge, Game, and Travel portals. */
+.products-menu{position:relative;flex:none;color:inherit}
+.products-menu>summary{display:flex;align-items:center;gap:8px;min-height:44px;padding:9px 12px;list-style:none;cursor:pointer;white-space:nowrap;font-size:13px;font-weight:600}
+.products-menu>summary::-webkit-details-marker{display:none}
+.products-menu>summary::after{content:"⌄";font-size:14px;color:#B8E986}
+.products-menu[open]>summary::after{content:"⌃"}
+.products-dropdown{position:absolute;z-index:70;top:calc(100% + 5px);left:0;display:none;min-width:190px;padding:6px;border:1px solid #315e4b;border-radius:10px;background:#103d30;box-shadow:0 14px 34px #061e1840}
+.products-menu[open] .products-dropdown{display:flex;flex-direction:column}
+.products-dropdown a{min-height:44px;padding:10px 12px;border-radius:6px;color:#F4F3EE;text-decoration:none;font-size:13px}
+.products-dropdown a:hover,.products-dropdown a:focus-visible{background:#1e5943;color:#B8E986}
+@media(max-width:760px){.products-menu{width:100%}.products-menu>summary{min-height:52px;padding:12px 10px;border-bottom:1px solid var(--green-line);font-size:15px}.products-dropdown{position:static;min-width:0;padding:2px 0 8px 14px;border:0;border-radius:0;background:transparent;box-shadow:none}.products-dropdown a{min-height:48px;padding:12px 14px;border-bottom:1px solid var(--green-line);font-size:15px}}
+/* Keep the AhaPath wordmark and its header neutral in both themes. */
+.game-page .top{background:#F4F3EE!important;color:#1F2A37;border-color:#D4DDD7}
+.game-page .top nav{background:#F4F3EE!important}
+.game-page .top nav a{color:#44534C!important}
+.game-page .top nav a:hover{color:#1F2A37!important}
+.game-page .brand .wordmark b,.game-page .brand .wordmark em{color:#1F2A37!important}
+.game-page .game-header-actions .menu-toggle{border-color:#BFC9C1}
+.game-page .game-header-actions .menu-toggle span{background:#1F2A37}
+/* The puzzle walkthrough belongs to Game's light theme, not its dark sample surface. */
+html[data-theme=light]:has(.game-page) .play-loop{background:#F4F3EE;color:#1F2A37;border-color:#D4DDD7}
+html[data-theme=light]:has(.game-page) .play-loop h2,html[data-theme=light]:has(.game-page) .loop-copy{color:#1F2A37}
+html[data-theme=light]:has(.game-page) .play-loop .loop-copy>p{color:#596B62}
+html[data-theme=light]:has(.game-page) .play-loop .index{color:#596B62}
+html[data-theme=light]:has(.game-page) .loop-steps>div{color:#44534C}
+html[data-theme=light]:has(.game-page) .loop-steps>div>b{background:#fff;color:#087F7B}
+html[data-theme=light]:has(.game-page) .puzzle-card{background:#FFFCF5;color:#1F2A37;border-color:#D4DDD7}
+html[data-theme=light]:has(.game-page) .puzzle-card .puzzle-top span,html[data-theme=light]:has(.game-page) .puzzle-card>small{color:#596B62}
+html[data-theme=light]:has(.game-page) .puzzle-card .puzzle-prompt{color:#1F2A37}
+html[data-theme=light]:has(.game-page) .features{background:#F4F3EE}
+html[data-theme=light]:has(.game-page) .feature-dark{background:#FFFCF5;color:#1F2A37;border-color:#D4DDD7}
+html[data-theme=light]:has(.game-page) .feature-dark>small,html[data-theme=light]:has(.game-page) .feature-dark p,html[data-theme=light]:has(.game-page) .feature-dark label,html[data-theme=light]:has(.game-page) .feature-dark .level-line{color:#596B62}
+html[data-theme=light]:has(.game-page) .closing{background:#E9EEE8;color:#1F2A37}
+html[data-theme=light]:has(.game-page) .closing-inner>div:nth-child(2)>p{color:#596B62}
+/* Unify the remaining light surfaces so Game never leaves dark islands in day mode. */
+html[data-theme=light]:has(.game-page) .play-loop{background:#F4F3EE;color:#1F2A37}
+html[data-theme=light]:has(.game-page) .puzzle-sequence{background:#EEEFEA;border-color:#D4DDD7}
+html[data-theme=light]:has(.game-page) .puzzle-sequence span{background:#FFFCF5;color:#1F2A37}
+html[data-theme=light]:has(.game-page) .puzzle-sequence>b{background:#E3F4EE;color:#087F7B;border-color:#8BCFC5}
+html[data-theme=light]:has(.game-page) .puzzle-answers span{background:#FFFCF5;color:#1F2A37;border-color:#D4DDD7}
+html[data-theme=light]:has(.game-page) .puzzle-answers b{background:#E3F4EE;color:#087F7B;border-color:#8BCFC5}
+html[data-theme=light]:has(.game-page) .journey{background:#F4F3EE;color:#1F2A37}
+html[data-theme=light]:has(.game-page) .journey-stop{background:#FFFCF5;color:#1F2A37;border-color:#D4DDD7}
+html[data-theme=light]:has(.game-page) .journey-stop.current{background:#E9F1E8;color:#1F2A37;border-color:#B8CDBA}
+html[data-theme=light]:has(.game-page) .journey-note{background:#FFFCF5;color:#596B62;border-color:#D4DDD7}
+html[data-theme=light]:has(.game-page) .language-band{background:#F4F3EE;color:#1F2A37}
+html[data-theme=light]:has(.game-page) .language-list span{background:#FFFCF5;color:#1F2A37}
+html[data-theme=light]:has(.game-page) .language-list span:nth-child(3n){color:#087F7B}
+/* Forge's demo priority chips use one green family on the warm light canvas. */
+html[data-theme=light]:has(.forge-page) .p-high,
+html[data-theme=light]:has(.forge-page) .p-mid,
+html[data-theme=light]:has(.forge-page) .p-low{background:#E5EEDB;color:#416A2D}
+html[data-theme=light]:has(.forge-page) .chip[aria-pressed=true]{background:#E5EEDB;border-color:#98BE70;color:#355923}
+html[data-theme=light]:has(.forge-page) .chip[aria-pressed=true] code{color:#355923;opacity:1}

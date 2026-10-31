@@ -22,3 +22,11 @@
   body.menu-open{overflow:hidden}
 }
 @media(prefers-reduced-motion:reduce){.menu-toggle span{transition:none}}
+
+/* QAcrew Studio uses the same type system and scale as Forge. */
+:root{--sans:"Manrope","Avenir Next",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace;--serif:"Bricolage Grotesque","Avenir Next",system-ui,sans-serif}
+body{font-family:var(--sans);font-size:16px;line-height:1.6}
+h1,h2,h3{font-family:"Bricolage Grotesque","Avenir Next",system-ui,sans-serif;letter-spacing:-.035em}
+.hero h1{font-size:clamp(44px,7vw,86px);letter-spacing:-.04em}
+.section-head h2,.promise h2,.template-row h2,.pricing h2,.about h2,.faq h2,.closing h2{font-size:clamp(34px,4.6vw,56px)}
+.hero .intro,.section-head>div>p,.steps p,.output-grid p,.pricing>p:last-child,.about-row>div>p:not(.eyebrow){font-size:15px;line-height:1.75}
