@@ -119,4 +119,8 @@
   mn.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){setMenuOpen(false)})});
   document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!mn.hidden)setMenuOpen(false)});
   window.addEventListener('resize',function(){if(window.innerWidth>900&&!mn.hidden)setMenuOpen(false)});
+  var comingSoon=document.getElementById('comingSoonDialog');
+  document.querySelectorAll('[data-coming-soon]').forEach(function(link){link.addEventListener('click',function(event){event.preventDefault();if(comingSoon&&typeof comingSoon.showModal==='function')comingSoon.showModal()})});
+  var closeComingSoon=document.querySelector('[data-close-coming-soon]');
+  if(closeComingSoon&&comingSoon)closeComingSoon.addEventListener('click',function(){comingSoon.close()});
 })();
