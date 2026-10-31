@@ -166,3 +166,24 @@ html[data-theme=light]:has(.forge-page) .p-mid,
 html[data-theme=light]:has(.forge-page) .p-low{background:#E5EEDB;color:#416A2D}
 html[data-theme=light]:has(.forge-page) .chip[aria-pressed=true]{background:#E5EEDB;border-color:#98BE70;color:#355923}
 html[data-theme=light]:has(.forge-page) .chip[aria-pressed=true] code{color:#355923;opacity:1}
+
+/* Studio dark mode: keep surfaces to the menu green and the near-black page base. */
+html[data-theme=dark]:has(.about-row){--green:#103d30}
+html[data-theme=dark]:has(.about-row) .about,
+html[data-theme=dark]:has(.about-row) .outputs,
+html[data-theme=dark]:has(.about-row) .steps article,
+html[data-theme=dark]:has(.about-row) .output-grid article,
+html[data-theme=dark]:has(.about-row) .demo-card,
+html[data-theme=dark]:has(.about-row) .demo-head,
+html[data-theme=dark]:has(.about-row) .pricing-note,
+html[data-theme=dark]:has(.about-row) .travel-card{background:#103d30;color:#edf2ec;border-color:#315e4b}
+html[data-theme=dark]:has(.about-row) .proof,
+html[data-theme=dark]:has(.about-row) .footer{background:#111513}
+html:has(.about-row) .eyebrow{font-size:13px}
+html:has(.about-row) .proof-inner{font-size:12px}
+html:has(.about-row) .demo-meta{font-size:13px}
+html:has(.about-row) .demo-note{font-size:12px}
+html:has(.about-row) .output-grid article>span{font-size:11px}
+html:has(.about-row) .step-no{font-size:13px}
+html:has(.about-row) .footer{font-size:14px}
+@media(max-width:760px){html:has(.about-row) .proof-inner{font-size:11px}}
