@@ -378,3 +378,9 @@ html[data-theme=light]:has(.game-page) .language-list span:nth-child(3n){color:#
 html:has(.game-page) .intro>.index{font-size:14px;gap:13px}
 html:has(.game-page) .intro>.index>b{font-size:16px}
 @media(max-width:700px){html:has(.game-page) .intro>.index{font-size:13px}html:has(.game-page) .intro>.index>b{font-size:15px}}
+
+/* Game section labels: consistent 18px type across the portal. */
+html:has(.game-page) .index{font-size:18px}
+html:has(.game-page) .index>b{font-size:18px}
+html:has(.game-page) .intro>.index{font-size:18px}
+html:has(.game-page) .intro>.index>b{font-size:18px}
