@@ -148,3 +148,5 @@ footer{background:#08090c;color:var(--muted)}.footer-inner{min-height:76px}.foot
 @keyframes constellation-flow{to{stroke-dashoffset:-88}}
 @media(max-width:700px){.hero-route .logic-tile rect{stroke-width:2}.hero-route .logic-tile text{font-size:21px}.phone{animation-duration:7s}}
 @media(prefers-reduced-motion:reduce){.orbit-a,.orbit-b,.phone,.hero-route .logic-tile,.hero-route .constellation,.hero-route .route-trace,.hero-route circle{animation:none!important}.hero-route .route-trace{stroke-dasharray:12 18}}
+
+.legal-links{display:flex;align-items:center;gap:14px}.legal-links a{color:var(--muted);font:500 10px var(--mono);text-decoration:none}.legal-links a:hover{color:var(--mint)}@media(max-width:700px){.legal-links{flex:1 0 100%;order:3;flex-wrap:wrap}.legal-links a{font-size:9px}}
