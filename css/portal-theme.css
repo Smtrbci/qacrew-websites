@@ -218,3 +218,11 @@ html:has(.about-row) .hero::before{content:"";position:absolute;z-index:-1;top:-
 html[data-theme=dark]:has(.about-row) .demo-card,
 html[data-theme=dark]:has(.about-row) .demo-head{background:#111513!important}
 @media(max-width:760px){html:has(.about-row) .hero::before{top:-8%;right:-34%;width:78vw;opacity:.7}}
+/* Make output descriptions visibly more legible and bring the hero rings to life. */
+html:has(.about-row) .section-head>div>p{font-size:17px!important;line-height:1.7}
+html:has(.about-row) .output-grid article>span{font-size:12px!important}
+html:has(.about-row) .output-grid h3{font-size:20px!important}
+html:has(.about-row) .output-grid p{font-size:17px!important;line-height:1.7}
+html:has(.about-row) .hero::before{animation:studio-hero-orbit 26s ease-in-out infinite alternate}
+@keyframes studio-hero-orbit{0%{transform:translate3d(0,0,0) rotate(-3deg)}100%{transform:translate3d(-16px,12px,0) rotate(5deg)}}
+@media(prefers-reduced-motion:reduce){html:has(.about-row) .hero::before{animation:none}}
