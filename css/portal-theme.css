@@ -307,3 +307,6 @@ html[data-theme=light]:has(.forge-page) .raw mark{text-decoration-color:#B8E986!
 html[data-theme=light]:has(.forge-page) .coming-soon-dialog::backdrop{background:#F3EDE3;backdrop-filter:none}
 html[data-theme=light]:has(.forge-page) .hero-node{filter:none!important}
 @keyframes node-breathe-light{0%,100%{fill:#F3EDE3;filter:none}50%{fill:#B8E986;filter:none}}
+
+html[data-theme=light]:has(.forge-page) .pulse-eyebrow{background-color:#F3EDE3!important;color:#000!important}
+html[data-theme=light]:has(.forge-page) .pulse-eyebrow::before{background:#F3EDE3!important}
