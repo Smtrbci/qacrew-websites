@@ -73,9 +73,21 @@ p{margin:0}
 @media (max-width:480px){.top-actions{gap:7px}.top-actions>.btn{display:none}.language-switch button{min-width:30px;min-height:32px;padding:0 6px}}
 
 /* Hero */
-.hero{padding-block:96px 40px;position:relative}
+.hero{padding-block:96px 40px;position:relative;overflow:hidden;isolation:isolate}
 .hero::after{content:"";position:absolute;inset:-120px 0 auto;height:560px;background:radial-gradient(ellipse 50% 60% at 50% 0%,rgba(184,233,134,.13),transparent 70%);pointer-events:none;z-index:-1}
-.hero-inner{display:flex;flex-direction:column;align-items:flex-start;gap:28px;max-width:900px}
+.hero-motion{position:absolute;z-index:0;inset:0;width:100%;height:100%;pointer-events:none;mask-image:linear-gradient(90deg,transparent 27%,rgba(0,0,0,.3) 45%,#000 78%);overflow:visible}
+.hero-grid-fill{opacity:.27}
+.hero-routes{opacity:.78}
+.hero-route{stroke-dasharray:8 14;animation:route-flow 13s linear infinite}
+.hero-route--b{animation-duration:17s;animation-direction:reverse}
+.hero-route--c{animation-duration:21s}
+.hero-route--d{animation-duration:15s;animation-direction:reverse}
+.hero-node{fill:#0D0C0B;stroke:#B8E986;stroke-width:2;filter:drop-shadow(0 0 8px rgba(184,233,134,.32));animation:node-breathe 4s ease-in-out infinite}
+.hero-node--b{animation-delay:.8s}.hero-node--c{animation-delay:1.6s}.hero-node--d{animation-delay:2.4s}.hero-node--e{animation-delay:3.2s}
+.hero-check{fill:none;stroke:#B8E986;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:32;stroke-dashoffset:32;animation:check-draw 4s ease-in-out infinite}
+.hero-check--b{animation-delay:.8s}.hero-check--c{animation-delay:1.6s}.hero-check--d{animation-delay:2.4s}
+.hero-scan{opacity:.42;animation:scan-pass 7s ease-in-out infinite}
+.hero-inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;gap:28px;max-width:900px}
 .status-tag{display:inline-flex;align-items:center;gap:10px;font-family:var(--f-mono);font-size:13px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:6px 14px 6px 8px;background:var(--surface)}
 .status-tag b{background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:2px 10px;font-weight:600}
 .hero h1{font-size:clamp(44px,7.4vw,92px);font-weight:800;letter-spacing:-.04em;line-height:.98}
@@ -233,6 +245,10 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;color:var(--mute
 
 /* Load motion */
 @media (prefers-reduced-motion:no-preference){
+  @keyframes route-flow{to{stroke-dashoffset:-176}}
+  @keyframes node-breathe{0%,100%{fill:#0D0C0B;filter:drop-shadow(0 0 3px rgba(184,233,134,.16))}50%{fill:#23351d;filter:drop-shadow(0 0 13px rgba(184,233,134,.62))}}
+  @keyframes check-draw{0%,15%{stroke-dashoffset:32;opacity:.25}38%,80%{stroke-dashoffset:0;opacity:1}100%{stroke-dashoffset:0;opacity:.45}}
+  @keyframes scan-pass{0%,12%{transform:translateX(-110px);opacity:0}35%{opacity:.6}88%,100%{transform:translateX(630px);opacity:0}}
   .hero-inner > *{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
   .hero-inner > *:nth-child(2){animation-delay:.06s}
   .hero-inner > *:nth-child(3){animation-delay:.12s}
@@ -241,8 +257,8 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;color:var(--mute
   .demo-frame{animation:rise .9s .3s cubic-bezier(.2,.7,.2,1) both}
   @keyframes rise{from{transform:translateY(14px)}to{transform:none}}
 }
-@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
-@media (max-width:560px){section{padding-block:80px}.hero{padding-block:64px 32px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}.hero-route{stroke-dasharray:none}.hero-check{stroke-dashoffset:0;opacity:1}.hero-scan{display:none}}
+@media (max-width:560px){section{padding-block:80px}.hero{padding-block:64px 32px}.hero-motion{left:15%;width:130%;opacity:.62;mask-image:linear-gradient(90deg,transparent 14%,#000 67%)}}
 
 /* Accurate preview state: plans and payment are not available yet. */
 .logo em{font-style:normal;color:var(--accent)}

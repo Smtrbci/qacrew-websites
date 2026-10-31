@@ -11,7 +11,7 @@
 <link rel="icon" href="assets/favicon.svg?v=green-1" type="image/svg+xml">
 <link rel="preload" href="assets/fonts/manrope-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/fonts.css">
-<link rel="stylesheet" href="css/site.css?v=demo-dialog-green-labels-1">
+<link rel="stylesheet" href="css/site.css?v=qa-flow-hero-motion-1">
   <link rel="stylesheet" href="/css/portal-theme.css">
 </head>
 <body class="forge-page">
@@ -58,6 +58,28 @@
 
 <main id="ust">
   <section class="hero">
+    <svg class="hero-motion" viewBox="0 0 1440 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+      <defs>
+        <pattern id="qaGrid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="#B8E986" stroke-opacity=".13" stroke-width="1"/></pattern>
+        <linearGradient id="qaFade" x1="0" x2="1"><stop offset="0" stop-color="#B8E986" stop-opacity="0"/><stop offset=".48" stop-color="#B8E986" stop-opacity=".62"/><stop offset="1" stop-color="#B8E986" stop-opacity=".08"/></linearGradient>
+        <linearGradient id="qaBeam" x1="0" x2="1"><stop stop-color="#B8E986" stop-opacity="0"/><stop offset=".5" stop-color="#B8E986" stop-opacity=".8"/><stop offset="1" stop-color="#B8E986" stop-opacity="0"/></linearGradient>
+      </defs>
+      <rect class="hero-grid-fill" width="1440" height="700" fill="url(#qaGrid)"/>
+      <g class="hero-routes" fill="none" stroke="url(#qaFade)" stroke-width="2">
+        <path class="hero-route hero-route--a" d="M690 100h130v100h110v-58h140l75 75h125"/>
+        <path class="hero-route hero-route--b" d="M720 530h180V390h120v90h125l70-70h95"/>
+        <path class="hero-route hero-route--c" d="M1000 100v90h-72v60h-96v130h112v92h-70v90h-150"/>
+        <path class="hero-route hero-route--d" d="M1370 280h-120v90h-90v90h-90"/>
+      </g>
+      <g class="hero-nodes">
+        <rect class="hero-node hero-node--a" x="805" y="85" width="30" height="30" rx="4"/><path class="hero-check hero-check--a" d="m813 100 6 6 10-12"/>
+        <rect class="hero-node hero-node--b" x="1055" y="127" width="30" height="30" rx="4"/><path class="hero-check hero-check--b" d="m1063 142 6 6 10-12"/>
+        <rect class="hero-node hero-node--c" x="885" y="515" width="30" height="30" rx="4"/><path class="hero-check hero-check--c" d="m893 530 6 6 10-12"/>
+        <rect class="hero-node hero-node--d" x="1135" y="465" width="30" height="30" rx="4"/><path class="hero-check hero-check--d" d="m1143 480 6 6 10-12"/>
+        <rect class="hero-node hero-node--e" x="1205" y="342" width="22" height="22" rx="3"/>
+      </g>
+      <path class="hero-scan" d="M760 245h620" stroke="url(#qaBeam)" stroke-width="2"/>
+    </svg>
     <div class="wrap">
       <div class="hero-inner">
         <span class="status-tag"><b>DEMO</b> QAcrew Studio ürünü · Yakında yayında</span>
