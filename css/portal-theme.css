@@ -208,3 +208,13 @@ html[data-theme=dark]:has(.about-row) .game-card,
 html[data-theme=dark]:has(.about-row) .game-card-art{background:#103d30!important}
 html[data-theme=dark]:has(.about-row) .about .eyebrow,
 html[data-theme=dark]:has(.about-row) .about .text-link{color:#b8e986}
+
+/* More readable QA-output summaries and a quiet geometric hero texture. */
+html:has(.about-row) .section-head>div>p{font-size:17px}
+html:has(.about-row) .output-grid h3{font-size:20px}
+html:has(.about-row) .output-grid p{font-size:15px}
+html:has(.about-row) .hero{position:relative;isolation:isolate;overflow:hidden;background-color:#103d30}
+html:has(.about-row) .hero::before{content:"";position:absolute;z-index:-1;top:-36%;right:-9%;width:min(58vw,700px);aspect-ratio:1;border:1px solid rgba(184,233,134,.24);border-radius:50%;box-shadow:0 0 0 28px rgba(184,233,134,.09),0 0 0 56px rgba(184,233,134,.07),0 0 0 84px rgba(184,233,134,.045);pointer-events:none}
+html[data-theme=dark]:has(.about-row) .demo-card,
+html[data-theme=dark]:has(.about-row) .demo-head{background:#111513!important}
+@media(max-width:760px){html:has(.about-row) .hero::before{top:-8%;right:-34%;width:78vw;opacity:.7}}
