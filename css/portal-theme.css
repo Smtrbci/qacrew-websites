@@ -249,40 +249,61 @@ html[data-theme=dark]:has(.about-row) .output-grid article>span,
 html[data-theme=dark]:has(.about-row) .step-no{color:#b8e986!important}
 
 
-/* Forge light theme: a restrained beige + QA green palette. */
-html[data-theme=light]:has(.forge-page){--bg:#F3EDE2;--surface:#FFFCF5;--surface-2:#EEE7DA;--line:#D8CDBD;--fg:#355923;--muted:#526B43;--accent:#B8E986;--accent-ink:#27421F;--accent-soft:rgba(184,233,134,.28)}
-html[data-theme=light]:has(.forge-page) .hero h1 em,
-html[data-theme=light]:has(.forge-page) .logo span em,
-html[data-theme=light]:has(.forge-page) .eyebrow,
-html[data-theme=light]:has(.forge-page) .step-num,
-html[data-theme=light]:has(.forge-page) .step .mini,
-html[data-theme=light]:has(.forge-page) .output-grid article>span,
-html[data-theme=light]:has(.forge-page) .sample,
-html[data-theme=light]:has(.forge-page) .pulse-eyebrow,
-html[data-theme=light]:has(.forge-page) .studio-top-link{color:#355923}
-html[data-theme=light]:has(.forge-page) .eyebrow::before,
-html[data-theme=light]:has(.forge-page) .pulse-eyebrow::before{background:#355923}
-html[data-theme=light]:has(.forge-page) .logo svg rect,
-html[data-theme=light]:has(.forge-page) .logo svg path{stroke:#B8E986}
-html[data-theme=light]:has(.forge-page) .step .mini{border-color:#D8CDBD}
-html[data-theme=light]:has(.forge-page) .sample{border-color:rgba(53,89,35,.38)}
-html[data-theme=light]:has(.forge-page) .hero-grid-fill{opacity:.48}
-html[data-theme=light]:has(.forge-page) #qaGrid path{stroke:#B8E986;stroke-opacity:.62}
-html[data-theme=light]:has(.forge-page) #qaFade stop[offset="0"],
-html[data-theme=light]:has(.forge-page) #qaFade stop[offset=".48"],
-html[data-theme=light]:has(.forge-page) #qaFade stop[offset="1"]{stop-color:#355923}
-html[data-theme=light]:has(.forge-page) #qaFade stop[offset="0"]{stop-opacity:.12}
-html[data-theme=light]:has(.forge-page) #qaFade stop[offset=".48"]{stop-opacity:.78}
-html[data-theme=light]:has(.forge-page) #qaFade stop[offset="1"]{stop-opacity:.2}
-html[data-theme=light]:has(.forge-page) #qaBeam stop[offset=".5"]{stop-color:#B8E986}
-html[data-theme=light]:has(.forge-page) .hero-node{fill:#F3EDE2;stroke:#B8E986}
-html[data-theme=light]:has(.forge-page) .hero-check{stroke:#355923}
-html[data-theme=light]:has(.forge-page) .raw mark{color:#355923;text-decoration-color:#B8E986}
-html[data-theme=light]:has(.forge-page) .pane-before .pane-label{color:#355923}
-html[data-theme=light]:has(.forge-page) .pane-after .pane-label{color:#355923}
-html[data-theme=light]:has(.forge-page) .cta-box .btn-dark{background:#355923;color:#F3EDE2}
-html[data-theme=light]:has(.forge-page) .btn-dark{background:#355923;color:#F3EDE2}
-html[data-theme=light]:has(.forge-page) .status-tag b{color:#355923}
+/* Forge light mode uses only the requested beige, brand green, and black text. */
+html[data-theme=light]:has(.forge-page){color-scheme:light;--bg:#F3EDE3;--surface:#F3EDE3;--surface-2:#F3EDE3;--line:#B8E986;--fg:#000;--muted:#000;--accent:#B8E986;--accent-ink:#000;--accent-soft:#B8E986;--pass:#B8E986;--fail:#B8E986;--warn:#B8E986}
+html[data-theme=light]:has(.forge-page) body,
+html[data-theme=light]:has(.forge-page) body::before,
+html[data-theme=light]:has(.forge-page) .top,
+html[data-theme=light]:has(.forge-page) .mobile-nav,
+html[data-theme=light]:has(.forge-page) section,
+html[data-theme=light]:has(.forge-page) .demo,
+html[data-theme=light]:has(.forge-page) .demo-frame,
+html[data-theme=light]:has(.forge-page) .demo-bar,
+html[data-theme=light]:has(.forge-page) .pane-before,
+html[data-theme=light]:has(.forge-page) .pane-after,
+html[data-theme=light]:has(.forge-page) .step,
+html[data-theme=light]:has(.forge-page) .g-item,
+html[data-theme=light]:has(.forge-page) .plan,
+html[data-theme=light]:has(.forge-page) .pricing-note,
+html[data-theme=light]:has(.forge-page) .quote,
+html[data-theme=light]:has(.forge-page) .faq,
+html[data-theme=light]:has(.forge-page) .coming-soon-dialog,
+html[data-theme=light]:has(.forge-page) .pulse-roadmap,
+html[data-theme=light]:has(.forge-page) .pulse-report,
+html[data-theme=light]:has(.forge-page) .pulse-log{background:#F3EDE3!important}
+html[data-theme=light]:has(.forge-page) .cta-box{background:#B8E986!important;color:#000!important}
+html[data-theme=light]:has(.forge-page) .forge-page *{color:#000!important;border-color:#B8E986!important;box-shadow:none!important}
+html[data-theme=light]:has(.forge-page) .hero::after{background:none!important}
+html[data-theme=light]:has(.forge-page) .btn-primary,
+html[data-theme=light]:has(.forge-page) .language-switch button[aria-pressed=true],
+html[data-theme=light]:has(.forge-page) .status-tag b,
 html[data-theme=light]:has(.forge-page) .p-high,
 html[data-theme=light]:has(.forge-page) .p-mid,
-html[data-theme=light]:has(.forge-page) .p-low{background:rgba(184,233,134,.28);color:#355923}
+html[data-theme=light]:has(.forge-page) .p-low,
+html[data-theme=light]:has(.forge-page) .pulse-status,
+html[data-theme=light]:has(.forge-page) .badge{background:#B8E986!important;color:#000!important}
+html[data-theme=light]:has(.forge-page) .btn-dark,
+html[data-theme=light]:has(.forge-page) .cta-box .btn-dark{background:#B8E986!important;color:#000!important}
+html[data-theme=light]:has(.forge-page) .logo svg rect,
+html[data-theme=light]:has(.forge-page) .logo svg path,
+html[data-theme=light]:has(.forge-page) .hero-check{stroke:#B8E986!important}
+html[data-theme=light]:has(.forge-page) .hero-grid-fill{opacity:1}
+html[data-theme=light]:has(.forge-page) #qaGrid path{stroke:#B8E986;stroke-opacity:1}
+html[data-theme=light]:has(.forge-page) #qaFade stop,
+html[data-theme=light]:has(.forge-page) #qaBeam stop{stop-color:#B8E986;stop-opacity:1}
+html[data-theme=light]:has(.forge-page) .hero-node{fill:#F3EDE3;stroke:#B8E986;filter:none}
+html[data-theme=light]:has(.forge-page) .sample{border-color:#B8E986}
+
+html[data-theme=light]:has(.forge-page) .btn-primary:hover,
+html[data-theme=light]:has(.forge-page) .btn-dark:hover,
+html[data-theme=light]:has(.forge-page) .cta-box .btn-dark:hover,
+html[data-theme=light]:has(.forge-page) .pulse-cta:hover{background:#B8E986!important;filter:none!important}
+html[data-theme=light]:has(.forge-page) .plan.pop{background:#F3EDE3!important}
+html[data-theme=light]:has(.forge-page) .d-pass,
+html[data-theme=light]:has(.forge-page) .d-fail,
+html[data-theme=light]:has(.forge-page) .d-warn,
+html[data-theme=light]:has(.forge-page) .d-acc{background:#B8E986!important}
+html[data-theme=light]:has(.forge-page) .raw mark{text-decoration-color:#B8E986!important}
+html[data-theme=light]:has(.forge-page) .coming-soon-dialog::backdrop{background:#F3EDE3;backdrop-filter:none}
+html[data-theme=light]:has(.forge-page) .hero-node{filter:none!important}
+@keyframes node-breathe-light{0%,100%{fill:#F3EDE3;filter:none}50%{fill:#B8E986;filter:none}}
