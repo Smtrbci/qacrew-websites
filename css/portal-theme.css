@@ -247,3 +247,42 @@ html:has(.about-row) .step-no{font-size:15px!important}
 html[data-theme=dark]:has(.about-row) .outputs .section-head>.eyebrow,
 html[data-theme=dark]:has(.about-row) .output-grid article>span,
 html[data-theme=dark]:has(.about-row) .step-no{color:#b8e986!important}
+
+
+/* Forge light theme: a restrained beige + QA green palette. */
+html[data-theme=light]:has(.forge-page){--bg:#F3EDE2;--surface:#FFFCF5;--surface-2:#EEE7DA;--line:#D8CDBD;--fg:#355923;--muted:#526B43;--accent:#B8E986;--accent-ink:#27421F;--accent-soft:rgba(184,233,134,.28)}
+html[data-theme=light]:has(.forge-page) .hero h1 em,
+html[data-theme=light]:has(.forge-page) .logo span em,
+html[data-theme=light]:has(.forge-page) .eyebrow,
+html[data-theme=light]:has(.forge-page) .step-num,
+html[data-theme=light]:has(.forge-page) .step .mini,
+html[data-theme=light]:has(.forge-page) .output-grid article>span,
+html[data-theme=light]:has(.forge-page) .sample,
+html[data-theme=light]:has(.forge-page) .pulse-eyebrow,
+html[data-theme=light]:has(.forge-page) .studio-top-link{color:#355923}
+html[data-theme=light]:has(.forge-page) .eyebrow::before,
+html[data-theme=light]:has(.forge-page) .pulse-eyebrow::before{background:#355923}
+html[data-theme=light]:has(.forge-page) .logo svg rect,
+html[data-theme=light]:has(.forge-page) .logo svg path{stroke:#B8E986}
+html[data-theme=light]:has(.forge-page) .step .mini{border-color:#D8CDBD}
+html[data-theme=light]:has(.forge-page) .sample{border-color:rgba(53,89,35,.38)}
+html[data-theme=light]:has(.forge-page) .hero-grid-fill{opacity:.48}
+html[data-theme=light]:has(.forge-page) #qaGrid path{stroke:#B8E986;stroke-opacity:.62}
+html[data-theme=light]:has(.forge-page) #qaFade stop[offset="0"],
+html[data-theme=light]:has(.forge-page) #qaFade stop[offset=".48"],
+html[data-theme=light]:has(.forge-page) #qaFade stop[offset="1"]{stop-color:#355923}
+html[data-theme=light]:has(.forge-page) #qaFade stop[offset="0"]{stop-opacity:.12}
+html[data-theme=light]:has(.forge-page) #qaFade stop[offset=".48"]{stop-opacity:.78}
+html[data-theme=light]:has(.forge-page) #qaFade stop[offset="1"]{stop-opacity:.2}
+html[data-theme=light]:has(.forge-page) #qaBeam stop[offset=".5"]{stop-color:#B8E986}
+html[data-theme=light]:has(.forge-page) .hero-node{fill:#F3EDE2;stroke:#B8E986}
+html[data-theme=light]:has(.forge-page) .hero-check{stroke:#355923}
+html[data-theme=light]:has(.forge-page) .raw mark{color:#355923;text-decoration-color:#B8E986}
+html[data-theme=light]:has(.forge-page) .pane-before .pane-label{color:#355923}
+html[data-theme=light]:has(.forge-page) .pane-after .pane-label{color:#355923}
+html[data-theme=light]:has(.forge-page) .cta-box .btn-dark{background:#355923;color:#F3EDE2}
+html[data-theme=light]:has(.forge-page) .btn-dark{background:#355923;color:#F3EDE2}
+html[data-theme=light]:has(.forge-page) .status-tag b{color:#355923}
+html[data-theme=light]:has(.forge-page) .p-high,
+html[data-theme=light]:has(.forge-page) .p-mid,
+html[data-theme=light]:has(.forge-page) .p-low{background:rgba(184,233,134,.28);color:#355923}
