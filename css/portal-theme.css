@@ -432,3 +432,14 @@ html[data-theme=light]:has(body.game-page) .hero-route .logic-tile rect{stroke-w
 html[data-theme=light]:has(body.game-page) .orbit{border-color:#7DE3C3;opacity:.72}
 html[data-theme=light]:has(body.game-page) .float-card{border-color:#7DE3C3;box-shadow:0 12px 32px #10172255,0 0 16px #7DE3C344}
 html[data-theme=light]:has(body.game-page) .float-card small{color:#F4F3EE}
+
+/* Game light mode: use a light header surface with dark, readable controls. */
+html[data-theme=light]:has(body.game-page) .top,
+html[data-theme=light]:has(body.game-page) .top nav,
+html[data-theme=light]:has(body.game-page) .top nav.is-open{background:#F4F3EE!important}
+html[data-theme=light]:has(body.game-page) .top{color:#1F2A37!important;border-bottom-color:#D4DDD7!important}
+html[data-theme=light]:has(body.game-page) .top nav a{color:#1F2A37!important}
+html[data-theme=light]:has(body.game-page) .top nav a:hover{color:#1F2A37!important}
+html[data-theme=light]:has(body.game-page) .brand .wordmark em{color:#1F2A37!important}
+html[data-theme=light]:has(body.game-page) .game-header-actions .menu-toggle{border-color:#1F2A37!important}
+html[data-theme=light]:has(body.game-page) .game-header-actions .menu-toggle span{background:#1F2A37!important}
