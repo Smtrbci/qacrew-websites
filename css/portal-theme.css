@@ -226,3 +226,10 @@ html:has(.about-row) .output-grid p{font-size:17px!important;line-height:1.7}
 html:has(.about-row) .hero::before{animation:studio-hero-orbit 26s ease-in-out infinite alternate}
 @keyframes studio-hero-orbit{0%{transform:translate3d(0,0,0) rotate(-3deg)}100%{transform:translate3d(-16px,12px,0) rotate(5deg)}}
 @media(prefers-reduced-motion:reduce){html:has(.about-row) .hero::before{animation:none}}
+/* Make the green QA section labels and card markers easy to scan. */
+html:has(.about-row) .outputs .section-head>.eyebrow,
+html:has(.about-row) .output-grid article>span,
+html:has(.about-row) .step-no{font-size:15px!important}
+html[data-theme=dark]:has(.about-row) .outputs .section-head>.eyebrow,
+html[data-theme=dark]:has(.about-row) .output-grid article>span,
+html[data-theme=dark]:has(.about-row) .step-no{color:#b8e986!important}
