@@ -384,3 +384,24 @@ html:has(.game-page) .index{font-size:18px}
 html:has(.game-page) .index>b{font-size:18px}
 html:has(.game-page) .intro>.index{font-size:18px}
 html:has(.game-page) .intro>.index>b{font-size:18px}
+
+/* Game: enforce readable left-side section labels over theme typography rules. */
+html:has(body.game-page) .intro>.index,
+html:has(body.game-page) .play-loop .index,
+html:has(body.game-page) .journey .index,
+html:has(body.game-page) .language-band .index,
+html:has(body.game-page) .screens .index,
+html:has(body.game-page) .devlog .index{font-size:18px!important;line-height:1.45}
+html:has(body.game-page) .intro>.index>b,
+html:has(body.game-page) .play-loop .index>b,
+html:has(body.game-page) .journey .index>b,
+html:has(body.game-page) .language-band .index>b,
+html:has(body.game-page) .screens .index>b,
+html:has(body.game-page) .devlog .index>b{font-size:18px!important}
+/* A restrained lift helps the Game cards separate from their page surfaces. */
+html:has(body.game-page) .game-idea-card,
+html:has(body.game-page) .feature,
+html:has(body.game-page) .screen-grid figure,
+html:has(body.game-page) .puzzle-card,
+html:has(body.game-page) .journey-stop,
+html:has(body.game-page) .log-entry{box-shadow:0 14px 34px rgba(0,0,0,.18)}
