@@ -373,3 +373,8 @@ html[data-theme=light]:has(.game-page) .intro>div.game-idea-card>p{color:#1F2A37
 html[data-theme=light]:has(.game-page) .loop-steps>div>b,html[data-theme=light]:has(.game-page) .puzzle-sequence>b,html[data-theme=light]:has(.game-page) .puzzle-answers b{color:#7DE3C3;border-color:#7DE3C3}
 html[data-theme=light]:has(.game-page) .language-list span:nth-child(3n){color:#7DE3C3}
 @media(max-width:700px){html:has(.game-page) .intro>div.game-idea-card{padding:22px 18px}html:has(.game-page) .intro>div.game-idea-card>p{font-size:17px}}
+
+/* Make Game section index labels readable at a glance. */
+html:has(.game-page) .intro>.index{font-size:14px;gap:13px}
+html:has(.game-page) .intro>.index>b{font-size:16px}
+@media(max-width:700px){html:has(.game-page) .intro>.index{font-size:13px}html:has(.game-page) .intro>.index>b{font-size:15px}}
