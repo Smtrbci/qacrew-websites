@@ -51,7 +51,7 @@ html[data-theme=light]:has(.forge-page) .top{background:rgba(243,237,226,.96)}
 html[data-theme=light]:has(.forge-page) .nav a,html[data-theme=light]:has(.forge-page) .mobile-nav a{color:var(--muted)}
 html[data-theme=light]:has(.forge-page) .hero::after{opacity:.24}
 /* Game: AhaPath colors stay in its own palette. */
-html[data-theme=light]:has(.game-page){color-scheme:light;--green:#F4F3EE;--deep:#E9EEE8;--lime:#0E9F9A;--brand:#1F2A37;--paper:#1F2A37;--ink:#F4F3EE;--panel:#fff;--raised:#e9eee8;--line:#d4ddd7;--muted:#596b62;--mint:#0E9F9A;--gold:#E58B36}
+html[data-theme=light]:has(.game-page){color-scheme:light;--green:#F4F3EE;--deep:#E9EEE8;--lime:#7DE3C3;--brand:#1F2A37;--paper:#1F2A37;--ink:#F4F3EE;--panel:#fff;--raised:#e9eee8;--line:#d4ddd7;--muted:#596b62;--mint:#7DE3C3;--gold:#E58B36}
 html[data-theme=light]:has(.game-page) html,html[data-theme=light]:has(.game-page) body{background:var(--green);color:var(--paper)}
 html[data-theme=light]:has(.game-page) .top{background:rgba(244,243,238,.96)}
 html[data-theme=light]:has(.game-page) .top nav{background:var(--green)}
@@ -125,21 +125,28 @@ html[data-theme=light]:has(.forge-page) .studio-top-link{color:#416A2D}
 .products-dropdown a{min-height:44px;padding:10px 12px;border-radius:6px;color:#F4F3EE;text-decoration:none;font-size:13px}
 .products-dropdown a:hover,.products-dropdown a:focus-visible{background:#1e5943;color:#B8E986}
 @media(max-width:760px){.products-menu{width:100%}.products-menu>summary{min-height:52px;padding:12px 10px;border-bottom:1px solid var(--green-line);font-size:15px}.products-dropdown{position:static;min-width:0;padding:2px 0 8px 14px;border:0;border-radius:0;background:transparent;box-shadow:none}.products-dropdown a{min-height:48px;padding:12px 14px;border-bottom:1px solid var(--green-line);font-size:15px}}
-/* Keep the AhaPath wordmark and its header neutral in both themes. */
-.game-page .top{background:#F4F3EE!important;color:#1F2A37;border-color:#D4DDD7}
-.game-page .top nav{background:#F4F3EE!important}
-.game-page .top nav a{color:#44534C!important}
-.game-page .top nav a:hover{color:#1F2A37!important}
-.game-page .brand .wordmark b,.game-page .brand .wordmark em{color:#1F2A37!important}
-.game-page .game-header-actions .menu-toggle{border-color:#BFC9C1}
-.game-page .game-header-actions .menu-toggle span{background:#1F2A37}
+/* Game: keep the dark menu legible, and preserve the light menu in day mode. */
+.game-page{--mint:#7DE3C3}
+.game-page .top nav a:hover,.game-page .brand .wordmark b{color:#7DE3C3}
+html[data-theme=light]:has(.game-page) .top{background:rgba(244,243,238,.96);color:#1F2A37;border-color:#D4DDD7}
+html[data-theme=light]:has(.game-page) .top nav{background:#F4F3EE}
+html[data-theme=light]:has(.game-page) .top nav a{color:#44534C}
+html[data-theme=light]:has(.game-page) .brand .wordmark em{color:#1F2A37}
+html[data-theme=light]:has(.game-page) .game-header-actions .menu-toggle{border-color:#BFC9C1}
+html[data-theme=light]:has(.game-page) .game-header-actions .menu-toggle span{background:#1F2A37}
+html[data-theme=dark]:has(.game-page) .top{background:#101722;color:#F4F3EE;border-color:#2b3749}
+html[data-theme=dark]:has(.game-page) .top nav{background:#101722}
+html[data-theme=dark]:has(.game-page) .top nav a{color:#F4F3EE}
+html[data-theme=dark]:has(.game-page) .brand .wordmark b,html[data-theme=dark]:has(.game-page) .brand .wordmark em{color:#F4F3EE}
+html[data-theme=dark]:has(.game-page) .game-header-actions .menu-toggle{border-color:#7DE3C3}
+html[data-theme=dark]:has(.game-page) .game-header-actions .menu-toggle span{background:#F4F3EE}
 /* The puzzle walkthrough belongs to Game's light theme, not its dark sample surface. */
 html[data-theme=light]:has(.game-page) .play-loop{background:#F4F3EE;color:#1F2A37;border-color:#D4DDD7}
 html[data-theme=light]:has(.game-page) .play-loop h2,html[data-theme=light]:has(.game-page) .loop-copy{color:#1F2A37}
 html[data-theme=light]:has(.game-page) .play-loop .loop-copy>p{color:#596B62}
 html[data-theme=light]:has(.game-page) .play-loop .index{color:#596B62}
 html[data-theme=light]:has(.game-page) .loop-steps>div{color:#44534C}
-html[data-theme=light]:has(.game-page) .loop-steps>div>b{background:#fff;color:#087F7B}
+html[data-theme=light]:has(.game-page) .loop-steps>div>b{background:#fff;color:#7DE3C3}
 html[data-theme=light]:has(.game-page) .puzzle-card{background:#FFFCF5;color:#1F2A37;border-color:#D4DDD7}
 html[data-theme=light]:has(.game-page) .puzzle-card .puzzle-top span,html[data-theme=light]:has(.game-page) .puzzle-card>small{color:#596B62}
 html[data-theme=light]:has(.game-page) .puzzle-card .puzzle-prompt{color:#1F2A37}
@@ -152,16 +159,16 @@ html[data-theme=light]:has(.game-page) .closing-inner>div:nth-child(2)>p{color:#
 html[data-theme=light]:has(.game-page) .play-loop{background:#F4F3EE;color:#1F2A37}
 html[data-theme=light]:has(.game-page) .puzzle-sequence{background:#EEEFEA;border-color:#D4DDD7}
 html[data-theme=light]:has(.game-page) .puzzle-sequence span{background:#FFFCF5;color:#1F2A37}
-html[data-theme=light]:has(.game-page) .puzzle-sequence>b{background:#E3F4EE;color:#087F7B;border-color:#8BCFC5}
+html[data-theme=light]:has(.game-page) .puzzle-sequence>b{background:#E3F4EE;color:#7DE3C3;border-color:#7DE3C3}
 html[data-theme=light]:has(.game-page) .puzzle-answers span{background:#FFFCF5;color:#1F2A37;border-color:#D4DDD7}
-html[data-theme=light]:has(.game-page) .puzzle-answers b{background:#E3F4EE;color:#087F7B;border-color:#8BCFC5}
+html[data-theme=light]:has(.game-page) .puzzle-answers b{background:#E3F4EE;color:#7DE3C3;border-color:#7DE3C3}
 html[data-theme=light]:has(.game-page) .journey{background:#F4F3EE;color:#1F2A37}
 html[data-theme=light]:has(.game-page) .journey-stop{background:#FFFCF5;color:#1F2A37;border-color:#D4DDD7}
 html[data-theme=light]:has(.game-page) .journey-stop.current{background:#E9F1E8;color:#1F2A37;border-color:#B8CDBA}
 html[data-theme=light]:has(.game-page) .journey-note{background:#FFFCF5;color:#596B62;border-color:#D4DDD7}
 html[data-theme=light]:has(.game-page) .language-band{background:#F4F3EE;color:#1F2A37}
 html[data-theme=light]:has(.game-page) .language-list span{background:#FFFCF5;color:#1F2A37}
-html[data-theme=light]:has(.game-page) .language-list span:nth-child(3n){color:#087F7B}
+html[data-theme=light]:has(.game-page) .language-list span:nth-child(3n){color:#7DE3C3}
 /* Forge's demo priority chips use one green family on the warm light canvas. */
 html[data-theme=light]:has(.forge-page) .p-high,
 html[data-theme=light]:has(.forge-page) .p-mid,
@@ -343,3 +350,26 @@ html[data-theme=light]:has(.forge-page) .cta-box .hero-cta .btn:hover{background
   html:has(.forge-page) .logo{font-size:15px}
   html:has(.forge-page) .language-switch button{min-width:25px;padding:0 3px}
 }
+
+
+/* Game polish: consistent mint accent and a clearer, contained idea section. */
+html:has(.game-page){--mint:#7DE3C3}
+html:has(.game-page) .hero h1 em,html:has(.game-page) .intro h2 em,html:has(.game-page) .section-head h2 em{color:#7DE3C3}
+html:has(.game-page) .eyebrow i,html:has(.game-page) .platform i,html:has(.game-page) .hero-meta>b{color:#7DE3C3;background-color:#7DE3C3}
+html:has(.game-page) .text-button:hover,html:has(.game-page) .float-card>i{color:#7DE3C3}
+html:has(.game-page) .intro>div.game-idea-card{padding:clamp(22px,3.2vw,38px);border:1px solid #7DE3C3;border-radius:18px;background:#F4F3EE;box-shadow:0 18px 50px #10172212}
+html:has(.game-page) .intro>div.game-idea-card>p{max-width:58ch;margin-top:23px;font-size:17px;line-height:1.85}
+html:has(.game-page) .sequence{flex-wrap:wrap;border-color:#7DE3C3}
+html[data-theme=dark]:has(.game-page) .intro>div.game-idea-card{background:#192331;color:#F4F3EE;border-color:#7DE3C3;box-shadow:0 18px 50px #0003}
+html[data-theme=dark]:has(.game-page) .intro>div.game-idea-card>p{color:#F4F3EE}
+html[data-theme=dark]:has(.game-page) .sequence{background:#101722;color:#F4F3EE;border-color:#7DE3C3}
+html[data-theme=dark]:has(.game-page) .sequence span{background:#2b3749;color:#F4F3EE}
+html[data-theme=dark]:has(.game-page) .sequence>b,html[data-theme=dark]:has(.game-page) .sequence .unknown{color:#7DE3C3}
+html[data-theme=dark]:has(.game-page) .sequence .unknown{background:#101722;border:1px solid #7DE3C3}
+html[data-theme=dark]:has(.game-page) .sequence small{color:#F4F3EE}
+html[data-theme=dark]:has(.game-page) .body,html[data-theme=dark]:has(.game-page) .platform,html[data-theme=dark]:has(.game-page) .lead,html[data-theme=dark]:has(.game-page) .text-button{color:#F4F3EE}
+html[data-theme=dark]:has(.game-page) .top nav.is-open{background:#101722}
+html[data-theme=light]:has(.game-page) .intro>div.game-idea-card>p{color:#1F2A37}
+html[data-theme=light]:has(.game-page) .loop-steps>div>b,html[data-theme=light]:has(.game-page) .puzzle-sequence>b,html[data-theme=light]:has(.game-page) .puzzle-answers b{color:#7DE3C3;border-color:#7DE3C3}
+html[data-theme=light]:has(.game-page) .language-list span:nth-child(3n){color:#7DE3C3}
+@media(max-width:700px){html:has(.game-page) .intro>div.game-idea-card{padding:22px 18px}html:has(.game-page) .intro>div.game-idea-card>p{font-size:17px}}
