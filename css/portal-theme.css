@@ -89,6 +89,8 @@ html[data-theme=light]:has(.forge-page) .eyebrow::before,html[data-theme=light]:
 html[data-theme=light]:has(.forge-page) .hero h1 em,html[data-theme=light]:has(.forge-page) .logo span em{color:#527C37}
 html[data-theme=light]:has(.forge-page) .status-tag b{color:#416A2D}
 html[data-theme=light]:has(.forge-page) .step-no,html[data-theme=light]:has(.forge-page) .output-grid article>span{color:#416A2D}
+html[data-theme=light]:has(.forge-page) .step-num,html[data-theme=light]:has(.forge-page) .step .mini{color:#416A2D}
+html[data-theme=light]:has(.forge-page) .step .mini{border-color:#C7D2B9}
 html[data-theme=light]:has(.forge-page) .logo svg rect,html[data-theme=light]:has(.forge-page) .logo svg path{stroke:#527C37}
 html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .forge-feature,
 html[data-theme=dark]:not(:has(.forge-page)):not(:has(.game-page)):not(:has(.portfolio-page)) .game-feature,
