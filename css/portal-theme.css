@@ -310,3 +310,14 @@ html[data-theme=light]:has(.forge-page) .hero-node{filter:none!important}
 
 html[data-theme=light]:has(.forge-page) .pulse-eyebrow{background-color:#F3EDE3!important;color:#000!important}
 html[data-theme=light]:has(.forge-page) .pulse-eyebrow::before{background:#F3EDE3!important}
+
+/* Code-like previews stay dark in the beige light theme. */
+html[data-theme=light]:has(.forge-page) .pane-before,
+html[data-theme=light]:has(.forge-page) .pulse-example,
+html[data-theme=light]:has(.forge-page) .pulse-example-head,
+html[data-theme=light]:has(.forge-page) .pulse-log{background:#000!important;color:#F3EDE3!important;border-color:#B8E986!important;box-shadow:none!important}
+html[data-theme=light]:has(.forge-page) .pane-before .raw{color:#F3EDE3!important}
+html[data-theme=light]:has(.forge-page) .pane-before .raw mark{color:#B8E986!important;text-decoration-color:#B8E986!important}
+html[data-theme=light]:has(.forge-page) .pane-before .pane-label,
+html[data-theme=light]:has(.forge-page) .pulse-example-label{background:#B8E986!important;color:#000!important;border-color:#B8E986!important}
+html[data-theme=light]:has(.forge-page) .pulse-example-head{color:#B8E986!important}
