@@ -114,3 +114,17 @@ footer{background:#08090c;color:var(--muted)}.footer-inner{min-height:76px}.foot
 @media(max-width:700px){.top nav{order:4;top:calc(env(safe-area-inset-top,0px) + 64px);background:#0b0c0f}.top nav a{border-color:var(--line);font-size:15px}.game-header-actions{gap:7px;margin-left:auto}.game-language button{min-width:34px;min-height:34px;padding-inline:7px}.store-actions{gap:8px}.store-button{flex:1;min-width:0;min-height:50px;padding-inline:10px}.store-button b{font-size:13px}.store-button small{font-size:7px}.store-dialog{padding:25px 22px;border-radius:18px}.store-dialog h2{font-size:26px}.dialog-status{font-size:10px}.play-loop,.journey,.language-band{padding:62px 0}.play-loop-grid{gap:27px}.puzzle-card{padding:18px;border-radius:15px}.puzzle-prompt{margin-top:25px;font-size:19px}.puzzle-sequence{gap:4px;padding:12px 8px}.puzzle-sequence span,.puzzle-sequence>b{width:clamp(34px,10vw,45px);height:43px;font-size:16px}.puzzle-answers{gap:7px}.puzzle-answers span,.puzzle-answers b{min-height:44px}.journey-head{margin-bottom:24px}.journey-track{grid-template-columns:1fr}.journey-stop{min-height:195px}.journey-stop>i{margin-top:15px}.journey-stop h3{margin-top:9px}.journey-note{gap:8px;padding:14px 8px;font-size:10px;flex-wrap:wrap}.journey-note b,.journey-note strong{font-size:13px}.language-inner{gap:27px}.language-list{gap:7px}.language-list span{min-height:44px;padding-inline:11px;font-size:12px}.brand .wordmark b{font-size:24px}.brand .wordmark em{font-size:30px}}
 @media(max-width:390px){.hero h1{font-size:clamp(42px,13vw,54px)}.puzzle-sequence span,.puzzle-sequence>b{width:34px;height:40px;font-size:15px}.puzzle-sequence{padding-inline:6px}.puzzle-sequence i{font-size:10px}.hero-meta{gap:6px}.journey-note{column-gap:6px}.language-list span{font-size:11px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+
+/* AhaPath discovery route: high-contrast mint motion that reads in either theme. */
+.hero-art{overflow:visible}
+.hero-route{position:absolute;inset:4% 0 2%;z-index:1;width:100%;height:94%;overflow:visible;pointer-events:none;filter:drop-shadow(0 0 9px #7DE3C355)}
+.hero-route path{fill:none;stroke:#7DE3C3;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.hero-route .route-base{opacity:.3;stroke-dasharray:2 12}
+.hero-route .route-trace{stroke-dasharray:22 760;stroke-width:4;animation:route-discovery 7s linear infinite}
+.hero-route circle{fill:#0b0c0f;stroke:#7DE3C3;stroke-width:3;transform-box:fill-box;transform-origin:center;animation:route-node 2.8s ease-in-out infinite}
+.hero-route circle:nth-of-type(2){animation-delay:.35s}.hero-route circle:nth-of-type(3){animation-delay:.7s}.hero-route circle:nth-of-type(4){animation-delay:1.05s}.hero-route circle:nth-of-type(5){animation-delay:1.4s}
+@keyframes route-discovery{to{stroke-dashoffset:-782}}
+@keyframes route-node{0%,100%{transform:scale(.86);filter:drop-shadow(0 0 1px #7DE3C3)}50%{transform:scale(1.28);filter:drop-shadow(0 0 8px #7DE3C3)}}
+@media(max-width:700px){.hero-route{inset:0 0 3%;height:92%;opacity:.82}}
+@media(prefers-reduced-motion:reduce){.hero-route .route-trace,.hero-route circle{animation:none}.hero-route .route-trace{stroke-dasharray:12 18}}

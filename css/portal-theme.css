@@ -405,3 +405,13 @@ html:has(body.game-page) .screen-grid figure,
 html:has(body.game-page) .puzzle-card,
 html:has(body.game-page) .journey-stop,
 html:has(body.game-page) .log-entry{box-shadow:0 14px 34px rgba(0,0,0,.18)}
+
+
+/* Game header uses the requested near-black in both themes. */
+html:has(body.game-page) .top,
+html:has(body.game-page) .top nav,
+html:has(body.game-page) .top nav.is-open{background:#0B0D11!important}
+html:has(body.game-page) .top{color:#F4F3EE;border-bottom-color:#30343c}
+html:has(body.game-page) .top nav a{color:#F4F3EE}
+html:has(body.game-page) .brand .wordmark em{color:#F4F3EE!important}
+html:has(body.game-page) .hero-route path{stroke:#7DE3C3}
