@@ -194,3 +194,17 @@ html:has(.about-row) .output-grid article>span{font-size:11px}
 html:has(.about-row) .step-no{font-size:13px}
 html:has(.about-row) .footer{font-size:14px}
 @media(max-width:760px){html:has(.about-row) .proof-inner{font-size:11px}}
+/* Lock the requested Studio surfaces against its older, more specific theme selectors. */
+html[data-theme=dark]:has(.about-row) .about,
+html[data-theme=dark]:has(.about-row) .outputs,
+html[data-theme=dark]:has(.about-row) .steps article,
+html[data-theme=dark]:has(.about-row) .output-grid article,
+html[data-theme=dark]:has(.about-row) .demo-card,
+html[data-theme=dark]:has(.about-row) .demo-head,
+html[data-theme=dark]:has(.about-row) .pricing-note,
+html[data-theme=dark]:has(.about-row) .travel-card,
+html[data-theme=dark]:has(.about-row) .travel-card-art,
+html[data-theme=dark]:has(.about-row) .game-card,
+html[data-theme=dark]:has(.about-row) .game-card-art{background:#103d30!important}
+html[data-theme=dark]:has(.about-row) .about .eyebrow,
+html[data-theme=dark]:has(.about-row) .about .text-link{color:#b8e986}
