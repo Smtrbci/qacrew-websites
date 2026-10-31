@@ -420,3 +420,15 @@ html:has(body.game-page) .hero-route path{stroke:#7DE3C3}
 html:has(body.game-page) .hero-route .logic-tile rect{fill:#0B0D11;stroke:#7DE3C3}
 html:has(body.game-page) .hero-route .logic-tile text{fill:#F4F3EE}
 html:has(body.game-page) .hero-route .constellation,html:has(body.game-page) .hero-route .route-base{stroke:#7DE3C3}
+
+/* Stronger Game animation contrast on the cream/light canvas. */
+html[data-theme=light]:has(body.game-page) .hero-route{opacity:1;filter:drop-shadow(0 2px 2px #14232166) drop-shadow(0 0 11px #7DE3C399)}
+html[data-theme=light]:has(body.game-page) .hero-route .route-base{stroke:#1F2A37;stroke-width:3.5;stroke-dasharray:2 9;opacity:.52}
+html[data-theme=light]:has(body.game-page) .hero-route .route-trace{stroke:#7DE3C3;stroke-width:5;opacity:1;filter:drop-shadow(0 1px 1px #1F2A37)}
+html[data-theme=light]:has(body.game-page) .hero-route .constellation{stroke:#1F2A37;stroke-width:2;stroke-dasharray:4 7;opacity:.62}
+html[data-theme=light]:has(body.game-page) .hero-route .constellation-arc{stroke:#7DE3C3;stroke-width:1.8;stroke-dasharray:2 7;opacity:.85}
+html[data-theme=light]:has(body.game-page) .hero-route circle{stroke:#7DE3C3;stroke-width:4;filter:drop-shadow(0 1px 1px #1F2A37) drop-shadow(0 0 7px #7DE3C3)}
+html[data-theme=light]:has(body.game-page) .hero-route .logic-tile rect{stroke-width:2.5;filter:drop-shadow(0 2px 2px #1F2A3744) drop-shadow(0 0 8px #7DE3C388)}
+html[data-theme=light]:has(body.game-page) .orbit{border-color:#7DE3C3;opacity:.72}
+html[data-theme=light]:has(body.game-page) .float-card{border-color:#7DE3C3;box-shadow:0 12px 32px #10172255,0 0 16px #7DE3C344}
+html[data-theme=light]:has(body.game-page) .float-card small{color:#F4F3EE}
