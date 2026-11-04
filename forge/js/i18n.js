@@ -13,7 +13,7 @@
     "Örnek görünüm":"Example view","Örnek bug raporu · taslak":"Sample bug report · draft","Ödeme ekranı açılışı yavaş, ardından çöküyor":"Payment screen opens slowly, then crashes","Ortam":"Environment","Android beta · örnek oturum":"Android beta · sample session","Adımlar":"Steps","Ödemeyi onayla":"Confirm payment","Gerçekleşen":"Actual","Ekran 3,2 sn sonra açılıyor; onayda NullPointerException oluşuyor.":"Screen opens after 3.2 sec; a NullPointerException occurs on confirmation.","Performans özeti":"Performance summary","POST /payments yanıtı 1,8 sn sürdü.":"POST /payments took 1.8 sec.",
     "Yol haritası":"Roadmap","ERKEN ERİŞİM":"EARLY ACCESS","Faz 1":"Phase 1","Log / crash metnini yapıştır, rapor üret":"Paste log/crash text and generate a report","Geliştiriliyor":"In development","Faz 2":"Phase 2","Android, bilgisayara bağlı kayıt (ADB)":"Android recording while connected to a computer (ADB)","Planlanıyor":"Planned","Faz 3":"Phase 3","Beta sürümler için SDK, canlı panel":"SDK for beta releases, live dashboard","Hedef: Network içerikleri varsayılan olarak maskelenir; kişisel veri toplanmaz. iOS desteği ileride değerlendirilecek.":"Goal: Network contents are masked by default; no personal data is collected. iOS support will be evaluated later.","Araştırma":"Research","Pulse geliştirme sürecini takip etmek ister misiniz?":"Would you like updates on Pulse development?","İlgileniyorum, haber ver":"I’m interested, keep me updated",
     "Nasıl çalışır":"How it works","Örnekler":"Examples","Yayın durumu":"Launch status","Yorumlar":"Use cases","SSS":"FAQ","Sık sorulanlar":"Frequently asked questions",
-    "QAcrew Studio ↗":"QAcrew Studio ↗","Panel demosu":"Sign in","DEMO":"DEMO","QAcrew Studio ürünü · Yakında yayında":"A QAcrew Studio product · Coming soon",
+    "QAcrew Studio ↗":"QAcrew Studio ↗","Panel demosu":"Sign in","Panele dön":"Return to panel","DEMO":"DEMO","QAcrew Studio ürünü · Yakında yayında":"A QAcrew Studio product · Coming soon",
     "QA dokümanlarını":"Let's shape QA documentation","birlikte şekillendirelim.":"together.",
     "Forge, QAcrew Studio çatısı altında geliştirilen QA dokümantasyon aracıdır. Bu sayfada görünen akışlar ve çıktılar ürün demosudur; gerçek kullanıcı hesabı ve üretim erişimi yakında yayına alınacaktır.":"Forge is a QA documentation tool developed under QAcrew Studio. The workflows and outputs shown here are a product demo; real user accounts and production access are coming soon.",
     "Demo önizlemesini gör":"Explore the demo","Kendi senaryonu dene":"Try your own scenario","Yakında yayında":"Coming soon","Tamamen demo":"Demo only","QAcrew Studio altında":"Part of QAcrew Studio","4 çıktı türü":"4 output types","Genel erişim yakında":"Public access coming soon",
@@ -72,6 +72,7 @@
   function syncAccessButtons(){
     var signedIn=false;try{signedIn=!!localStorage.getItem("qacrew.session")}catch(_){}
     document.querySelectorAll("[data-forge-access]").forEach(function(el){el.hidden=signedIn});
+    document.querySelectorAll("[data-forge-panel-shortcut]").forEach(function(el){el.hidden=!signedIn});
   }
   function setLanguage(lang){
     current=lang==="en"?"en":"tr";busy=true;document.documentElement.lang=current;walk(document.body);
@@ -85,6 +86,7 @@
   }
   document.querySelectorAll("[data-forge-lang]").forEach(function(b){b.addEventListener("click",function(){setLanguage(b.dataset.forgeLang)})});
   window.addEventListener("storage",function(e){if(e.key==="qacrew.session")syncAccessButtons()});
+  window.addEventListener("pageshow",syncAccessButtons);
   var observer=new MutationObserver(function(records){if(busy)return;records.forEach(function(r){if(r.type==="characterData")translateNode(r.target);else r.addedNodes.forEach(function(n){if(n.nodeType===3)translateNode(n);else if(n.nodeType===1)walk(n)})})});
   observer.observe(document.body,{subtree:true,childList:true,characterData:true});
   var preferred="tr";try{preferred=localStorage.getItem("qacrew-forge-language")||"tr"}catch(_){}
