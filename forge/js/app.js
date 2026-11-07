@@ -77,6 +77,8 @@
     updateWelcome(nm);
     showTab("panel");renderAll();renderNotice();
   }
+  var demoPreviewBtn=$("demoPreviewBtn");
+  if(demoPreviewBtn)demoPreviewBtn.addEventListener("click",function(){signIn("demo@qacrew.it",true)});
   function updateWelcome(name){
     var h=new Date().getHours(),en=document.documentElement.lang==="en";
     $("hello").textContent=(en?(h<12?"Good morning, ":h<18?"Good afternoon, ":"Good evening, "):(h<12?"Günaydın, ":h<18?"İyi günler, ":"İyi akşamlar, "))+name;
