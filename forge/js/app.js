@@ -77,8 +77,18 @@
     updateWelcome(nm);
     showTab("panel");renderAll();renderNotice();
   }
-  var demoPreviewBtn=$("demoPreviewBtn");
-  if(demoPreviewBtn)demoPreviewBtn.addEventListener("click",function(){signIn("demo@qacrew.it",true)});
+  var demoLoginForm=$("demoLoginForm"),demoLoginError=$("demoLoginError");
+  if(demoLoginForm)demoLoginForm.addEventListener("submit",function(e){
+    e.preventDefault();
+    var email=$("demoEmail").value.trim().toLowerCase(),password=$("demoPassword").value;
+    if(email!=="demo@qacrew.it"||password!=="qacrew2026"){
+      demoLoginError.textContent=document.documentElement.lang==="en"?"Use the demo email and password shown below.":"Demo için aşağıda gösterilen e-posta ve şifreyi kullanın.";
+      demoLoginError.hidden=false;return;
+    }
+    demoLoginError.hidden=true;signIn(email,true);
+  });
+  var fillDemoCredentials=$("fillDemoCredentials");
+  if(fillDemoCredentials)fillDemoCredentials.addEventListener("click",function(){$("demoEmail").value="demo@qacrew.it";$("demoPassword").value="qacrew2026";$("demoPassword").focus()});
   function updateWelcome(name){
     var h=new Date().getHours(),en=document.documentElement.lang==="en";
     $("hello").textContent=(en?(h<12?"Good morning, ":h<18?"Good afternoon, ":"Good evening, "):(h<12?"Günaydın, ":h<18?"İyi günler, ":"İyi akşamlar, "))+name;

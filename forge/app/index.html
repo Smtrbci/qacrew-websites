@@ -33,12 +33,22 @@
     </a>
     <section class="login-card" aria-labelledby="accessTitle">
       <div style="display:flex;flex-direction:column;gap:8px">
-        <h1 id="accessTitle">QAcrew Forge erişimi</h1>
-        <p class="sub">Örnek paneli gerçek hesap açmadan salt okunur olarak inceleyebilirsiniz.</p>
+        <h1 id="accessTitle">QAcrew Forge giriş</h1>
+        <p class="sub">Demo hesabıyla paneli salt okunur olarak inceleyin.</p>
       </div>
-      <p class="sub" role="status">Gerçek hesap ve belge üretimi henüz etkin değil. Panel arayüzünü örnek verilerle inceleyebilirsiniz.</p>
-      <button class="btn btn-primary" type="button" id="demoPreviewBtn" style="width:100%;min-height:50px">Salt okunur demo panelini aç</button>
-      <a class="btn btn-ghost" href="mailto:info@qacrew.it?subject=QAcrew%20Forge%20eri%C5%9Fim" style="width:100%;min-height:50px">Hesap erişimi hakkında bilgi al</a>
+      <form id="demoLoginForm" novalidate>
+        <div class="field"><label for="demoEmail">E-posta</label><input class="input" id="demoEmail" type="email" autocomplete="username" placeholder="demo@qacrew.it"></div>
+        <div class="field" style="margin-top:16px"><label for="demoPassword">Şifre</label><input class="input" id="demoPassword" type="password" autocomplete="current-password" placeholder="Demo şifresi"></div>
+        <p class="err" id="demoLoginError" role="alert" hidden></p>
+        <button class="btn btn-primary" type="submit" style="width:100%;min-height:50px;margin-top:20px">Giriş yap</button>
+      </form>
+      <div class="demo-box">
+        <div class="row"><b>Demo hesabı</b><button class="link-btn" type="button" id="fillDemoCredentials">Giriş bilgilerini doldur</button></div>
+        <div class="row"><small>E-posta</small><code>demo@qacrew.it</code></div>
+        <div class="row"><small>Şifre</small><code>qacrew2026</code></div>
+        <small>Bu bilgiler yalnızca örnek paneli açar. Gerçek hesap ve belge üretimi etkin değildir; gizli veri girmeyin.</small>
+      </div>
+      <a class="btn btn-ghost" href="mailto:info@qacrew.it?subject=QAcrew%20Forge%20%C3%BCyelik%20talebi" style="width:100%;min-height:50px">Üye ol</a>
     </section>
   </div>
 </section>
