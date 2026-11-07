@@ -39,7 +39,7 @@
   function httpSample(){
     return {json:async function(opts){
       opts=opts||{};var r,d=null;
-      if(state.demo)throw {code:"demo_read_only",message:"Demo hesabı yalnızca örnekleri görüntüleyebilir; gerçek üretim kapalıdır."};
+      if(state.demo)throw {code:"demo_read_only",message:"Salt okunur erişimdesiniz; belge üretimi etkin değildir."};
       try{r=await fetch("/api/generate",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({job:currentJob}),signal:opts.signal})}
       catch(e){throw {code:e&&e.name==="AbortError"?"cancelled":"upstream_error"}}
       try{d=await r.json()}catch(e){}
@@ -60,39 +60,14 @@
   function renderNotice(){
     var n=$("storeNote"),msgs=[];
     var en=document.documentElement.lang==="en";
-    if(state.demo)msgs.push(en?"You are using a read-only demo account. Document generation is disabled.":"Salt okunur demo hesabındasınız. Gerçek doküman üretimi kapalıdır.");
-    if(!sample)msgs.push(en?"Forge is currently in demo mode. Explore the sample documents; real generation is coming soon.":"Forge şu an demo modunda. Örnek dokümanları inceleyebilirsiniz; gerçek üretim yakında açılacak.");
+    if(state.demo)msgs.push(en?"Read-only access is active.":"Salt okunur erişim etkin.");
+    if(!sample)msgs.push(en?"Document generation is currently unavailable.":"Belge üretim servisi şu anda etkin değil.");
     if(store.mode!=="db")msgs.push(en?"Documents are stored only in this browser.":"Kayıtlar yalnızca bu tarayıcıda tutuluyor.");
     n.hidden=!msgs.length;n.textContent=msgs.join(" ");
   }
 
   // ---------- login ----------
   function nameFrom(email){var n=(email.split("@")[0]||"").split(/[._-]/)[0]||"Kullanıcı";return n.charAt(0).toLocaleUpperCase("tr-TR")+n.slice(1)}
-  $("fillDemo").addEventListener("click",function(){$("lEmail").value=$("demoEmail").textContent.trim();$("lPass").value=$("demoPassword").textContent.trim();$("lEmail").focus()});
-  function isDemoLogin(email,password){return email.toLowerCase()===$("demoEmail").textContent.trim().toLowerCase()&&password===$("demoPassword").textContent.trim()}
-  function enterReadOnlyDemo(){
-    $("lPass").value="";
-    lsSet("qacrew.demo-preview","1");
-    signIn($("demoEmail").textContent.trim(),true);
-    if(new URLSearchParams(location.search).has("try"))history.replaceState(null,"",location.pathname);
-  }
-  $("loginForm").addEventListener("submit",async function(e){
-    e.preventDefault();
-    var em=$("lEmail").value.trim(),pw=$("lPass").value,er=$("lErr");
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){er.textContent="Geçerli bir e-posta adresi girin.";er.hidden=false;$("lEmail").focus();return}
-    er.hidden=true;var btn=$("loginForm").querySelector('[type="submit"]');btn.disabled=true;
-    try{
-      var res;
-      try{res=await fetch("/api/session",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:em,password:pw})})}
-      catch(_){if(isDemoLogin(em,pw)){enterReadOnlyDemo();return}throw new Error("Giriş servisine ulaşılamadı. Bağlantıyı kontrol edip tekrar deneyin.")}
-      var raw=await res.text(),data=null;
-      try{data=raw?JSON.parse(raw):null}catch(_){}
-      if(res.ok&&data&&data.user){$("lPass").value="";signIn(data.user.email,data.user.demo);if(new URLSearchParams(location.search).has("try")&&!data.user.demo){openTool();history.replaceState(null,"",location.pathname)}}
-      else if(isDemoLogin(em,pw)){enterReadOnlyDemo()}
-      else throw new Error(data&&data.message||("Giriş servisi geçerli yanıt vermedi (HTTP "+res.status+")."));
-    }
-    catch(err){er.textContent=err.message||"Giriş yapılamadı. Tekrar deneyin.";er.hidden=false}finally{btn.disabled=false}
-  });
   function signIn(em,isDemo){
     state.email=em;state.demo=isDemo===true;lsSet("qacrew.session",em);if(state.demo)lsSet("qacrew.demo-preview","1");else lsDel("qacrew.demo-preview");
     if(store.mode!=="db")loadLocal();
@@ -111,7 +86,7 @@
     updateCount();renderOpts();
     if(state.email){updateWelcome(nameFrom(state.email));renderAll();renderNotice();if(!$('tool').hidden&&state.viewing)showResult(state.viewing,true)}
   });
-  $("logoutBtn").onclick=async function(){try{await fetch("/api/session",{method:"DELETE",credentials:"same-origin"})}catch(e){}lsDel("qacrew.session");lsDel("qacrew.demo-preview");state.email=null;state.demo=false;$("userMenu").hidden=true;$("appShell").hidden=true;$("login").hidden=false;$("lEmail").focus()};
+  $("logoutBtn").onclick=async function(){try{await fetch("/api/session",{method:"DELETE",credentials:"same-origin"})}catch(e){}lsDel("qacrew.session");lsDel("qacrew.demo-preview");state.email=null;state.demo=false;$("userMenu").hidden=true;$("appShell").hidden=true;$("login").hidden=false};
   $("avatarBtn").onclick=function(e){e.stopPropagation();var m=$("userMenu");m.hidden=!m.hidden;this.setAttribute("aria-expanded",String(!m.hidden))};
   document.addEventListener("click",function(e){if(!e.target.closest(".avatar-wrap")){$("userMenu").hidden=true;$("avatarBtn").setAttribute("aria-expanded","false")}});
 
@@ -243,7 +218,7 @@
   function startGenUI(){
     var steps=STEPS[state.type],t0=Date.now(),idx=0;
     $("genTitle").textContent=TYPES[state.type].label+" üretiliyor";
-    $("genSub").textContent="Bu demo ekranında üretim akışı yakında açılacak.";
+    $("genSub").textContent="Belge üretimi şu anda etkin değildir.";
     $("genChars").textContent="Sunucu yanıtı bekleniyor";
     function paint(){$("genSteps").innerHTML=steps.map(function(s,i){var c=i<idx?"ok":i===idx?"on":"";return '<li class="'+c+'"><span class="b">'+(i<idx?CHECK:"")+'</span>'+s+'</li>'}).join("")}
     paint();
@@ -256,7 +231,7 @@
     return function(n){if(n){$("genChars").textContent=n.toLocaleString("tr-TR")+" karakter yazıldı";if(idx<steps.length-1){idx=steps.length-1;paint()}}};
   }
   function errCopy(c){
-    if(c==="demo_read_only")return document.documentElement.lang==="en"?"The demo account can only view examples; real generation is disabled.":"Demo hesabı yalnızca örnekleri görüntüleyebilir; gerçek üretim kapalıdır.";
+    if(c==="demo_read_only")return document.documentElement.lang==="en"?"The demo account can only view examples; real generation is disabled.":"Salt okunur erişimdesiniz; belge üretimi etkin değildir.";
     return ({not_granted:"Üretim için izin verilmedi. İzin vermeden yeni doküman üretilemez.",
       sampling_disabled:"Üretim servisi şu an kapalı",
       rate_limited:"Günlük deneme hakkın doldu, yarın tekrar dene",
@@ -265,10 +240,10 @@
       refused:"Bu girdi için doküman üretilemedi. Girdiyi değiştirip tekrar deneyin.",
       invalid_json:"Sunucu yanıtı okunamadı. Yeniden üretmeyi deneyin.",
       empty_completion:"Sunucu boş yanıt döndü. Girdiyi biraz daha açıklayıcı yazıp tekrar deneyin.",
-      demo_read_only:"Demo hesabı yalnızca örnekleri görüntüleyebilir; gerçek üretim kapalıdır."})[c]||"Üretim sunucusuna ulaşılamadı. Bağlantınızı kontrol edip tekrar deneyin.";
+      demo_read_only:"Salt okunur erişimdesiniz; belge üretimi etkin değildir."})[c]||"Üretim sunucusuna ulaşılamadı. Bağlantınızı kontrol edip tekrar deneyin.";
   }
   async function generate(){
-    if(state.demo){showComposeErr(document.documentElement.lang==="en"?"The demo account can only view examples; real generation is disabled.":"Demo hesabı yalnızca örnekleri görüntüleyebilir; gerçek üretim kapalıdır.");return}
+    if(!sample){showComposeErr(document.documentElement.lang==="en"?"Document generation is currently unavailable.":"Belge üretim servisi şu anda etkin değil.");return}
     var text=$("inputText").value.trim();
     if(text.length<20){showComposeErr("Biraz daha ayrıntı gerekiyor: en az 20 karakterlik bir girdi yazın veya örnek seçin.");$("inputText").focus();return}
     if(text.length>12000){showComposeErr("Girdi 12.000 karakteri geçemez.");return}
@@ -389,5 +364,5 @@
   // ---------- boot ----------
   renderOpts();updateCount();
   lsDel("qacrew.session");
-  fetch("/api/session",{credentials:"same-origin"}).then(async function(r){var raw=await r.text(),data=null;try{data=raw?JSON.parse(raw):null}catch(_){}return r.ok?data:null}).then(function(data){if(data&&data.user){signIn(data.user.email,data.user.demo);if(new URLSearchParams(location.search).has("try")&&!data.user.demo){openTool();history.replaceState(null,"",location.pathname)}return}if(lsGet("qacrew.demo-preview")==="1")signIn($("demoEmail").textContent.trim(),true)}).catch(function(){if(lsGet("qacrew.demo-preview")==="1")signIn($("demoEmail").textContent.trim(),true)});
+  fetch("/api/session",{credentials:"same-origin"}).then(async function(r){var raw=await r.text(),data=null;try{data=raw?JSON.parse(raw):null}catch(_){}return r.ok?data:null}).then(function(data){if(data&&data.user){signIn(data.user.email,false);if(new URLSearchParams(location.search).has("try")){openTool();history.replaceState(null,"",location.pathname)}return}}).catch(function(){});
 })();

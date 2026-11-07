@@ -13,3 +13,16 @@
 | Faz 3 | Beta sürümler için SDK ve canlı panel | Araştırma |
 
 Faz 3 gizlilik hedefi: Network içerikleri varsayılan olarak maskelenir; kişisel veri toplanmaz. iOS desteği ileride değerlendirilecektir; mevcut yol haritası iOS desteği vaat etmez.
+
+
+## PDF ve iş takip sistemi entegrasyonları
+
+**Durum:** Hazırlık / kapsam çalışması. PDF içe aktarma ve Jira/Azure DevOps bağlantıları henüz uygulanmamıştır.
+
+| Faz | Kapsam | Durum |
+| --- | --- | --- |
+| 1 | Metin seçilebilir PDF’den tarayıcıda metin çıkarma, kullanıcıya gözden geçirtme; ilk sürümde OCR yok | Hazırlık |
+| 2 | Jira issue içeriğini içe alma ve onaylanan QA çıktısını aynı issue’a ekleme | Hazırlık |
+| 3 | Azure DevOps work item içeriğini içe alma ve onaylanan QA çıktısını aynı work item’a ekleme | Hazırlık |
+
+Entegrasyonlardan önce gerçek kullanıcı hesabı, kalıcı bağlantı verisi, sunucu tarafında güvenli OAuth token saklama ve HTTPS callback adresi gerekir. Ayrıntılar ve ürün sahibinden beklenen kararlar için [Forge entegrasyon hazırlığı](02-forge-entegrasyon-hazirligi.md) belgesine bakın.
