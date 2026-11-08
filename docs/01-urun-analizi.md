@@ -14,6 +14,18 @@
 
 Faz 3 gizlilik hedefi: Network içerikleri varsayılan olarak maskelenir; kişisel veri toplanmaz. iOS desteği ileride değerlendirilecektir; mevcut yol haritası iOS desteği vaat etmez.
 
+## Sürüm bazlı test planlama ve yürütme
+
+**Durum:** Yerel prototip / değerlendirme. Yeni akış; belirsizlik soruları, tekrar kullanılabilir senaryo kütüphanesi, kullanıcı girdisine dayalı etki önerileri, süre planı, sürüm yürütmeleri, keşif oturumları ve yazdırılabilir rapor taslağını kapsar.
+
+- Öneriler anahtar sözcük ve modül eşleşmelerine dayanır; kod/bağımlılık analizi veya AI kullanılmaz.
+- Senaryo kütüphanesi, planlar, test yürütmeleri, bulgular ve rapor kararları mevcut oturum kullanıcısının tarayıcı depolamasında tutulur. Sunucu eşitlemesi ve ekip paylaşımı yoktur.
+- Her yürütme senaryonun o andaki metin ve adım anlık görüntüsünü saklar; yeni sürüm/ortam çalıştırmaları Bekliyor başlar.
+- Metrik paydası çalıştırma içindeki senaryo × ortam kayıtlarıdır. Bu kayıtlar farklı ortamlara sonuç kopyalamaz.
+- Süre tahminleri kullanıcı tarafından değiştirilebilir; kısa plan ürünün bütünü test edildi veya yayına hazır anlamına gelmez.
+
+Gerçek çok kullanıcılı kalıcılık, merkezi proje yetkileri, dosya/kanıt depolama ve tarayıcılar arası eşitleme mevcut yerel veri mimarisinin dışındadır; servis altyapısı kararlaştırılmadan etkin özellik gibi sunulmaz.
+
 
 ## PDF ve iş takip sistemi entegrasyonları
 

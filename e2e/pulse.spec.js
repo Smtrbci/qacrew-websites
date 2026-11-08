@@ -29,7 +29,7 @@ test("Pulse menu link navigates to the section on desktop and mobile", async ({ 
   await expect(page.locator("#pulse")).toBeInViewport();
 });
 
-test("390px viewport has no horizontal page overflow; log scrolls inside its panel", async ({ page, isMobile }) => {
+test("390px viewport has no horizontal page overflow; log stays inside its panel", async ({ page, isMobile }) => {
   test.skip(!isMobile, "This is the 390px mobile layout check.");
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/forge/#pulse");
@@ -37,5 +37,6 @@ test("390px viewport has no horizontal page overflow; log scrolls inside its pan
   const pageOverflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   const logMetrics = await page.locator(".pulse-log").evaluate((el) => ({ scrollWidth: el.scrollWidth, clientWidth: el.clientWidth }));
   expect(pageOverflow).toBeLessThanOrEqual(0);
-  expect(logMetrics.scrollWidth).toBeGreaterThan(logMetrics.clientWidth);
+  expect(logMetrics.clientWidth).toBeLessThanOrEqual(390);
+  expect(logMetrics.scrollWidth).toBeLessThanOrEqual(logMetrics.clientWidth);
 });

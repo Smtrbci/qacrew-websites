@@ -173,5 +173,29 @@
     "title": "Kayıtlı kartla ödeme akışı",
     "type": "test",
     "id": "ex-test"
+  },
+  {
+    "createdAt": "2026-10-16T09:00:00.000Z",
+    "depth": "quick",
+    "input": "v3.9 release notes: redesigned sign-in, added biometric login, notification permission after first order, payment SDK 5.2 update, fixed profile photo upload.",
+    "platforms": ["iOS", "Android"],
+    "project": "Sample project · v3.9",
+    "result": {
+      "items": [
+        {"area":"Sign-in","check":"Sign in with email and password","note":"The user reaches the home screen","priority":"High"},
+        {"area":"Biometrics","check":"Sign in with Face ID or fingerprint","note":"Authentication succeeds and fallback is available","priority":"High"},
+        {"area":"Notifications","check":"Complete the first order","note":"Permission is requested after the order","priority":"Medium"},
+        {"area":"Payment","check":"Complete payment with SDK 5.2","note":"Payment confirmation is shown","priority":"High"},
+        {"area":"Profile","check":"Upload a profile photo","note":"The photo is saved and displayed","priority":"Medium"}
+      ],
+      "summary":"Sample smoke checks for the v3.9 release notes.",
+      "title":"v3.9 release smoke checklist"
+    },
+    "summary":"A sample checklist covering the main changed flows in v3.9.",
+    "title":"v3.9 release smoke checklist",
+    "type":"smoke",
+    "id":"ex-smoke",
+    "documentLanguage":"en",
+    "example":true
   }
 ]

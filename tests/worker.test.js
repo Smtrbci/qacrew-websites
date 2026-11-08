@@ -43,7 +43,9 @@ test("validates strict jobs and builds prompts only on server", () => {
   assert.ok(validateJob(validJob));
   assert.equal(validateJob({ ...validJob, prompt: "client prompt" }), null);
   assert.equal(validateJob({ ...validJob, input: "x".repeat(12001) }), null);
-  assert.match(buildPrompt(validJob), /GİRDİ BAŞLANGICI/);
+  assert.match(buildPrompt(validJob), /INPUT START/);
+  assert.equal(validateJob({ ...validJob, language: "en" }).language, "en");
+  assert.match(buildPrompt({ ...validJob, language: "en" }), /Write the document in English/);
   assert.deepEqual(parseModelJson("```json\n{\"ok\":true}\n```"), { ok: true });
   assert.equal(validResult("test", okModel.content[0].text), false);
 });
@@ -115,9 +117,11 @@ test("public try stays closed and landing demo does not call the generation API"
     readFile(new URL("../forge/js/site.js", import.meta.url), "utf8"),
     readFile(new URL("../forge/js/app.js", import.meta.url), "utf8")
   ]);
-  assert.match(home, /Kendi senaryonu dene/);
-  assert.match(home, /app\/\?try=1/);
+  assert.match(home, /Örnek çıktıları incele/);
+  assert.doesNotMatch(home, /Kendi senaryonu dene/);
   assert.doesNotMatch(script, /\/api\/generate/);
+  assert.match(app, /if\(state\.demo\)/);
+  assert.match(app, /Örnek çıktıyı göster/);
   assert.match(app, /fetch\("\/api\/generate"/);
   assert.doesNotMatch(app, /QAPrompts\.build|prompt\s*:/);
 });
