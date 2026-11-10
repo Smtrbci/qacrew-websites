@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Travel · Partner paneli</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+body{margin:0}
+.qs-root{--bg:#F4F5F7;--surface:#FFFFFF;--ink:#0E1116;--muted:#4B5563;--body:#3A4150;--line:#DDE0E6;--line2:#C9CDD6;--field:#8C93A1;--btn:#0E1116;--btn-fg:#FFFFFF;--shadow:rgba(14,17,22,.14);--acc:#0A5F58;--acc-bg:#DAF1ED;--acc-fg:#084A44;--side:#0A2B28;--side2:#123D39;--map:#E6EFEC;--block:#D3E2DE;font-family:Inter,system-ui,sans-serif;color:var(--ink);background:var(--bg);box-sizing:border-box}
+body:has(#qs-theme:checked) .qs-root{--bg:#0B0D11;--surface:#151920;--ink:#F1F3F6;--muted:#A9B0BC;--body:#C3C9D3;--line:#262B35;--line2:#343A46;--field:#6B7483;--btn:#F1F3F6;--btn-fg:#0B0D11;--shadow:rgba(0,0,0,.5);--acc:#8FE0D4;--acc-bg:#0E3531;--acc-fg:#A5E8DE;--side:#061614;--side2:#0E2624;--map:#10201E;--block:#183430}
+body:not(:has(#qs-lang:checked)) .en{display:none!important}
+body:has(#qs-lang:checked) .tr{display:none!important}
+.qs-root a{color:var(--ink)}.qs-root a:hover{color:var(--muted)}
+.qs-root,.qs-root *{transition:background-color .35s ease,border-color .35s ease,color .35s ease,fill .35s ease,stroke .35s ease}
+.col{display:flex;flex-direction:column}
+.h{font-family:'Space Grotesk',sans-serif;margin:0}
+.p{margin:0;font-size:14px;line-height:1.5;color:var(--body)}
+.mut{font-size:13px;font-weight:600;color:var(--muted)}
+.badge{font-size:12px;font-weight:600;background:var(--acc-bg);color:var(--acc-fg);border-radius:999px;padding:4px 10px;display:inline-block}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:14px;box-sizing:border-box}
+.act{transition:transform .25s ease,box-shadow .25s ease,background-color .35s ease,border-color .35s ease}
+.act:hover{transform:translateY(-5px);box-shadow:0 16px 32px var(--shadow)}
+.btn,.btn2{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;font:inherit;font-weight:600;font-size:14px;text-decoration:none;cursor:pointer;box-sizing:border-box;transition:transform .2s ease,box-shadow .2s ease,background-color .35s ease}
+.btn{background:var(--btn);border:0;color:var(--btn-fg)}.qs-root a.btn,.qs-root a.btn:hover{color:var(--btn-fg)}
+.btn2{border:1px solid var(--field);background:transparent;color:var(--ink)}
+.btn:hover,.btn2:hover{transform:translateY(-2px);box-shadow:0 10px 22px var(--shadow)}
+.sl{height:44px;padding:0 12px;display:flex;align-items:center;gap:12px;border-radius:12px;font-size:14px;font-weight:600;text-decoration:none;transition:background-color .2s ease}
+.qs-root a.sl,.qs-root a.sl:hover{color:#F1F3F6}.sl:hover{background:var(--side2)}.sl.on{background:#0B6B63}
+.ico{width:38px;height:38px;border-radius:11px;background:var(--acc-bg);color:var(--acc);display:flex;align-items:center;justify-content:center;flex:none}
+#qs-theme{appearance:none;-webkit-appearance:none;margin:0;width:60px;height:34px;border-radius:999px;background:var(--line2);position:relative;cursor:pointer;flex:none}
+#qs-theme::before{content:"";position:absolute;top:4px;left:4px;width:26px;height:26px;border-radius:50%;background:var(--surface);box-shadow:0 2px 6px var(--shadow);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}
+#qs-theme:checked::before{transform:translateX(26px)}
+#qs-theme:focus-visible,.lang:has(:focus-visible){outline:2px solid var(--ink);outline-offset:3px}
+.sun{display:block}.moon{display:none}body:has(#qs-theme:checked) .sun{display:none}body:has(#qs-theme:checked) .moon{display:block}
+.lang{display:inline-flex;gap:4px;border:1px solid var(--line2);border-radius:999px;padding:4px;cursor:pointer;position:relative}
+#qs-lang{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.l1,.l2{font-size:13px;font-weight:600;padding:8px 14px;border-radius:999px}
+.l1{background:var(--btn);color:var(--btn-fg)}
+body:has(#qs-lang:checked) .l1{background:transparent;color:var(--ink)}body:has(#qs-lang:checked) .l2{background:var(--btn);color:var(--btn-fg)}
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes dash{to{stroke-dashoffset:-24}}
+@keyframes rise{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes flt{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes ping{0%{transform:scale(1);opacity:.6}100%{transform:scale(2.6);opacity:0}}
+.in{animation:up .7s cubic-bezier(.2,.7,.2,1) both}
+.flow{animation:dash 1.2s linear infinite}
+.rise{transform-origin:bottom;animation:rise 1.2s cubic-bezier(.2,.7,.2,1) both}
+.flt{animation:flt 6s ease-in-out infinite}
+.ping{transform-box:fill-box;transform-origin:center;animation:ping 2.4s ease-out infinite}
+@media (prefers-reduced-motion:reduce){.qs-root *,.qs-root *::before,.qs-root *::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div role="note" style="position:relative;z-index:20;padding:9px 16px;text-align:center;background:#B8E986;color:#111;font:600 13px/1.45 Inter,system-ui,sans-serif"><span class="tr">Yeni arayüz önizlemesi · Bu sayfa yerel taslaktır; burada görünmeyen servisler etkin değildir.</span><span class="en">New UI preview · This page is a local draft; services not shown as available are not active.</span></div>
+<div class="qs-root" style="min-height: 2000px; display: flex; flex-wrap: wrap">
+
+<nav aria-label="Partner paneli" class="col" style="flex: 1 1 250px; max-width: 100%; box-sizing: border-box; background: var(--side); color: #F1F3F6; padding: 22px 16px; gap: 22px">
+<a href="travel.html" class="col" style="text-decoration: none; color: #F1F3F6; padding: 0 8px; gap: 2px"><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 20px">QAcrew <span style="color: #8FE0D4">Travel</span></span><span style="font-size: 12px; font-weight: 600; color: #8FE0D4"><span class="tr">Partner paneli</span><span class="en">Partner panel</span></span></a>
+<button type="button" style="display: flex; align-items: center; gap: 10px; padding: 12px; background: var(--side2); border: 0; border-radius: 14px; color: #F1F3F6; font: inherit; text-align: left; cursor: pointer">
+<span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; color: #0A2B28; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex: none">HS</span>
+<span class="col" style="flex: 1; min-width: 0"><span style="font-size: 14px; font-weight: 600">Hotel Suadiye</span><span style="font-size: 12px; color: #B8C9C6"><span class="tr">Otel · İstanbul</span><span class="en">Hotel · Istanbul</span></span></span>
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B8C9C6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 9 4-4 4 4M8 15l4 4 4-4"/></svg>
+</button>
+<div class="col" style="gap: 2px">
+<span style="padding: 0 12px 8px; font-size: 12px; font-weight: 600; color: #9DB3AF"><span class="tr">Yönetim</span><span class="en">Manage</span></span>
+<a class="sl on" href="#genel" aria-current="page"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg><span class="tr">Genel bakış</span><span class="en">Overview</span></a>
+<a class="sl" href="#planlar"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg><span class="tr">Hazır planlar</span><span class="en">Ready plans</span></a>
+<a class="sl" href="#qr"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v7h-7"/></svg><span class="tr">QR ve kodlar</span><span class="en">QR &amp; codes</span></a>
+<a class="sl" href="#marka"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1 0 1.5-.8 1.5-1.6 0-1.3-1-1.6-1-2.7 0-.9.7-1.7 1.7-1.7H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/></svg><span class="tr">Marka</span><span class="en">Brand</span></a>
+<a class="sl" href="#istatistik"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span class="tr">İstatistikler</span><span class="en">Statistics</span></a>
+<span style="padding: 16px 12px 8px; font-size: 12px; font-weight: 600; color: #9DB3AF"><span class="tr">Hesap</span><span class="en">Account</span></span>
+<a class="sl" href="#ekip"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 15c3 0 6 1.8 6 5"/></svg><span class="tr">Ekip ve roller</span><span class="en">Team &amp; roles</span></a>
+<a class="sl" href="#fatura"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6M9 16h3"/></svg><span class="tr">Faturalar</span><span class="en">Invoices</span></a>
+</div>
+<div class="col" style="margin-top: auto; gap: 10px; background: var(--side2); border-radius: 16px; padding: 16px">
+<span style="font-size: 14px; font-weight: 600"><span class="tr">Yardım lazım mı?</span><span class="en">Need a hand?</span></span>
+<span style="font-size: 13px; line-height: 1.45; color: #B8C9C6"><span class="tr">İlk planını birlikte kuralım.</span><span class="en">Let's set up your first plan together.</span></span>
+<a href="mailto:info@qacrew.it" style="min-height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: #FFFFFF; color: #0A2B28; font-size: 14px; font-weight: 600; text-decoration: none"><span class="tr">Bize yaz</span><span class="en">Contact us</span></a>
+</div>
+</nav>
+
+<div class="col" style="flex: 999 1 600px; min-width: 0">
+<div style="padding: 14px 32px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line)">
+<label style="flex: 1 1 260px; max-width: 420px; display: flex; align-items: center; gap: 10px; padding: 0 14px; background: var(--surface); border: 1px solid var(--line2); border-radius: 12px; min-height: 44px; box-sizing: border-box; color: var(--muted)"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input type="search" aria-label="Ara / Search" placeholder="Plan, kod, ekip ara" style="flex: 1; min-width: 0; border: 0; outline: none; font: inherit; font-size: 14px; background: transparent; color: var(--ink)"></label>
+<div style="display: flex; align-items: center; gap: 12px">
+<label for="qs-theme" style="display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; color: var(--muted)">
+<svg class="sun" aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="10" r="3.6"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M4.3 15.7l1.4-1.4M14.3 5.7l1.4-1.4"/></svg>
+<svg class="moon" aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 11.8A7 7 0 0 1 8.2 3.5a7 7 0 1 0 8.3 8.3z"/></svg>
+<input id="qs-theme" type="checkbox" aria-label="Gece modu / Dark mode">
+</label>
+<label class="lang" for="qs-lang"><input id="qs-lang" type="checkbox" aria-label="English"><span class="l1">TR</span><span class="l2">EN</span></label>
+<button type="button" aria-label="Bildirimler / Notifications" style="width: 44px; height: 44px; border: 1px solid var(--line2); border-radius: 50%; background: var(--surface); color: var(--ink); display: flex; align-items: center; justify-content: center; cursor: pointer"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 0 0 4 0"/></svg></button>
+</div>
+</div>
+
+<main id="genel" class="col" style="padding: 28px 32px 48px; gap: 20px">
+
+<section class="in" style="position: relative; overflow: hidden; background: #0A3F3B; color: #FFFFFF; border-radius: 24px; padding: 32px; display: flex; flex-wrap: wrap; gap: 28px; align-items: center">
+<svg aria-hidden="true" viewBox="0 0 900 260" preserveAspectRatio="xMidYMid slice" style="position: absolute; inset: 0; width: 100%; height: 100%"><path class="flow" d="M-20 220C160 160 260 60 440 90S700 230 920 120" fill="none" stroke="#1C6F68" stroke-width="8" stroke-linecap="round" stroke-dasharray="3 21"/><circle class="ping" cx="440" cy="90" r="12" fill="#8FE0D4"/><circle cx="440" cy="90" r="12" fill="#1C6F68"/></svg>
+<div class="col" style="position: relative; flex: 1 1 360px; min-width: 0; gap: 14px">
+<span style="align-self: flex-start; display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #FFFFFF; color: #084A44; border-radius: 999px; font-size: 13px; font-weight: 600"><span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: #0B6B63"></span><span class="tr">Prototip · pilot başlamadı</span><span class="en">Prototype · pilot not started</span></span>
+<h1 class="h" style="font-weight: 700; font-size: 34px; letter-spacing: -0.02em"><span class="tr">Örnek otel görünümü</span><span class="en">Sample hotel view</span></h1>
+<p class="p" style="font-size: 16px; color: #D5ECE8; max-width: 480px"><span class="tr">Bu ekran temsili bir Travel paneli taslağıdır. Gerçek otel, pilot, ziyaretçi verisi veya canlı bağlantı yoktur.</span><span class="en">This is an illustrative Travel dashboard concept. There is no real hotel, pilot, visitor data or live connection.</span></p>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<a class="btn" href="#planlar" style="background: #8FE0D4; color: #0A2B28; min-height: 52px; font-size: 16px"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span class="tr">Yeni hazır plan</span><span class="en">New ready plan</span></a>
+<a class="btn2" href="travel.html#ekranlar" style="border-color: #5FA8A0; color: #FFFFFF; min-height: 52px; font-size: 16px"><span class="tr">Misafir sayfasını aç</span><span class="en">Open guest page</span></a>
+</div>
+</div>
+<div class="col" style="position: relative; flex: 0 1 320px; min-width: 0; background: #FFFFFF; color: #0E1116; border-radius: 20px; padding: 20px; gap: 14px; box-shadow: 0 16px 36px rgba(0,0,0,.25)">
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-weight: 600"><span class="tr">Örnek kurulum görünümü</span><span class="en">Sample setup view</span></span><span style="font-size: 13px; font-weight: 600; color: #0A5F58">Örnek · Sample</span></div>
+<div style="height: 8px; border-radius: 4px; background: #DDE0E6; overflow: hidden"><div style="width: 50%; height: 100%; background: #0B6B63; border-radius: 4px"></div></div>
+<ul class="col" style="list-style: none; margin: 0; padding: 0; gap: 10px; font-size: 14px">
+<li style="display: flex; align-items: center; gap: 10px; color: #4B5563"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="11" fill="#0B6B63"/><path d="m6 11 3.5 3.5L16 8" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="text-decoration: line-through"><span class="tr">Logonu ekle</span><span class="en">Add your logo</span></span></li>
+<li style="display: flex; align-items: center; gap: 10px; color: #4B5563"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="11" fill="#0B6B63"/><path d="m6 11 3.5 3.5L16 8" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="text-decoration: line-through"><span class="tr">Bir hazır plan yayınla</span><span class="en">Publish a ready plan</span></span></li>
+<li style="display: flex; align-items: center; gap: 10px; font-weight: 600"><span aria-hidden="true" style="width: 22px; height: 22px; border-radius: 50%; border: 2px solid #0B6B63; box-sizing: border-box"></span><span class="tr">Oda QR kartlarını bas</span><span class="en">Print room QR cards</span></li>
+<li style="display: flex; align-items: center; gap: 10px; font-weight: 600"><span aria-hidden="true" style="width: 22px; height: 22px; border-radius: 50%; border: 2px solid #C9CDD6; box-sizing: border-box"></span><span class="tr">Resepsiyon ekibini davet et</span><span class="en">Invite the reception team</span></li>
+</ul>
+</div>
+</section>
+
+<section id="istatistik" aria-label="Bu ay" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px">
+<div class="card act in" style="animation-delay: .05s"><div style="display: flex; justify-content: space-between; align-items: center"><span class="mut"><span class="tr">QR okutma</span><span class="en">QR scans</span></span><span class="ico"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v7h-7"/></svg></span></div><span class="h" style="font-weight: 700; font-size: 34px">—</span><span class="mut" style="font-weight: 500"><span class="tr">Bu ay</span><span class="en">This month</span></span></div>
+<div class="card act in" style="animation-delay: .1s"><div style="display: flex; justify-content: space-between; align-items: center"><span class="mut"><span class="tr">Açılan plan</span><span class="en">Plans opened</span></span><span class="ico"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg></span></div><span class="h" style="font-weight: 700; font-size: 34px">—</span><span class="mut" style="font-weight: 500"><span class="tr">Hazır planlarından</span><span class="en">From your ready plans</span></span></div>
+<div class="card act in" style="animation-delay: .15s"><div style="display: flex; justify-content: space-between; align-items: center"><span class="mut"><span class="tr">Tamamlanan rota</span><span class="en">Routes completed</span></span><span class="ico"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.5"/></svg></span></div><span class="h" style="font-weight: 700; font-size: 34px">—</span><span class="mut" style="font-weight: 500"><span class="tr">Misafir yürüyüşleri</span><span class="en">Guest walks</span></span></div>
+<div class="card act in" style="animation-delay: .2s"><div style="display: flex; justify-content: space-between; align-items: center"><span class="mut"><span class="tr">Uygulama indirme</span><span class="en">App downloads</span></span><span class="ico"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg></span></div><span class="h" style="font-weight: 700; font-size: 34px">—</span><span class="mut" style="font-weight: 500"><span class="tr">QR kodlarından</span><span class="en">From your QR codes</span></span></div>
+</section>
+
+<div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: stretch">
+<section class="card in" style="flex: 2 1 460px; min-width: 0; animation-delay: .25s">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px"><h2 class="h" style="font-weight: 600; font-size: 18px"><span class="tr">Misafir hareketi</span><span class="en">Guest activity</span></h2><div style="display: flex; gap: 6px"><button type="button" class="btn2" style="min-height: 44px"><span class="tr">7 gün</span><span class="en">7 days</span></button><button type="button" class="btn" aria-pressed="true"><span class="tr">30 gün</span><span class="en">30 days</span></button></div></div>
+<div style="flex: 1; min-height: 240px; position: relative; border-radius: 14px; background: var(--bg); display: flex; align-items: flex-end; gap: 10px; padding: 24px 20px 20px; box-sizing: border-box">
+<div class="rise" style="flex: 1; height: 30%; border-radius: 8px 8px 3px 3px; background: var(--line2)"></div>
+<div class="rise" style="flex: 1; height: 45%; border-radius: 8px 8px 3px 3px; background: var(--line2); animation-delay: .08s"></div>
+<div class="rise" style="flex: 1; height: 38%; border-radius: 8px 8px 3px 3px; background: var(--line2); animation-delay: .16s"></div>
+<div class="rise" style="flex: 1; height: 60%; border-radius: 8px 8px 3px 3px; background: var(--line2); animation-delay: .24s"></div>
+<div class="rise" style="flex: 1; height: 52%; border-radius: 8px 8px 3px 3px; background: var(--line2); animation-delay: .32s"></div>
+<div class="rise" style="flex: 1; height: 70%; border-radius: 8px 8px 3px 3px; background: var(--line2); animation-delay: .4s"></div>
+<div class="rise" style="flex: 1; height: 64%; border-radius: 8px 8px 3px 3px; background: var(--line2); animation-delay: .48s"></div>
+<div class="rise" style="flex: 1; height: 80%; border-radius: 8px 8px 3px 3px; background: var(--line2); animation-delay: .56s"></div>
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 20px">
+<div style="background: var(--surface); border-radius: 14px; padding: 16px 20px; display: flex; align-items: center; gap: 12px; max-width: 360px; box-shadow: 0 8px 20px var(--shadow)"><span class="ico"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><span class="col" style="gap: 2px"><span style="font-size: 14px; font-weight: 600"><span class="tr">Grafiğin ilk okutmayla başlar</span><span class="en">Your chart starts with the first scan</span></span><span class="p" style="font-size: 13px"><span class="tr">Başlamak için oda kartlarını bas.</span><span class="en">Print your room cards to get going.</span></span></span></div>
+</div>
+</div>
+</section>
+
+<section id="marka" class="card in" style="flex: 1 1 300px; min-width: 0; background: var(--acc-bg); border-color: transparent; animation-delay: .3s">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><h2 class="h" style="font-weight: 600; font-size: 18px; color: var(--acc-fg)"><span class="tr">Misafir sayfan</span><span class="en">Your guest page</span></h2><a href="travel.html#ekranlar" style="padding: 12px 0; font-size: 14px; font-weight: 600; color: var(--acc-fg)"><span class="tr">Önizle</span><span class="en">Preview</span></a></div>
+<div class="flt" aria-hidden="true" style="align-self: center; width: 210px; border-radius: 32px; background: #0E1116; padding: 7px; box-sizing: border-box; box-shadow: 0 16px 36px var(--shadow)">
+<div class="col" style="border-radius: 26px; background: var(--surface); padding: 16px 12px; gap: 10px; min-height: 340px; box-sizing: border-box">
+<span style="width: 40px; height: 40px; border-radius: 12px; background: #0A3F3B; color: #FFFFFF; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center">HS</span>
+<span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 16px; color: var(--ink)">Hotel Suadiye</span>
+<svg viewBox="0 0 180 90" style="width: 100%; border-radius: 12px; background: var(--map)"><path class="flow" d="M16 72C50 20 90 80 120 44s30-24 44-28" fill="none" stroke-width="3" stroke-linecap="round" stroke-dasharray="3 9" style="stroke: var(--acc)"/><rect x="8" y="64" width="16" height="16" rx="4" style="fill: var(--btn)"/><circle cx="164" cy="16" r="6" style="fill: var(--acc)"/></svg>
+<span style="padding: 10px; border-radius: 10px; background: var(--bg); font-size: 12px; font-weight: 600; color: var(--ink)"><span class="tr">Tarihi yarımada · 1 gün</span><span class="en">Old city · 1 day</span></span>
+<span style="padding: 10px; border-radius: 10px; background: var(--bg); font-size: 12px; font-weight: 600; color: var(--ink)"><span class="tr">Sahil yürüyüşü · yarım gün</span><span class="en">Seaside walk · half day</span></span>
+<span style="margin-top: auto; padding: 10px; border-radius: 10px; background: var(--btn); color: var(--btn-fg); font-size: 12px; font-weight: 600; text-align: center"><span class="tr">Planı aç</span><span class="en">Open plan</span></span>
+</div>
+</div>
+</section>
+</div>
+
+<section id="planlar" class="col in" style="gap: 14px; animation-delay: .35s">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px"><h2 class="h" style="font-weight: 600; font-size: 18px"><span class="tr">Hazır planlar</span><span class="en">Ready plans</span></h2><span class="mut"><span class="tr">Örnek planlar</span><span class="en">Sample plans</span></span></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px">
+<article class="card act" style="padding: 0; overflow: hidden; gap: 0">
+<svg aria-hidden="true" viewBox="0 0 320 130" style="width: 100%; background: var(--map)"><g style="fill: var(--block)"><rect x="16" y="14" width="90" height="44" rx="8"/><rect x="122" y="14" width="70" height="70" rx="8"/><rect x="208" y="40" width="96" height="76" rx="8"/><rect x="16" y="74" width="90" height="42" rx="8"/></g><path class="flow" d="M36 104C80 30 150 110 200 60s60-30 92-34" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="3 9" style="stroke: var(--acc)"/><rect x="26" y="94" width="20" height="20" rx="5" style="fill: var(--btn)"/><circle cx="292" cy="26" r="7" style="fill: var(--acc)"/></svg>
+<div class="col" style="padding: 18px; gap: 8px"><span class="badge" style="align-self: flex-start"><span class="tr">Yayında</span><span class="en">Published</span></span><h3 class="h" style="font-weight: 600; font-size: 17px"><span class="tr">Tarihi yarımada</span><span class="en">Old city</span></h3><span class="p"><span class="tr">1 gün · yürüyüş · otelden başlar</span><span class="en">1 day · walking · starts at the hotel</span></span></div>
+</article>
+<article class="card act" style="padding: 0; overflow: hidden; gap: 0">
+<svg aria-hidden="true" viewBox="0 0 320 130" style="width: 100%; background: var(--map)"><g style="fill: var(--block)"><rect x="16" y="14" width="130" height="36" rx="8"/><rect x="162" y="14" width="142" height="36" rx="8"/><rect x="16" y="96" width="288" height="20" rx="8"/></g><path class="flow" d="M36 76c60-10 120 6 250-4" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="3 9" style="stroke: var(--acc)"/><rect x="26" y="66" width="20" height="20" rx="5" style="fill: var(--btn)"/><circle cx="286" cy="72" r="7" style="fill: var(--acc)"/></svg>
+<div class="col" style="padding: 18px; gap: 8px"><span class="mut" style="align-self: flex-start; border: 1px solid var(--line2); border-radius: 999px; padding: 3px 10px; font-size: 12px"><span class="tr">Taslak</span><span class="en">Draft</span></span><h3 class="h" style="font-weight: 600; font-size: 17px"><span class="tr">Sahil yürüyüşü</span><span class="en">Seaside walk</span></h3><span class="p"><span class="tr">Yarım gün · yürüyüş · otelden başlar</span><span class="en">Half day · walking · starts at the hotel</span></span></div>
+</article>
+<a class="act col" href="#yeni" style="gap: 10px; align-items: center; justify-content: center; min-height: 200px; border: 2px dashed var(--field); border-radius: 18px; text-decoration: none; font-weight: 600"><svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span class="tr">Yeni hazır plan</span><span class="en">New ready plan</span></a>
+</div>
+</section>
+
+</main>
+</div>
+</div>
+<script>
+(function(){var ids=['qs-theme','qs-lang'];ids.forEach(function(id){var el=document.getElementById(id);if(!el)return;
+try{if(localStorage.getItem(id)==='1')el.checked=true;}catch(e){}
+el.addEventListener('change',function(){try{localStorage.setItem(id,el.checked?'1':'0');}catch(e){}
+if(id==='qs-lang')document.documentElement.lang=el.checked?'en':'tr';});
+if(id==='qs-lang'&&el.checked)document.documentElement.lang='en';});})();
+</script>
+</body>
+</html>

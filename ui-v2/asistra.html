@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asistra</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+body{margin:0}
+.qs-root{--bg:#F4F5F7;--surface:#FFFFFF;--ink:#0E1116;--muted:#4B5563;--body:#3A4150;--line:#DDE0E6;--line2:#C9CDD6;--field:#8C93A1;--btn:#0E1116;--btn-fg:#FFFFFF;--shadow:rgba(14,17,22,.14);--acc:#8A1F6B;--acc-bg:#F8E1F1;--acc-fg:#6E1555;--ok:#0A5F58;font-family:Inter,system-ui,sans-serif;color:var(--ink);background:var(--bg);box-sizing:border-box}
+body:has(#qs-theme:checked) .qs-root{--bg:#0B0D11;--surface:#151920;--ink:#F1F3F6;--muted:#A9B0BC;--body:#C3C9D3;--line:#262B35;--line2:#343A46;--field:#6B7483;--btn:#F1F3F6;--btn-fg:#0B0D11;--shadow:rgba(0,0,0,.5);--acc:#F2A6DC;--acc-bg:#3A1230;--acc-fg:#F6BFE6;--ok:#8FE0D4}
+body:not(:has(#qs-lang:checked)) .en{display:none!important}
+body:has(#qs-lang:checked) .tr{display:none!important}
+.qs-root a{color:var(--ink)}.qs-root a:hover{color:var(--muted)}
+.qs-root,.qs-root *{transition:background-color .35s ease,border-color .35s ease,color .35s ease}
+.w{max-width:1200px;margin:0 auto;padding-left:24px;padding-right:24px}
+.sec{padding-top:88px;padding-bottom:88px}
+.col{display:flex;flex-direction:column}
+.h1,.h2,.h3{font-family:'Space Grotesk',sans-serif;margin:0}
+.h1{font-weight:700;font-size:clamp(38px,4.8vw,68px);line-height:1.04;letter-spacing:-.03em}
+.h2{font-weight:700;font-size:clamp(28px,3.2vw,42px);line-height:1.1;letter-spacing:-.02em}
+.h3{font-weight:600;font-size:21px}
+.p{margin:0;font-size:16px;line-height:1.6;color:var(--body)}
+.lead{margin:0;font-size:clamp(17px,1.5vw,20px);line-height:1.55;color:var(--body)}
+.eb{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--acc)}
+.mut{font-size:13px;font-weight:600;color:var(--muted)}
+.badge{font-size:13px;font-weight:600;background:var(--acc-bg);color:var(--acc-fg);border-radius:999px;padding:5px 12px;display:inline-block;align-self:flex-start}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:12px;transition:transform .28s cubic-bezier(.2,.7,.2,1),box-shadow .28s ease,background-color .35s ease,border-color .35s ease}
+.card:hover{transform:translateY(-6px);box-shadow:0 20px 40px var(--shadow)}
+.btn,.btn2{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 26px;border-radius:12px;font:inherit;font-weight:600;font-size:16px;text-decoration:none;cursor:pointer;box-sizing:border-box;transition:transform .2s ease,box-shadow .2s ease,background-color .35s ease,color .35s ease}
+.btn{background:var(--btn);border:0}.qs-root a.btn,.qs-root a.btn:hover,.btn{color:var(--btn-fg)}
+.btn2{border:1px solid var(--field);background:transparent;color:var(--ink)}
+.btn:hover,.btn2:hover{transform:translateY(-2px);box-shadow:0 10px 22px var(--shadow)}
+.nav{position:relative;text-decoration:none;padding:12px 0;font-size:15px;font-weight:500}
+.nav::after{content:"";position:absolute;left:0;right:0;bottom:6px;height:2px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .25s ease}.nav:hover::after{transform:scaleX(1)}
+.back{display:inline-flex;align-items:center;gap:8px;min-height:44px;text-decoration:none;font-size:14px;font-weight:600}
+.back svg{transition:transform .2s ease}.back:hover svg{transform:translateX(-4px)}
+#qs-theme{appearance:none;-webkit-appearance:none;margin:0;width:60px;height:34px;border-radius:999px;background:var(--line2);position:relative;cursor:pointer;flex:none}
+#qs-theme::before{content:"";position:absolute;top:4px;left:4px;width:26px;height:26px;border-radius:50%;background:var(--surface);box-shadow:0 2px 6px var(--shadow);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}
+#qs-theme:checked::before{transform:translateX(26px)}
+#qs-theme:focus-visible,.lang:has(:focus-visible){outline:2px solid var(--ink);outline-offset:3px}
+.sun{display:block}.moon{display:none}body:has(#qs-theme:checked) .sun{display:none}body:has(#qs-theme:checked) .moon{display:block}
+.lang{display:inline-flex;gap:4px;border:1px solid var(--line2);border-radius:999px;padding:4px;cursor:pointer;position:relative}
+#qs-lang{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.l1,.l2{font-size:13px;font-weight:600;padding:8px 14px;border-radius:999px;min-height:20px}
+.l1{background:var(--btn);color:var(--btn-fg)}
+body:has(#qs-lang:checked) .l1{background:transparent;color:var(--ink)}body:has(#qs-lang:checked) .l2{background:var(--btn);color:var(--btn-fg)}
+details{border-top:1px solid var(--line2)}summary{cursor:pointer;padding:22px 0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:19px;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::after{content:"+";font-size:24px;line-height:1;transition:transform .25s ease}details[open] summary::after{transform:rotate(45deg)}
+.ph{width:270px;max-width:100%;border-radius:38px;background:#0E1116;padding:8px;box-sizing:border-box;box-shadow:0 24px 50px var(--shadow);flex:none}
+.scr{border-radius:30px;background:var(--bg);min-height:500px;display:flex;flex-direction:column;padding:18px 14px 16px;gap:10px;box-sizing:border-box;color:var(--ink)}
+.in-m,.out-m{max-width:82%;padding:10px 12px;border-radius:16px;font-size:13px;line-height:1.4}
+.in-m{align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:4px}
+.out-m{align-self:flex-end;background:var(--acc);color:var(--surface);border-bottom-right-radius:4px}
+.ch{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;border:1px solid var(--line2);border-radius:999px;padding:10px 16px;background:var(--surface);transition:transform .2s ease}
+.ch:hover{transform:translateY(-3px)}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--bg);font-size:13px;font-weight:600}
+.th{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;font-size:13px}
+.av{width:32px;height:32px;border-radius:50%;background:var(--acc-bg);color:var(--acc-fg);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex:none}
+.ico{width:44px;height:44px;border-radius:13px;background:var(--acc-bg);color:var(--acc);display:flex;align-items:center;justify-content:center;flex:none}
+@keyframes up{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes msg{0%{opacity:0;transform:translateY(12px)}6%,90%{opacity:1;transform:none}100%{opacity:0}}
+@keyframes flt{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes dots{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes toast{0%,55%{opacity:0;transform:translateY(16px)}62%,90%{opacity:1;transform:none}100%{opacity:0}}
+@keyframes hue{0%,28%{background:#8A1F6B}33%,61%{background:#0A5F58}66%,94%{background:#2C399F}100%{background:#8A1F6B}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.in{animation:up .8s cubic-bezier(.2,.7,.2,1) both}
+.msg{animation:msg 12s ease infinite both}
+.flt{animation:flt 6s ease-in-out infinite}
+.dots i{display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-right:3px;animation:dots 1.2s ease-in-out infinite}
+.toast{animation:toast 12s ease infinite both}
+.hue{animation:hue 9s ease-in-out infinite}
+.grow{transform-origin:left;animation:grow 1.6s cubic-bezier(.2,.7,.2,1) both}
+@supports (animation-timeline:view()){.rv{animation:up linear both;animation-timeline:view();animation-range:entry 0% entry 40%}}
+@media (prefers-reduced-motion:reduce){.qs-root *,.qs-root *::before,.qs-root *::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div role="note" style="position:relative;z-index:20;padding:9px 16px;text-align:center;background:#B8E986;color:#111;font:600 13px/1.45 Inter,system-ui,sans-serif"><span class="tr">Yeni arayüz önizlemesi · Bu sayfa yerel taslaktır; burada görünmeyen servisler etkin değildir.</span><span class="en">New UI preview · This page is a local draft; services not shown as available are not active.</span></div>
+<div class="qs-root" id="top">
+
+<header style="position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line)">
+<div class="w" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; padding-bottom: 12px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px">
+<a class="back" href="business.html" style="color: var(--muted)"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9H4m4-4L4 9l4 4"/></svg>QAcrew Business</a>
+<span aria-hidden="true" style="width: 1px; height: 22px; background: var(--line2)"></span>
+<a href="#top" style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 20px; text-decoration: none; color: var(--acc)">Asistra</a>
+</div>
+<nav aria-label="Asistra" style="display: flex; flex-wrap: wrap; align-items: center; gap: 22px">
+<a class="nav" href="#asistra">Panel</a>
+<a class="nav" href="#nasil"><span class="tr">Nasıl çalışır</span><span class="en">How it works</span></a>
+<a class="nav" href="#kurumsal"><span class="tr">Kurumsal</span><span class="en">White-label</span></a>
+<a class="nav" href="#fiyatlar"><span class="tr">Fiyatlar</span><span class="en">Pricing</span></a>
+<label for="qs-theme" style="display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; color: var(--muted)">
+<svg class="sun" aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="10" r="3.6"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M4.3 15.7l1.4-1.4M14.3 5.7l1.4-1.4"/></svg>
+<svg class="moon" aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 11.8A7 7 0 0 1 8.2 3.5a7 7 0 1 0 8.3 8.3z"/></svg>
+<input id="qs-theme" type="checkbox" aria-label="Gece modu / Dark mode">
+</label>
+<label class="lang" for="qs-lang"><input id="qs-lang" type="checkbox" aria-label="English"><span class="l1">TR</span><span class="l2">EN</span></label>
+</nav>
+</div>
+</header>
+
+<main>
+
+<section class="w" style="padding-top: 72px; padding-bottom: 72px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 48px; align-items: center">
+<div class="col" style="gap: 24px">
+<span class="eb in"><span class="tr">AI müşteri iletişimi konsepti</span><span class="en">AI customer communication concept</span></span>
+<h1 class="h1 in" style="animation-delay: .08s"><span class="tr">Mesaj ve randevu akışları için ürün konsepti.</span><span class="en">A product concept for messaging and appointment workflows.</span></h1>
+<p class="lead in" style="animation-delay: .2s"><span class="tr">Asistra için planlanan fikir; mesaj kanalları, yapay zekâ yanıtları ve randevu akışlarını tek yerde toplamaktır. Bu bağlantılar şu anda çalışmıyor.</span><span class="en">The Asistra concept aims to bring messaging channels, AI replies and appointment workflows together. These integrations are not currently active.</span></p>
+<div class="in" style="display: flex; flex-wrap: wrap; gap: 12px; animation-delay: .32s">
+<a class="btn" href="asistra-giris.html"><span class="tr">Panele gir</span><span class="en">Open the panel</span></a>
+<a class="btn2" href="#nasil"><span class="tr">Nasıl çalışır</span><span class="en">How it works</span></a>
+</div>
+</div>
+<div class="in" aria-hidden="true" style="animation-delay: .3s; display: flex; justify-content: center; position: relative">
+<div class="ph flt"><div class="scr">
+<div style="display: flex; align-items: center; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--line)"><span class="av">E</span><span class="col"><span style="font-size: 14px; font-weight: 600">Elif K.</span><span style="font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px"><span class="dot" style="background: #25D366; width: 8px; height: 8px"></span>WhatsApp</span></span></div>
+<span class="in-m msg"><span class="tr">Merhaba, yarın akşam saç kesimi için yeriniz var mı?</span><span class="en">Hi, do you have a slot for a haircut tomorrow evening?</span></span>
+<span class="out-m msg" style="animation-delay: 1.4s"><span class="tr">Merhaba Elif Hanım! Yarın 18:30 ve 19:15 boş. Hangisi uygun?</span><span class="en">Hello Elif! Tomorrow 18:30 and 19:15 are free. Which suits you?</span></span>
+<span class="in-m msg" style="animation-delay: 2.8s">18:30 <span class="tr">olsun</span><span class="en">please</span></span>
+<span class="out-m msg" style="animation-delay: 4.2s"><span class="tr">Randevunuz onaylandı: Salı 18:30, saç kesimi. Bir saat önce hatırlatacağım.</span><span class="en">Booked: Tuesday 18:30, haircut. I'll remind you an hour before.</span></span>
+<span class="in-m dots" style="color: var(--muted)"><i></i><i style="animation-delay: .2s"></i><i style="animation-delay: .4s"></i></span>
+<span style="margin-top: auto; font-size: 12px; text-align: center; color: var(--muted)"><span class="tr">Asistra otomatik yanıtlıyor · istediğin an devral</span><span class="en">Asistra replies automatically · take over anytime</span></span>
+</div></div>
+<div class="toast" style="position: absolute; right: 0; bottom: 40px; display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); box-shadow: 0 16px 32px var(--shadow); font-size: 13px"><svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="11" r="11" style="fill: var(--ok)"/><path d="m6 11 3.5 3.5L16 8" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--surface)"/></svg><span class="col"><span style="font-weight: 600"><span class="tr">Yeni randevu</span><span class="en">New appointment</span></span><span style="color: var(--muted)"><span class="tr">Takvime işlendi</span><span class="en">Added to the calendar</span></span></span></div>
+</div>
+</section>
+
+<section class="w" style="padding-bottom: 72px">
+<div class="rv" style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px">
+<span class="mut"><span class="tr">Konseptte değerlendirilmesi planlanan kanallar:</span><span class="en">Channels considered for the concept:</span></span>
+<span class="ch"><span class="dot" style="background: #25D366"></span>WhatsApp</span>
+<span class="ch"><span class="dot" style="background: #2AABEE"></span>Telegram</span>
+<span class="ch"><span class="dot" style="background: #E1306C"></span>Instagram</span>
+<span class="ch"><span class="dot" style="background: #0077FF"></span>VK</span>
+</div>
+</section>
+
+<section id="asistra" style="background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line)">
+<div class="w sec col" style="gap: 36px">
+<div class="col rv" style="gap: 12px; max-width: 680px">
+<span class="eb"><span class="tr">Asistra paneli</span><span class="en">The Asistra panel</span></span>
+<h2 class="h2"><span class="tr">Tek bir gelen kutusu ve takvim için arayüz taslağı.</span><span class="en">A draft interface for a shared inbox and calendar.</span></h2>
+<a class="btn" href="asistra-giris.html" style="align-self: flex-start; margin-top: 8px"><span class="tr">Demo paneline gir</span><span class="en">Enter the demo panel</span></a>
+</div>
+<div class="rv" aria-hidden="true" style="border: 1px solid var(--line); border-radius: 20px; overflow: hidden; background: var(--bg); box-shadow: 0 30px 60px var(--shadow)">
+<div style="display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--surface)">
+<span class="dot" style="background: var(--line2)"></span><span class="dot" style="background: var(--line2)"></span><span class="dot" style="background: var(--line2)"></span>
+<span style="margin-left: 12px; flex: 1; max-width: 320px; padding: 6px 14px; border-radius: 999px; background: var(--bg); font-size: 12px; color: var(--muted)">Prototip ekranı · Prototype screen</span>
+<span class="badge" style="align-self: center; font-size: 12px"><span class="tr">Demo · planlama aşamasında</span><span class="en">Demo · in planning</span></span>
+</div>
+<div style="display: flex; flex-wrap: wrap">
+<div class="col" style="flex: 1 1 220px; gap: 4px; padding: 16px; border-right: 1px solid var(--line); background: var(--surface)">
+<span class="mut" style="padding: 0 10px 8px"><span class="tr">Gelen kutusu</span><span class="en">Inbox</span></span>
+<div class="th" style="background: var(--acc-bg)"><span class="av">E</span><span class="col" style="min-width: 0"><span style="font-weight: 600; display: flex; align-items: center; gap: 6px">Elif K.<span class="dot" style="background: #25D366; width: 8px; height: 8px"></span></span><span style="color: var(--muted)"><span class="tr">AI · yazıyor…</span><span class="en">AI · typing…</span></span></span></div>
+<div class="th"><span class="av">M</span><span class="col" style="min-width: 0"><span style="font-weight: 600; display: flex; align-items: center; gap: 6px">Mert A.<span class="dot" style="background: #2AABEE; width: 8px; height: 8px"></span></span><span style="color: var(--muted)"><span class="tr">AI · Randevunuz onaylandı</span><span class="en">AI · Your appointment is confirmed</span></span></span></div>
+<div class="th"><span class="av">S</span><span class="col" style="min-width: 0"><span style="font-weight: 600; display: flex; align-items: center; gap: 6px">Selin Y.<span class="dot" style="background: #E1306C; width: 8px; height: 8px"></span></span><span style="color: var(--muted)"><span class="tr">AI · Fiyat listemiz şöyle…</span><span class="en">AI · Here is our price list…</span></span></span></div>
+<div class="th"><span class="av">А</span><span class="col" style="min-width: 0"><span style="font-weight: 600; display: flex; align-items: center; gap: 6px">Анна П.<span class="dot" style="background: #0077FF; width: 8px; height: 8px"></span></span><span style="color: var(--muted)">AI · Запись подтверждена</span></span></div>
+<div class="th"><span class="av">C</span><span class="col" style="min-width: 0"><span style="font-weight: 600; display: flex; align-items: center; gap: 6px">Can D.<span class="dot" style="background: #25D366; width: 8px; height: 8px"></span></span><span style="color: var(--muted)"><span class="tr">Ekibe devredildi</span><span class="en">Handed to the team</span></span></span></div>
+</div>
+<div class="col" style="flex: 2 1 320px; min-width: 0; gap: 10px; padding: 18px; min-height: 380px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--line)"><span style="font-weight: 600">Elif K.</span><span class="ch" style="padding: 6px 12px; font-size: 13px"><span class="dot" style="background: #25D366"></span>WhatsApp</span></div>
+<span class="in-m msg"><span class="tr">Yarın akşam saç kesimi için yeriniz var mı?</span><span class="en">Do you have a slot for a haircut tomorrow evening?</span></span>
+<span class="out-m msg" style="animation-delay: 1.4s"><span class="tr">Yarın 18:30 ve 19:15 boş. Hangisi uygun?</span><span class="en">Tomorrow 18:30 and 19:15 are free. Which suits you?</span></span>
+<span class="in-m msg" style="animation-delay: 2.8s">18:30</span>
+<span class="out-m msg" style="animation-delay: 4.2s"><span class="tr">Onaylandı. Bir saat önce hatırlatacağım.</span><span class="en">Confirmed. I'll remind you an hour before.</span></span>
+<div style="margin-top: auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); font-size: 13px; color: var(--muted)"><span class="tr">Asistra otomatik yanıtlıyor</span><span class="en">Asistra is replying automatically</span><span style="font-weight: 600; color: var(--acc)"><span class="tr">Devral</span><span class="en">Take over</span></span></div>
+</div>
+<div class="col" style="flex: 1 1 220px; gap: 10px; padding: 16px; border-left: 1px solid var(--line); background: var(--surface)">
+<span style="font-weight: 600"><span class="tr">Yarın · Salı</span><span class="en">Tomorrow · Tuesday</span></span>
+<div class="row" style="color: var(--muted)">17:45 · <span class="tr">Dolu</span><span class="en">Booked</span></div>
+<div class="row" style="background: var(--acc-bg); color: var(--acc-fg)">18:30 · Elif K.</div>
+<div class="row">19:15 · <span class="tr">Boş</span><span class="en">Free</span></div>
+<div class="row">20:00 · <span class="tr">Boş</span><span class="en">Free</span></div>
+<span class="mut" style="margin-top: 8px"><span class="tr">Hatırlatmalar</span><span class="en">Reminders</span></span>
+<div class="row"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--ok)"><path d="m5 12 5 5 9-10"/></svg><span class="tr">1 gün önce</span><span class="en">1 day before</span></div>
+<div class="row"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--ok)"><path d="m5 12 5 5 9-10"/></svg><span class="tr">1 saat önce</span><span class="en">1 hour before</span></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="nasil" class="w sec col" style="gap: 36px">
+<div class="col rv" style="gap: 12px; max-width: 640px">
+<span class="eb"><span class="tr">Nasıl çalışır</span><span class="en">How it works</span></span>
+<h2 class="h2"><span class="tr">Üç adımda kurulur.</span><span class="en">Set up in three steps.</span></h2>
+</div>
+<ol class="grid" style="list-style: none; margin: 0; padding: 0">
+<li class="card rv"><span class="h2" style="color: var(--acc)">01</span><h3 class="h3"><span class="tr">Kanallarını bağla</span><span class="en">Connect your channels</span></h3><p class="p"><span class="tr">Tüm mesajlar tek gelen kutusunda toplanır.</span><span class="en">All messages land in one inbox.</span></p>
+<div class="col" aria-hidden="true" style="gap: 8px; margin-top: auto"><div class="row"><span class="dot" style="background: #25D366"></span>WhatsApp Business<span style="margin-left: auto; color: var(--ok)"><span class="tr">Bağlı</span><span class="en">Connected</span></span></div><div class="row"><span class="dot" style="background: #E1306C"></span>Instagram DM<span style="margin-left: auto; color: var(--ok)"><span class="tr">Bağlı</span><span class="en">Connected</span></span></div><div class="row"><span class="dot" style="background: #2AABEE"></span>Telegram<span style="margin-left: auto; color: var(--acc)"><span class="tr">Bağla</span><span class="en">Connect</span></span></div></div></li>
+<li class="card rv"><span class="h2" style="color: var(--acc)">02</span><h3 class="h3"><span class="tr">Asistanını eğit</span><span class="en">Train your assistant</span></h3><p class="p"><span class="tr">Hizmetlerini, fiyatlarını, çalışma saatlerini ve sık sorulanları ekle.</span><span class="en">Add your services, prices, opening hours and FAQs.</span></p>
+<div class="col" aria-hidden="true" style="gap: 10px; margin-top: auto; font-size: 13px; font-weight: 600"><span><span class="tr">Hizmet listesi</span><span class="en">Service list</span></span><div style="height: 8px; border-radius: 4px; background: var(--line)"><div class="grow" style="width: 100%; height: 100%; border-radius: 4px; background: var(--acc)"></div></div><span><span class="tr">Çalışma saatleri</span><span class="en">Opening hours</span></span><div style="height: 8px; border-radius: 4px; background: var(--line)"><div class="grow" style="width: 100%; height: 100%; border-radius: 4px; background: var(--acc)"></div></div><span><span class="tr">Marka üslubu</span><span class="en">Brand voice</span></span><div style="height: 8px; border-radius: 4px; background: var(--line)"><div class="grow" style="width: 72%; height: 100%; border-radius: 4px; background: var(--acc)"></div></div></div></li>
+<li class="card rv"><span class="h2" style="color: var(--acc)">03</span><h3 class="h3"><span class="tr">Randevular dolsun</span><span class="en">Let the bookings come in</span></h3><p class="p"><span class="tr">Boş saatleri önerir, takvime işler, bir gün ve bir saat önce hatırlatır.</span><span class="en">It offers free slots, adds them to the calendar and reminds a day and an hour before.</span></p>
+<div class="col" aria-hidden="true" style="gap: 8px; margin-top: auto"><div class="row"><span class="tr">Salı 18:30 · Saç kesimi</span><span class="en">Tue 18:30 · Haircut</span><span style="margin-left: auto; color: var(--muted)">WhatsApp</span></div><div class="row"><span class="tr">Salı 19:15 · Sakal</span><span class="en">Tue 19:15 · Beard</span><span style="margin-left: auto; color: var(--muted)">Instagram</span></div><div class="row"><span class="tr">Çar 10:00 · Boya</span><span class="en">Wed 10:00 · Colour</span><span style="margin-left: auto; color: var(--muted)">Telegram</span></div></div></li>
+</ol>
+<div class="col rv" style="gap: 16px">
+<h3 class="h3"><span class="tr">Randevuyla çalışan her işletme için</span><span class="en">For every appointment-based business</span></h3>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px">
+<li class="ch"><span class="tr">Kuaför ve berber</span><span class="en">Hair and barber</span></li><li class="ch"><span class="tr">Diş kliniği</span><span class="en">Dental clinic</span></li><li class="ch"><span class="tr">Güzellik salonu</span><span class="en">Beauty salon</span></li><li class="ch"><span class="tr">Restoran</span><span class="en">Restaurant</span></li><li class="ch"><span class="tr">Veteriner</span><span class="en">Vet</span></li><li class="ch"><span class="tr">Spor ve pilates</span><span class="en">Gym and pilates</span></li>
+</ul>
+</div>
+</section>
+
+<section id="kurumsal" style="background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line)">
+<div class="w sec" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 48px; align-items: center">
+<div class="col rv" style="gap: 16px">
+<span class="eb"><span class="tr">Kurumsal · white-label</span><span class="en">White-label</span></span>
+<h2 class="h2"><span class="tr">Kendi markan, kendi panelin.</span><span class="en">Your brand, your panel.</span></h2>
+<p class="p"><span class="tr">Asistra; işletme iletişimi için geliştirilen bir ürün konseptidir. Kanal bağlantıları, otomatik yanıtlar ve takvim özellikleri bu prototipte çalışmaz.</span><span class="en">Asistra is a product concept for business communications. Channel connections, automated replies and calendar features do not work in this prototype.</span></p>
+<div style="display: flex; flex-wrap: wrap; gap: 10px"><span class="ch">Türkçe</span><span class="ch">English</span><span class="ch">Русский</span></div>
+</div>
+<div class="rv flt" aria-hidden="true" style="border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: var(--bg); box-shadow: 0 24px 50px var(--shadow); display: flex; min-height: 260px">
+<div class="hue col" style="width: 92px; padding: 16px 12px; gap: 10px; background: #8A1F6B"><span style="width: 34px; height: 34px; border-radius: 10px; background: #FFFFFF"></span><span style="height: 8px; border-radius: 4px; background: rgba(255,255,255,.6)"></span><span style="height: 8px; width: 70%; border-radius: 4px; background: rgba(255,255,255,.4)"></span><span style="height: 8px; width: 85%; border-radius: 4px; background: rgba(255,255,255,.4)"></span></div>
+<div class="col" style="flex: 1; padding: 18px; gap: 12px"><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700"><span class="tr">Örnek işletme paneli</span><span class="en">Sample business panel</span></span><div class="row" style="background: var(--surface)"><span class="hue dot"></span><span class="tr">Logo ve renkler</span><span class="en">Logo and colours</span></div><div class="row" style="background: var(--surface)"><span class="hue dot"></span><span class="tr">Kendi alan adı</span><span class="en">Own domain</span></div><div class="row" style="background: var(--surface)"><span class="hue dot"></span><span class="tr">Şube ve roller</span><span class="en">Branches and roles</span></div></div>
+</div>
+</div>
+</section>
+
+<p class="p" style="max-width:760px"><span class="tr">Fiyatlar ve paket içerikleri taslaktır; satın alma ve abonelik şu anda etkin değildir.</span><span class="en">Prices and plan contents are drafts; purchasing and subscriptions are not active.</span></p>
+<section id="fiyatlar" class="w sec col" style="gap: 36px">
+<div class="col rv" style="gap: 12px; max-width: 680px">
+<span class="eb"><span class="tr">Fiyatlar</span><span class="en">Pricing</span></span>
+<h2 class="h2"><span class="tr">Her ölçekte işletme için bir plan.</span><span class="en">A plan for every size of business.</span></h2>
+<span class="badge"><span class="tr">Taslak fiyatlar · KDV hariç</span><span class="en">Draft pricing · excl. VAT</span></span>
+</div>
+<div class="grid">
+<article class="card rv"><h3 class="h3"><span class="tr">Başlangıç</span><span class="en">Starter</span></h3><span class="h2">Taslak fiyat <span style="font-size: 16px; font-weight: 500; color: var(--muted)"><span class="tr">/ ay</span><span class="en">/ mo</span></span></span><ul class="col p" style="margin: 0; padding-left: 20px; gap: 8px"><li><span class="tr">1 kanal</span><span class="en">1 channel</span></li><li><span class="tr">Ayda 500 AI yanıtı</span><span class="en">500 AI replies a month</span></li><li><span class="tr">1 takvim · 1 çalışan</span><span class="en">1 calendar · 1 staff member</span></li><li><span class="tr">Web paneli + mobil uygulama</span><span class="en">Web panel + mobile app</span></li></ul></article>
+<article class="card rv" style="border-color: var(--acc)"><span class="badge"><span class="tr">Planlama</span><span class="en">Planning</span></span><h3 class="h3"><span class="tr">Profesyonel</span><span class="en">Professional</span></h3><span class="h2">Taslak fiyat <span style="font-size: 16px; font-weight: 500; color: var(--muted)"><span class="tr">/ ay</span><span class="en">/ mo</span></span></span><ul class="col p" style="margin: 0; padding-left: 20px; gap: 8px"><li><span class="tr">4 kanalın tamamı</span><span class="en">All 4 channels</span></li><li><span class="tr">Ayda 3.000 AI yanıtı</span><span class="en">3,000 AI replies a month</span></li><li><span class="tr">5 çalışan · ayrı takvimler</span><span class="en">5 staff · separate calendars</span></li><li><span class="tr">Türkçe, İngilizce, Rusça yanıt</span><span class="en">Replies in Turkish, English, Russian</span></li></ul></article>
+<article class="card rv"><h3 class="h3"><span class="tr">İşletme</span><span class="en">Business</span></h3><span class="h2">Taslak fiyat <span style="font-size: 16px; font-weight: 500; color: var(--muted)"><span class="tr">/ ay</span><span class="en">/ mo</span></span></span><ul class="col p" style="margin: 0; padding-left: 20px; gap: 8px"><li><span class="tr">Sınırsız kanal hesabı ve şube</span><span class="en">Unlimited channel accounts and branches</span></li><li><span class="tr">Ayda 15.000 AI yanıtı</span><span class="en">15,000 AI replies a month</span></li><li><span class="tr">Sınırsız çalışan</span><span class="en">Unlimited staff</span></li><li><span class="tr">CRM ve API entegrasyonu</span><span class="en">CRM and API integration</span></li></ul></article>
+</div>
+<div class="rv" style="border-bottom: 1px solid var(--line2); max-width: 860px">
+<details><summary><span class="tr">Asistan yanlış bir şey söylerse ne olur?</span><span class="en">What if the assistant says something wrong?</span></summary><p class="p" style="padding-bottom: 22px"><span class="tr">Asistra yalnızca senin eklediğin hizmet, fiyat ve kurallara dayanır. Emin olmadığı soruda tahmin yürütmez, konuşmayı sana ya da ekibine devreder.</span><span class="en">Asistra relies only on the services, prices and rules you add. When unsure it doesn't guess; it hands the conversation to you or your team.</span></p></details>
+<details><summary><span class="tr">Konuşmaları izleyebilir miyim?</span><span class="en">Can I follow the conversations?</span></summary><p class="p" style="padding-bottom: 22px"><span class="tr">Evet. Tüm konuşmaları panelden ve mobil uygulamadan canlı izleyebilir, istediğin an devralabilirsin.</span><span class="en">Yes. You can watch every conversation live from the panel and the mobile app, and take over at any moment.</span></p></details>
+</div>
+</section>
+
+</main>
+
+<footer style="border-top: 1px solid var(--line)">
+<div class="w" style="padding-top: 40px; padding-bottom: 40px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 32px; font-size: 15px">
+<span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 18px; color: var(--acc)">Asistra</span>
+<nav aria-label="Footer" style="display: flex; flex-wrap: wrap; gap: 8px 28px">
+<a href="business.html" style="text-decoration: none; padding: 10px 0">QAcrew Business</a>
+<a href="forge.html" style="text-decoration: none; padding: 10px 0">Forge</a>
+<a href="index.html" style="text-decoration: none; padding: 10px 0">QAcrew Studio</a>
+<a href="#kurumsal" style="text-decoration: none; padding: 10px 0"><span class="tr">Kurumsal</span><span class="en">White-label</span></a>
+</nav>
+<span style="color: var(--muted); font-size: 14px">© 2026 QAcrew Studio</span>
+</div>
+</footer>
+
+</div>
+<script>
+(function(){var ids=['qs-theme','qs-lang'];ids.forEach(function(id){var el=document.getElementById(id);if(!el)return;
+try{if(localStorage.getItem(id)==='1')el.checked=true;}catch(e){}
+el.addEventListener('change',function(){try{localStorage.setItem(id,el.checked?'1':'0');}catch(e){}
+if(id==='qs-lang')document.documentElement.lang=el.checked?'en':'tr';});
+if(id==='qs-lang'&&el.checked)document.documentElement.lang='en';});})();
+</script>
+</body>
+</html>

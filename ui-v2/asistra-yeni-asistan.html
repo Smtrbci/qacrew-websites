@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asistra · Yeni asistan</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+body{margin:0}
+.qs-root{--bg:#F4F5F7;--surface:#FFFFFF;--ink:#0E1116;--muted:#4B5563;--body:#3A4150;--line:#DDE0E6;--line2:#C9CDD6;--field:#8C93A1;--btn:#0E1116;--btn-fg:#FFFFFF;--shadow:rgba(14,17,22,.14);--acc:#8A1F6B;--acc-bg:#F8E1F1;--acc-fg:#6E1555;--ok:#0A5F58;font-family:Inter,system-ui,sans-serif;color:var(--ink);background:var(--bg);box-sizing:border-box}
+body:has(#qs-theme:checked) .qs-root{--bg:#0B0D11;--surface:#151920;--ink:#F1F3F6;--muted:#A9B0BC;--body:#C3C9D3;--line:#262B35;--line2:#343A46;--field:#6B7483;--btn:#F1F3F6;--btn-fg:#0B0D11;--shadow:rgba(0,0,0,.5);--acc:#F2A6DC;--acc-bg:#3A1230;--acc-fg:#F6BFE6;--ok:#8FE0D4}
+body:not(:has(#qs-lang:checked)) .en{display:none!important}
+body:has(#qs-lang:checked) .tr{display:none!important}
+.qs-root a{color:var(--ink)}.qs-root a:hover{color:var(--muted)}
+.qs-root,.qs-root *{transition:background-color .35s ease,border-color .35s ease,color .35s ease}
+.w{max-width:1240px;margin:0 auto;padding-left:32px;padding-right:32px}
+.col{display:flex;flex-direction:column}
+.h{font-family:'Space Grotesk',sans-serif;margin:0}
+.p{margin:0;font-size:14px;line-height:1.5;color:var(--body)}
+.mut{font-size:13px;font-weight:600;color:var(--muted)}
+.lb{font-size:14px;font-weight:600}
+.badge{font-size:12px;font-weight:600;background:var(--acc-bg);color:var(--acc-fg);border-radius:999px;padding:4px 10px;display:inline-block}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:16px;box-sizing:border-box}
+.btn,.btn2{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;font:inherit;font-weight:600;font-size:14px;text-decoration:none;cursor:pointer;box-sizing:border-box;transition:transform .2s ease,box-shadow .2s ease}
+.btn{background:var(--btn);border:0;color:var(--btn-fg)}.qs-root a.btn,.qs-root a.btn:hover{color:var(--btn-fg)}
+.btn2{border:1px solid var(--field);background:transparent;color:var(--ink)}
+.btn:hover,.btn2:hover{transform:translateY(-2px);box-shadow:0 10px 22px var(--shadow)}
+.tab{min-height:44px;padding:0 16px;display:inline-flex;align-items:center;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none}
+.tab:hover{background:var(--line)}.tab.on,.qs-root a.tab.on{background:var(--acc-bg);color:var(--acc-fg)}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.fld{font:inherit;font-size:14px;min-height:44px;box-sizing:border-box;width:100%;padding:0 14px;border:1px solid var(--field);border-radius:12px;background:var(--surface);color:var(--ink)}
+textarea.fld{padding:14px;min-height:130px;resize:vertical;line-height:1.5}
+.fld:focus{outline:2px solid var(--acc);outline-offset:1px}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg label{position:relative;min-height:44px;padding:0 14px;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line2);border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;background:var(--surface);transition:transform .2s ease,background-color .2s ease,border-color .2s ease}
+.seg label:hover{transform:translateY(-2px)}
+.seg input{position:absolute;opacity:0;width:1px;height:1px}
+.seg label:has(input:checked){background:var(--acc-bg);border-color:var(--acc);color:var(--acc-fg)}
+.seg label:has(input:focus-visible),.sw:has(input:focus-visible){outline:2px solid var(--ink);outline-offset:2px}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 14px;border-radius:12px;background:var(--bg);cursor:pointer;min-height:44px;box-sizing:border-box}
+.sw input{appearance:none;-webkit-appearance:none;margin:0;width:46px;height:26px;border-radius:999px;background:var(--line2);position:relative;cursor:pointer;flex:none;transition:background-color .25s ease}
+.sw input::before{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--surface);transition:transform .25s cubic-bezier(.3,1.4,.5,1)}
+.sw input:checked{background:var(--acc)}.sw input:checked::before{transform:translateX(20px)}
+.step{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--muted)}
+.num{width:30px;height:30px;border-radius:50%;border:2px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:13px;box-sizing:border-box}
+.step.on{color:var(--ink)}.step.on .num{background:var(--acc);border-color:var(--acc);color:var(--surface)}
+.in-m,.out-m{max-width:80%;padding:10px 13px;border-radius:16px;font-size:13px;line-height:1.45}
+.in-m{align-self:flex-start;background:var(--bg);border-bottom-left-radius:4px}
+.out-m{align-self:flex-end;background:var(--acc);color:var(--surface);border-bottom-right-radius:4px}
+td,th{padding:12px 10px;text-align:left;border-bottom:1px solid var(--line);font-size:14px}
+th{font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+#qs-theme{appearance:none;-webkit-appearance:none;margin:0;width:60px;height:34px;border-radius:999px;background:var(--line2);position:relative;cursor:pointer;flex:none}
+#qs-theme::before{content:"";position:absolute;top:4px;left:4px;width:26px;height:26px;border-radius:50%;background:var(--surface);box-shadow:0 2px 6px var(--shadow);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}
+#qs-theme:checked::before{transform:translateX(26px)}
+#qs-theme:focus-visible,.lang:has(:focus-visible){outline:2px solid var(--ink);outline-offset:3px}
+.sun{display:block}.moon{display:none}body:has(#qs-theme:checked) .sun{display:none}body:has(#qs-theme:checked) .moon{display:block}
+.lang{display:inline-flex;gap:4px;border:1px solid var(--line2);border-radius:999px;padding:4px;cursor:pointer;position:relative}
+#qs-lang{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.l1,.l2{font-size:13px;font-weight:600;padding:8px 14px;border-radius:999px}
+.l1{background:var(--btn);color:var(--btn-fg)}
+body:has(#qs-lang:checked) .l1{background:transparent;color:var(--ink)}body:has(#qs-lang:checked) .l2{background:var(--btn);color:var(--btn-fg)}
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes stepin{0%,5%{opacity:.25}15%,100%{opacity:1}}
+@keyframes msg{0%{opacity:0;transform:translateY(10px)}6%,92%{opacity:1;transform:none}100%{opacity:0}}
+@keyframes drop{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.in{animation:up .7s cubic-bezier(.2,.7,.2,1) both}.spin{animation:spin 1s linear infinite}
+.stepin{animation:stepin 8s ease infinite both}.msg{animation:msg 12s ease infinite both}.drop{animation:drop 2.4s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.qs-root *,.qs-root *::before,.qs-root *::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div role="note" style="position:relative;z-index:20;padding:9px 16px;text-align:center;background:#B8E986;color:#111;font:600 13px/1.45 Inter,system-ui,sans-serif"><span class="tr">Yeni arayüz önizlemesi · Bu sayfa yerel taslaktır; burada görünmeyen servisler etkin değildir.</span><span class="en">New UI preview · This page is a local draft; services not shown as available are not active.</span></div>
+<div class="qs-root" style="min-height: 2100px">
+
+<header style="background: var(--surface); border-bottom: 1px solid var(--line)">
+<div class="w" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; padding-bottom: 12px">
+<a href="asistra.html" class="h" style="font-weight: 700; font-size: 20px; text-decoration: none; color: var(--acc)">Asistra</a>
+<nav aria-label="Panel bölümleri" style="display: flex; flex-wrap: wrap; gap: 4px">
+<a class="tab on" href="asistra-panel.html"><span class="tr">Asistanlar</span><span class="en">Assistants</span></a>
+<a class="tab" href="asistra-konusmalar.html"><span class="tr">Konuşmalar</span><span class="en">Conversations</span></a>
+<a class="tab" href="asistra-konusmalar.html#takvim"><span class="tr">Takvim</span><span class="en">Calendar</span></a>
+<a class="tab" href="asistra-panel.html#ayarlar"><span class="tr">Ayarlar</span><span class="en">Settings</span></a>
+</nav>
+<div style="display: flex; align-items: center; gap: 12px">
+<label for="qs-theme" style="display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; color: var(--muted)">
+<svg class="sun" aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="10" r="3.6"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M4.3 15.7l1.4-1.4M14.3 5.7l1.4-1.4"/></svg>
+<svg class="moon" aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 11.8A7 7 0 0 1 8.2 3.5a7 7 0 1 0 8.3 8.3z"/></svg>
+<input id="qs-theme" type="checkbox" aria-label="Gece modu / Dark mode">
+</label>
+<label class="lang" for="qs-lang"><input id="qs-lang" type="checkbox" aria-label="English"><span class="l1">TR</span><span class="l2">EN</span></label>
+</div>
+</div>
+</header>
+
+<main class="w col" style="padding-top: 28px; padding-bottom: 56px; gap: 20px">
+
+<div class="in" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<h1 class="h" style="font-weight: 700; font-size: 30px; letter-spacing: -0.02em"><span class="tr">Yeni asistan oluştur</span><span class="en">Create a new assistant</span></h1>
+<ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 22px">
+<li class="step on"><span class="num">1</span><span class="tr">İşletme</span><span class="en">Business</span></li>
+<li class="step on"><span class="num">2</span><span class="tr">Seçenekler</span><span class="en">Options</span></li>
+<li class="step"><span class="num">3</span><span class="tr">Üretim</span><span class="en">Generate</span></li>
+<li class="step"><span class="num">4</span><span class="tr">Sonuç</span><span class="en">Result</span></li>
+</ol>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: stretch">
+<section class="card in" style="flex: 1 1 380px">
+<h2 class="h" style="font-weight: 600; font-size: 19px"><span class="tr">İşletmeniz</span><span class="en">Your business</span></h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px">
+<div class="col" style="gap: 6px"><label class="lb" for="ad"><span class="tr">İşletme adı</span><span class="en">Business name</span></label><input class="fld" id="ad" type="text" placeholder="ör. Studio Makas"></div>
+<div class="col" style="gap: 6px"><label class="lb" for="sektor"><span class="tr">Sektör</span><span class="en">Industry</span></label><select class="fld" id="sektor"><option>Kuaför &amp; Berber</option><option>Güzellik Salonu</option><option>Diş Kliniği</option><option>Klinik &amp; Sağlık</option><option>Restoran &amp; Kafe</option><option>Spor &amp; Pilates</option><option>Veteriner</option><option>Otel &amp; Konaklama</option><option>Diğer</option></select></div>
+</div>
+<div class="col" style="gap: 6px">
+<label class="lb" for="anlat"><span class="tr">İşletmenizi anlatın</span><span class="en">Describe your business</span> <span class="mut" style="font-weight: 500"><span class="tr">hizmetler, fiyatlar, saatler, kurallar</span><span class="en">services, prices, hours, rules</span></span></label>
+<textarea class="fld" id="anlat" placeholder="ör. Kadıköy'de erkek ve kadın kuaförüyüz. Salı–Pazar 10:00–21:00 açığız. Erkek saç kesimi 450 TL (30 dk), sakal 250 TL…"></textarea>
+</div>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px"><span class="mut"><span class="tr">Örnekle doldur:</span><span class="en">Fill with an example:</span></span><button type="button" class="btn2"><span class="tr">Kuaför</span><span class="en">Hair salon</span></button><button type="button" class="btn2"><span class="tr">Diş kliniği</span><span class="en">Dental clinic</span></button><button type="button" class="btn2"><span class="tr">Restoran</span><span class="en">Restaurant</span></button></div>
+<div class="col" style="gap: 8px; align-items: center; text-align: center; padding: 22px 18px; border: 2px dashed var(--field); border-radius: 16px; background: var(--bg)">
+<svg class="drop" aria-hidden="true" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--acc)"><path d="M12 16V5m-4 4 4-4 4 4M5 19h14"/></svg>
+<span style="font-weight: 600"><span class="tr">Fiyat listesi, menü fotoğrafı ya da metin dosyası sürükleyin</span><span class="en">Drag a price list, menu photo or text file here</span></span>
+<span class="mut" style="font-weight: 500">PNG, JPG, WEBP, TXT, CSV, MD · <span class="tr">en fazla 5 MB · isteğe bağlı</span><span class="en">up to 5 MB · optional</span></span>
+<button type="button" class="btn2"><span class="tr">Dosya yükle</span><span class="en">Upload file</span></button>
+</div>
+</section>
+
+<section class="card in" style="flex: 1 1 380px; animation-delay: .1s">
+<h2 class="h" style="font-weight: 600; font-size: 19px"><span class="tr">Seçenekler</span><span class="en">Options</span></h2>
+<fieldset style="border: 0; margin: 0; padding: 0"><legend class="lb" style="padding: 0; margin-bottom: 8px"><span class="tr">Kanal</span><span class="en">Channel</span></legend>
+<div class="seg"><label><input type="radio" name="kanal" checked><span class="dot" style="background: #25D366"></span>WhatsApp</label><label><input type="radio" name="kanal"><span class="dot" style="background: #2AABEE"></span>Telegram</label><label><input type="radio" name="kanal"><span class="dot" style="background: #E1306C"></span>Instagram</label><label><input type="radio" name="kanal"><span class="dot" style="background: #0077FF"></span>VK</label></div></fieldset>
+<fieldset style="border: 0; margin: 0; padding: 0"><legend class="lb" style="padding: 0; margin-bottom: 8px"><span class="tr">Üslup</span><span class="en">Tone</span></legend>
+<div class="seg"><label><input type="radio" name="uslup" checked><span class="tr">Samimi</span><span class="en">Friendly</span></label><label><input type="radio" name="uslup"><span class="tr">Kurumsal</span><span class="en">Professional</span></label><label><input type="radio" name="uslup"><span class="tr">Enerjik</span><span class="en">Energetic</span></label><label><input type="radio" name="uslup"><span class="tr">Lüks ve zarif</span><span class="en">Luxury and elegant</span></label></div></fieldset>
+<fieldset style="border: 0; margin: 0; padding: 0"><legend class="lb" style="padding: 0; margin-bottom: 8px"><span class="tr">Yanıt dili</span><span class="en">Reply language</span></legend>
+<div class="seg"><label><input type="radio" name="dil" checked>Türkçe</label><label><input type="radio" name="dil">English</label><label><input type="radio" name="dil">Русский</label><label><input type="radio" name="dil"><span class="tr">Çok dilli (otomatik)</span><span class="en">Multilingual (auto)</span></label></div></fieldset>
+<fieldset class="col" style="border: 0; margin: 0; padding: 0; gap: 8px"><legend class="lb" style="padding: 0; margin-bottom: 8px"><span class="tr">Davranış</span><span class="en">Behaviour</span></legend>
+<label class="sw"><span class="col"><span style="font-size: 14px; font-weight: 600"><span class="tr">Kapora iste</span><span class="en">Ask for a deposit</span></span><span class="p" style="font-size: 13px"><span class="tr">Randevuyu ön ödemeyle kesinleştir</span><span class="en">Confirm bookings with prepayment</span></span></span><input type="checkbox"></label>
+<label class="sw"><span class="col"><span style="font-size: 14px; font-weight: 600"><span class="tr">Emoji kullan</span><span class="en">Use emoji</span></span><span class="p" style="font-size: 13px"><span class="tr">Ölçülü, kanala uygun</span><span class="en">Sparingly, channel-appropriate</span></span></span><input type="checkbox" checked></label>
+<label class="sw"><span class="col"><span style="font-size: 14px; font-weight: 600"><span class="tr">Ek hizmet öner</span><span class="en">Suggest add-ons</span></span><span class="p" style="font-size: 13px"><span class="tr">Uygun anda nazikçe</span><span class="en">Gently, at the right moment</span></span></span><input type="checkbox" checked></label>
+</fieldset>
+<a class="btn" href="#uretim" style="min-height: 52px; font-size: 16px; margin-top: auto"><span class="tr">Asistanı üret</span><span class="en">Generate assistant</span></a>
+</section>
+</div>
+
+<section id="uretim" class="card in" aria-live="polite" style="animation-delay: .2s; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 24px">
+<div style="display: flex; align-items: center; gap: 16px; flex: 1 1 280px">
+<svg class="spin" aria-hidden="true" width="40" height="40" viewBox="0 0 32 32" fill="none" stroke-width="4" stroke-linecap="round"><circle cx="16" cy="16" r="12" style="stroke: var(--line)"/><path d="M16 4a12 12 0 0 1 12 12" style="stroke: var(--acc)"/></svg>
+<div class="col" style="gap: 4px"><span class="mut"><span class="tr">3 · Üretim</span><span class="en">3 · Generate</span></span><h2 class="h" style="font-weight: 600; font-size: 19px"><span class="tr">Asistanınız eğitiliyor</span><span class="en">Training your assistant</span></h2></div>
+</div>
+<ul class="col" style="list-style: none; margin: 0; padding: 0; gap: 8px; flex: 2 1 360px; font-size: 14px">
+<li class="stepin" style="display: flex; align-items: center; gap: 10px"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--ok)"><path d="m5 12 5 5 9-10"/></svg><span class="tr">İşletme bilgileri okunuyor…</span><span class="en">Reading your business details…</span></li>
+<li class="stepin" style="display: flex; align-items: center; gap: 10px; animation-delay: 1.2s"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--ok)"><path d="m5 12 5 5 9-10"/></svg><span class="tr">Hizmetler ve fiyatlar çıkarılıyor…</span><span class="en">Extracting services and prices…</span></li>
+<li class="stepin" style="display: flex; align-items: center; gap: 10px; animation-delay: 2.4s"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--ok)"><path d="m5 12 5 5 9-10"/></svg><span class="tr">Sık sorulan sorular yanıtlanıyor…</span><span class="en">Answering frequent questions…</span></li>
+<li class="stepin" style="display: flex; align-items: center; gap: 10px; animation-delay: 3.6s"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--ok)"><path d="m5 12 5 5 9-10"/></svg><span class="tr">Örnek randevu konuşması kuruluyor…</span><span class="en">Building a sample booking conversation…</span></li>
+</ul>
+</section>
+
+<section id="sonuc" class="card in" style="animation-delay: .3s">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px">
+<div class="col" style="gap: 4px"><span class="mut"><span class="tr">4 · Sonuç</span><span class="en">4 · Result</span></span><div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px"><h2 class="h" style="font-weight: 700; font-size: 24px">Studio Makas</h2><span class="badge">WhatsApp</span><span class="badge"><span class="tr">Temsili örnek</span><span class="en">Illustrative sample</span></span></div></div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px"><button type="button" class="btn2"><span class="tr">Yeniden üret</span><span class="en">Regenerate</span></button><a class="btn" href="asistra-panel.html"><span class="tr">Asistanı kaydet</span><span class="en">Save assistant</span></a></div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 20px">
+<div class="col" style="flex: 3 1 420px; min-width: 0; gap: 10px">
+<span class="mut"><span class="tr">Randevulanabilir hizmetler</span><span class="en">Bookable services</span></span>
+<div style="overflow-x: auto">
+<table style="width: 100%; min-width: 420px; border-collapse: collapse">
+<thead><tr><th scope="col"><span class="tr">Hizmet</span><span class="en">Service</span></th><th scope="col"><span class="tr">Süre</span><span class="en">Duration</span></th><th scope="col"><span class="tr">Fiyat</span><span class="en">Price</span></th></tr></thead>
+<tbody>
+<tr><td style="font-weight: 600"><span class="tr">Erkek saç kesimi</span><span class="en">Men's haircut</span></td><td>30 <span class="tr">dk</span><span class="en">min</span></td><td>450 TL</td></tr>
+<tr><td style="font-weight: 600"><span class="tr">Sakal</span><span class="en">Beard</span></td><td>Belirtilmedi · Not specified</td><td>250 TL</td></tr>
+</tbody>
+</table>
+</div>
+<span class="mut" style="margin-top: 8px"><span class="tr">Çalışma saatleri</span><span class="en">Opening hours</span></span>
+<span class="p"><span class="tr">Salı–Pazar 10:00–21:00</span><span class="en">Tue–Sun 10:00–21:00</span></span>
+<div class="col" style="gap: 6px; padding: 14px; border-radius: 12px; background: var(--acc-bg); margin-top: 8px">
+<span style="font-size: 13px; font-weight: 600; color: var(--acc-fg)"><span class="tr">Eksik bilgi</span><span class="en">Missing information</span></span>
+<span style="font-size: 14px; color: var(--acc-fg)"><span class="tr">Sakal için süre ve iptal kuralı belirtilmemiş. Asistan bu sorularda konuşmayı size devreder.</span><span class="en">No duration for the beard service and no cancellation policy were given. The assistant will hand these questions over to you.</span></span>
+</div>
+</div>
+<div class="col" style="flex: 2 1 300px; min-width: 0; gap: 10px">
+<span class="mut"><span class="tr">Örnek randevu konuşması</span><span class="en">Sample booking conversation</span></span>
+<div class="col" style="gap: 10px; padding: 16px; border-radius: 16px; border: 1px solid var(--line); min-height: 240px">
+<span class="in-m msg"><span class="tr">Yarın akşam saç kesimi için yer var mı?</span><span class="en">Any slot for a haircut tomorrow evening?</span></span>
+<span class="out-m msg" style="animation-delay: 1.4s"><span class="tr">Merhaba! Yarın 18:30 ve 19:15 boş. Erkek saç kesimi 450 TL, 30 dakika sürüyor. Hangisi uygun?</span><span class="en">Hi! Tomorrow 18:30 and 19:15 are free. A men's haircut is 450 TL and takes 30 minutes. Which suits you?</span></span>
+<span class="in-m msg" style="animation-delay: 2.8s">18:30</span>
+<span class="out-m msg" style="animation-delay: 4.2s"><span class="tr">Randevunuz alındı. Bir saat önce hatırlatacağım.</span><span class="en">You're booked. I'll remind you an hour before.</span></span>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+</div>
+<script>
+(function(){var ids=['qs-theme','qs-lang'];ids.forEach(function(id){var el=document.getElementById(id);if(!el)return;
+try{if(localStorage.getItem(id)==='1')el.checked=true;}catch(e){}
+el.addEventListener('change',function(){try{localStorage.setItem(id,el.checked?'1':'0');}catch(e){}
+if(id==='qs-lang')document.documentElement.lang=el.checked?'en':'tr';});
+if(id==='qs-lang'&&el.checked)document.documentElement.lang='en';});})();
+</script>
+</body>
+</html>
