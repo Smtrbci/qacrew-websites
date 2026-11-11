@@ -68,7 +68,7 @@ function setTheme(theme) {
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#15242a' : '#f6f1e9');
   try { localStorage.setItem('qacrew-theme', theme); } catch (_) {}
 }
-let theme = 'light';
-try { theme = localStorage.getItem('qacrew-theme') || 'light'; } catch (_) {}
+let theme = 'dark';
+try { theme = localStorage.getItem('qacrew-theme') || 'dark'; } catch (_) {}
 setTheme(theme === 'dark' ? 'dark' : 'light');
 themeButton?.addEventListener('click', () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
