@@ -28,7 +28,7 @@ test("demo sample preview is bilingual and never requests real generation", asyn
   await expect(page.getByText("Set up this test run")).toBeVisible();
   await expect(page.getByText("Records stay in this browser and are not shared with a team.")).toBeVisible();
   await page.locator("#runPlatform").locator("xpath=..").locator("[data-forge-select-toggle]").click();
-  await expect(page.locator("#runPlatform").locator("xpath=..").locator("[role=listbox]")).toHaveCSS("background-color", "rgb(22, 20, 18)");
+  await expect(page.locator("#runPlatform").locator("xpath=..").locator("[role=listbox]")).toHaveCSS("background-color", "rgb(21, 25, 32)");
   await page.locator("#runPlatform").locator("xpath=..").locator('[data-forge-option="Android"]').click();
   await expect(page.locator("#runPlatform")).toHaveValue("Android");
   await page.locator("#runVersion").fill("v3.9");

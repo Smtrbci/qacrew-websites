@@ -30,3 +30,18 @@
     }
   }
 })();
+
+/* İSTEĞE BAĞLI — gece modu.
+   Sitenin geri kalanında seçilen gece modunu AhaPath yasal sayfalarına da taşır.
+   Kullanım: bu dosyanın içeriğini mevcut /ahapath/legal.js dosyasının EN SONUNA ekle.
+   Sayfaların HTML'i ve metni değişmez. Eklemezsen sayfalar her zaman gündüz modunda açılır. */
+(function () {
+  function apply() {
+    var dark = false;
+    try { dark = localStorage.getItem('qs-theme') === '1'; } catch (e) {}
+    if (dark) document.documentElement.setAttribute('data-theme', 'dark');
+    else document.documentElement.removeAttribute('data-theme');
+  }
+  apply();
+  window.addEventListener('pageshow', apply);
+})();

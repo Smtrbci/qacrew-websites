@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asistra · Asistanlarım</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+body{margin:0}
+.qs-root{--bg:#F4F5F7;--surface:#FFFFFF;--ink:#0E1116;--muted:#4B5563;--body:#3A4150;--line:#DDE0E6;--line2:#C9CDD6;--field:#8C93A1;--btn:#0E1116;--btn-fg:#FFFFFF;--shadow:rgba(14,17,22,.14);--acc:#8A1F6B;--acc-bg:#F8E1F1;--acc-fg:#6E1555;--ok:#0A5F58;font-family:Inter,system-ui,sans-serif;color:var(--ink);background:var(--bg);box-sizing:border-box}
+body:has(#qs-theme:checked) .qs-root{--bg:#0B0D11;--surface:#151920;--ink:#F1F3F6;--muted:#A9B0BC;--body:#C3C9D3;--line:#262B35;--line2:#343A46;--field:#6B7483;--btn:#F1F3F6;--btn-fg:#0B0D11;--shadow:rgba(0,0,0,.5);--acc:#F2A6DC;--acc-bg:#3A1230;--acc-fg:#F6BFE6;--ok:#8FE0D4}
+body:not(:has(#qs-lang:checked)) .en{display:none!important}
+body:has(#qs-lang:checked) .tr{display:none!important}
+.qs-root a{color:var(--ink)}.qs-root a:hover{color:var(--muted)}
+.qs-root,.qs-root *{transition:background-color .35s ease,border-color .35s ease,color .35s ease}
+.w{max-width:1240px;margin:0 auto;padding-left:32px;padding-right:32px}
+.col{display:flex;flex-direction:column}
+.h{font-family:'Space Grotesk',sans-serif;margin:0}
+.p{margin:0;font-size:14px;line-height:1.5;color:var(--body)}
+.mut{font-size:13px;font-weight:600;color:var(--muted)}
+.badge{font-size:12px;font-weight:600;background:var(--acc-bg);color:var(--acc-fg);border-radius:999px;padding:4px 10px;display:inline-block}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:14px;box-sizing:border-box}
+.act{text-decoration:none;transition:transform .25s ease,box-shadow .25s ease,background-color .35s ease,border-color .35s ease}
+.act:hover{transform:translateY(-5px);box-shadow:0 16px 32px var(--shadow)}
+.btn,.btn2{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;font:inherit;font-weight:600;font-size:14px;text-decoration:none;cursor:pointer;box-sizing:border-box;transition:transform .2s ease,box-shadow .2s ease}
+.btn{background:var(--btn);border:0;color:var(--btn-fg)}.qs-root a.btn,.qs-root a.btn:hover{color:var(--btn-fg)}
+.btn2{border:1px solid var(--field);background:transparent;color:var(--ink)}
+.btn:hover,.btn2:hover{transform:translateY(-2px);box-shadow:0 10px 22px var(--shadow)}
+.tab{min-height:44px;padding:0 16px;display:inline-flex;align-items:center;border-radius:999px;font-size:14px;font-weight:600;text-decoration:none;transition:background-color .2s ease}
+.tab:hover{background:var(--line)}.tab.on,.qs-root a.tab.on{background:var(--acc-bg);color:var(--acc-fg)}
+.dot{width:10px;height:10px;border-radius:50%;flex:none}
+.ico{width:38px;height:38px;border-radius:11px;background:var(--acc-bg);color:var(--acc);display:flex;align-items:center;justify-content:center;flex:none}
+.row{display:flex;align-items:center;gap:10px;padding:12px;border-radius:12px;background:var(--bg);font-size:13px;font-weight:600}
+.in-m,.out-m{max-width:86%;padding:8px 11px;border-radius:14px;font-size:12px;line-height:1.4}
+.in-m{align-self:flex-start;background:var(--bg);border-bottom-left-radius:4px}
+.out-m{align-self:flex-end;background:var(--acc);color:var(--surface);border-bottom-right-radius:4px}
+#qs-theme{appearance:none;-webkit-appearance:none;margin:0;width:60px;height:34px;border-radius:999px;background:var(--line2);position:relative;cursor:pointer;flex:none}
+#qs-theme::before{content:"";position:absolute;top:4px;left:4px;width:26px;height:26px;border-radius:50%;background:var(--surface);box-shadow:0 2px 6px var(--shadow);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}
+#qs-theme:checked::before{transform:translateX(26px)}
+#qs-theme:focus-visible,.lang:has(:focus-visible){outline:2px solid var(--ink);outline-offset:3px}
+.sun{display:block}.moon{display:none}body:has(#qs-theme:checked) .sun{display:none}body:has(#qs-theme:checked) .moon{display:block}
+.lang{display:inline-flex;gap:4px;border:1px solid var(--line2);border-radius:999px;padding:4px;cursor:pointer;position:relative}
+#qs-lang{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.l1,.l2{font-size:13px;font-weight:600;padding:8px 14px;border-radius:999px}
+.l1{background:var(--btn);color:var(--btn-fg)}
+body:has(#qs-lang:checked) .l1{background:transparent;color:var(--ink)}body:has(#qs-lang:checked) .l2{background:var(--btn);color:var(--btn-fg)}
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes msg{0%{opacity:0;transform:translateY(8px)}8%,90%{opacity:1;transform:none}100%{opacity:0}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 var(--acc-bg)}50%{box-shadow:0 0 0 7px var(--acc-bg)}}
+.in{animation:up .7s cubic-bezier(.2,.7,.2,1) both}.msg{animation:msg 10s ease infinite both}.pulse{animation:pulse 2s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.qs-root *,.qs-root *::before,.qs-root *::after{animation:none!important;transition:none!important}}
+</style>
+<link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/css/studio-integration.css?v=20261111">
+<link rel="canonical" href="https://www.qacrew.it/asistra/app/">
+</head>
+<body>
+<div class="qs-root" style="min-height: 1600px">
+
+<header style="background: var(--surface); border-bottom: 1px solid var(--line)">
+<div class="w" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; padding-bottom: 12px">
+<a href="/asistra/" class="h" style="font-weight: 700; font-size: 20px; text-decoration: none; color: var(--acc)">Asistra</a>
+<nav aria-label="Panel bölümleri" style="display: flex; flex-wrap: wrap; gap: 4px">
+<a class="tab on" href="#top" aria-current="page"><span class="tr">Asistanlar</span><span class="en">Assistants</span></a>
+<a class="tab" href="/asistra/konusmalar/"><span class="tr">Konuşmalar</span><span class="en">Conversations</span></a>
+<a class="tab" href="/asistra/konusmalar/#takvim"><span class="tr">Takvim</span><span class="en">Calendar</span></a>
+<a class="tab" href="#ayarlar"><span class="tr">Ayarlar</span><span class="en">Settings</span></a>
+</nav>
+<div style="display: flex; align-items: center; gap: 12px">
+<label for="qs-theme" style="display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; color: var(--muted)">
+<svg class="sun" aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="10" r="3.6"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M4.3 15.7l1.4-1.4M14.3 5.7l1.4-1.4"/></svg>
+<svg class="moon" aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 11.8A7 7 0 0 1 8.2 3.5a7 7 0 1 0 8.3 8.3z"/></svg>
+<input id="qs-theme" type="checkbox" aria-label="Gece modu / Dark mode">
+</label>
+<label class="lang" for="qs-lang"><input id="qs-lang" type="checkbox" aria-label="English"><span class="l1">TR</span><span class="l2">EN</span></label>
+<a href="/asistra/giris/" aria-label="Çıkış yap / Log out" style="width: 44px; height: 44px; border-radius: 50%; background: var(--acc); color: var(--surface); font-weight: 700; display: flex; align-items: center; justify-content: center; text-decoration: none">D</a>
+</div>
+</div>
+</header>
+
+<main data-demo-panel id="top" class="w col" style="padding-top: 32px; padding-bottom: 56px; gap: 24px">
+
+<div class="in" style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
+<div class="col" style="gap: 8px; max-width: 620px">
+<h1 class="h" style="font-weight: 700; font-size: 34px; letter-spacing: -0.02em"><span class="tr">Asistanlarım</span><span class="en">My assistants</span></h1>
+<p class="p" style="font-size: 15px"><span class="tr">Her asistan, bir kanal için işletmenize özel eğitilmiş müşteri ve randevu temsilcisidir.</span><span class="en">Each assistant is a customer and booking agent trained on your business for one channel.</span></p>
+</div>
+<a class="btn" href="/asistra/yeni/" style="min-height: 52px; font-size: 16px"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span class="tr">Yeni asistan</span><span class="en">New assistant</span></a>
+</div>
+
+<section aria-label="Özet" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px">
+<div class="card act in" style="animation-delay: .05s"><div style="display: flex; justify-content: space-between; align-items: center"><span class="mut"><span class="tr">Aktif asistan</span><span class="en">Active assistants</span></span><span class="ico"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg></span></div><span class="h" style="font-weight: 700; font-size: 34px">2</span><span class="mut" style="font-weight: 500"><span class="tr">Kaydedilmiş ve kullanıma hazır</span><span class="en">Saved and ready to use</span></span></div>
+<div class="card act in" style="animation-delay: .1s"><div style="display: flex; justify-content: space-between; align-items: center"><span class="mut"><span class="tr">Kanal kapsaması</span><span class="en">Channel coverage</span></span><span class="ico"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></span></div><span class="h" style="font-weight: 700; font-size: 34px">2 / 4</span><div style="display: flex; gap: 8px"><span class="dot" style="background: #25D366"></span><span class="dot" style="background: #E1306C"></span><span class="dot" style="border: 2px solid var(--line2); box-sizing: border-box"></span><span class="dot" style="border: 2px solid var(--line2); box-sizing: border-box"></span></div></div>
+<div class="card act in" style="animation-delay: .15s"><div style="display: flex; justify-content: space-between; align-items: center"><span class="mut"><span class="tr">Hazır yanıt</span><span class="en">Ready replies</span></span><span class="ico"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 4 14h7l-1 7 9-11h-7z"/></svg></span></div><span class="h" style="font-weight: 700; font-size: 34px">0</span><span class="mut" style="font-weight: 500"><span class="tr">SSS, hızlı yanıt ve hatırlatmalar</span><span class="en">FAQs, quick replies and reminders</span></span></div>
+<div class="card act in" style="animation-delay: .2s"><div style="display: flex; justify-content: space-between; align-items: center"><span class="mut"><span class="tr">Randevulanabilir hizmet</span><span class="en">Bookable services</span></span><span class="ico"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span></div><span class="h" style="font-weight: 700; font-size: 34px">0</span><span class="mut" style="font-weight: 500"><span class="tr">Süre ve fiyatıyla tanımlı</span><span class="en">With duration and price</span></span></div>
+</section>
+
+<section class="col in" style="gap: 14px; animation-delay: .25s">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+<h2 class="h" style="font-weight: 600; font-size: 20px"><span class="tr">Oluşturulan asistanlar</span><span class="en">Your assistants</span></h2>
+<label style="flex: 0 1 320px; display: flex; align-items: center; gap: 10px; padding: 0 14px; background: var(--surface); border: 1px solid var(--line2); border-radius: 12px; min-height: 44px; box-sizing: border-box; color: var(--muted)"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input type="search" aria-label="Asistan ara / Search assistants" placeholder="İşletme veya kanal ara…" style="flex: 1; min-width: 0; border: 0; outline: none; font: inherit; font-size: 14px; background: transparent; color: var(--ink)"></label>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px">
+<article class="card act">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px"><div style="display: flex; align-items: center; gap: 10px"><span class="dot pulse" style="background: #25D366"></span><h3 class="h" style="font-weight: 600; font-size: 18px">Studio Makas</h3></div><span class="badge">WhatsApp</span></div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px"><span class="row" style="padding: 6px 10px"><span class="tr">Samimi</span><span class="en">Friendly</span></span><span class="row" style="padding: 6px 10px">Türkçe</span><span class="row" style="padding: 6px 10px"><span class="tr">Kuaför ve berber</span><span class="en">Hair and barber</span></span></div>
+<div class="col" aria-hidden="true" style="gap: 8px; padding: 14px; border-radius: 14px; border: 1px solid var(--line)">
+<span class="in-m msg"><span class="tr">Sakal tıraşı ne kadar?</span><span class="en">How much is a beard trim?</span></span>
+<span class="out-m msg" style="animation-delay: 1.2s"><span class="tr">Sakal 250 TL. Yarın için saat önereyim mi?</span><span class="en">A beard trim is 250 TL. Shall I suggest a time for tomorrow?</span></span>
+</div>
+<div style="display: flex; gap: 8px; margin-top: auto"><a class="btn2" href="/asistra/konusmalar/" style="flex: 1"><span class="tr">Konuşmalar</span><span class="en">Conversations</span></a><a class="btn2" href="/asistra/yeni/#sonuc" style="flex: 1"><span class="tr">Düzenle</span><span class="en">Edit</span></a></div>
+</article>
+<article class="card act">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px"><div style="display: flex; align-items: center; gap: 10px"><span class="dot pulse" style="background: #E1306C"></span><h3 class="h" style="font-weight: 600; font-size: 18px">Studio Makas</h3></div><span class="badge">Instagram</span></div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px"><span class="row" style="padding: 6px 10px"><span class="tr">Enerjik</span><span class="en">Energetic</span></span><span class="row" style="padding: 6px 10px"><span class="tr">Çok dilli</span><span class="en">Multilingual</span></span><span class="row" style="padding: 6px 10px"><span class="tr">Kuaför ve berber</span><span class="en">Hair and barber</span></span></div>
+<div class="col" aria-hidden="true" style="gap: 8px; padding: 14px; border-radius: 14px; border: 1px solid var(--line)">
+<span class="in-m msg" style="animation-delay: .6s"><span class="tr">Pazar günü açık mısınız?</span><span class="en">Are you open on Sunday?</span></span>
+<span class="out-m msg" style="animation-delay: 1.8s"><span class="tr">Evet, Salı–Pazar 10:00–21:00 açığız.</span><span class="en">Yes, we're open Tue–Sun 10:00–21:00.</span></span>
+</div>
+<div style="display: flex; gap: 8px; margin-top: auto"><a class="btn2" href="/asistra/konusmalar/" style="flex: 1"><span class="tr">Konuşmalar</span><span class="en">Conversations</span></a><a class="btn2" href="/asistra/yeni/#sonuc" style="flex: 1"><span class="tr">Düzenle</span><span class="en">Edit</span></a></div>
+</article>
+<a class="act col" href="/asistra/yeni/" style="gap: 10px; align-items: center; justify-content: center; text-align: center; min-height: 260px; padding: 22px; border: 2px dashed var(--field); border-radius: 18px">
+<svg aria-hidden="true" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+<span style="font-weight: 600"><span class="tr">Yeni asistan ekle</span><span class="en">Add a new assistant</span></span>
+<span class="mut" style="font-weight: 500"><span class="tr">Bir kanal için 1 dakikada kurulum</span><span class="en">Set up for one channel in a minute</span></span>
+</a>
+</div>
+<span class="mut" style="font-weight: 500"><span class="tr">Örnek asistanlar · demo verisi</span><span class="en">Sample assistants · demo data</span></span>
+</section>
+
+<section id="ayarlar" class="card in" style="animation-delay: .3s; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<div class="col" style="gap: 6px; max-width: 640px"><h2 class="h" style="font-weight: 600; font-size: 18px"><span class="tr">Hesap ayarları</span><span class="en">Account settings</span></h2><p class="p"><span class="tr">Fatura, ekip üyeleri ve kanal bağlantıları bu bölümden yönetilecek.</span><span class="en">Billing, team members and channel connections will be managed here.</span></p></div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px"><span class="row"><span class="dot" style="background: #25D366"></span>WhatsApp · <span style="color: var(--ok)"><span class="tr">Bağlı</span><span class="en">Connected</span></span></span><span class="row"><span class="dot" style="background: #E1306C"></span>Instagram · <span style="color: var(--ok)"><span class="tr">Bağlı</span><span class="en">Connected</span></span></span><span class="row"><span class="dot" style="background: #2AABEE"></span>Telegram · <span style="color: var(--acc)"><span class="tr">Bağla</span><span class="en">Connect</span></span></span><span class="row"><span class="dot" style="background: #0077FF"></span>VK · <span style="color: var(--acc)"><span class="tr">Bağla</span><span class="en">Connect</span></span></span></div>
+</section>
+
+</main>
+</div>
+
+<script src="/js/studio-integration.js?v=20261111"></script>
+</body>
+</html>

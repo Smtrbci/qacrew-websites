@@ -46,6 +46,7 @@ body:has(#qs-theme:checked) .qs-sun{display:none}body:has(#qs-theme:checked) .qs
 @media (max-width: 680px){.qs-root{overflow-x:clip}.qs-root [style*="repeat(auto-fit, minmax(320px, 1fr))"]{grid-template-columns:minmax(0,1fr)!important}.qs-root input[type="email"]{width:min(280px,100%)!important}.qs-root header nav{gap:10px!important}.qs-root header>div{padding-left:16px!important;padding-right:16px!important}}
 @media (prefers-reduced-motion:reduce){.qs-root *,.qs-root *::before,.qs-root *::after{animation:none!important;transition:none!important}}
 </style>
+<link rel="stylesheet" href="/css/studio-integration.css?v=20261111"><link rel="canonical" href="https://www.qacrew.it/">
 </head>
 <body>
 <div class="qs-root" style="font-family: Inter, system-ui, sans-serif; color: var(--ink); background: var(--bg); min-height: 3500px; box-sizing: border-box">
@@ -185,12 +186,12 @@ body:has(#qs-theme:checked) .qs-sun{display:none}body:has(#qs-theme:checked) .qs
 <span style="font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--biz)">QA araçları</span>
 <span style="font-size: 13px; font-weight: 600; background: var(--biz-bg); color: var(--biz-fg); border-radius: 999px; padding: 5px 12px">2 ürün</span>
 </div>
-<h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em">QA araçları</h3>
+<h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: -0.01em"><a href="/business/" style="text-decoration:none">QAcrew Business ↗</a></h3>
 <p style="margin: 0; font-size: 16px; line-height: 1.55; color: var(--body)">QAcrew Forge geliştirme aşamasında; Asistra demo / planlama aşamasında.</p>
-<div style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 14px; background: var(--sub); border: 1px solid var(--line); text-decoration: none; flex: 1">
+<a href="/asistra/" style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 14px; background: var(--sub); border: 1px solid var(--line); text-decoration: none; flex: 1">
 <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 19px; color: var(--ink)">Asistra</span>
 <span style="font-size: 15px; line-height: 1.5; color: var(--body)">Asistra demo / planlama aşamasında. Mesaj ve randevu asistanı fikri henüz etkin bir hizmet değildir.</span>
-</div>
+</a>
 <a href="/forge/" style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 14px; background: var(--sub); border: 1px solid var(--line); text-decoration: none; flex: 1">
 <span style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px"><span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 19px; color: var(--ink)">Forge</span><span style="font-size: 12px; font-weight: 600; background: var(--forge-bg); color: var(--forge-fg); border-radius: 999px; padding: 4px 10px">Geliştirme aşamasında</span></span>
 <span style="font-size: 15px; line-height: 1.5; color: var(--body)">QA dokümantasyon aracı geliştirme aşamasında; senaryo, hata raporu ve kontrol listesi akışları hazırlanmaktadır.</span>
@@ -314,7 +315,7 @@ body:has(#qs-theme:checked) .qs-sun{display:none}body:has(#qs-theme:checked) .qs
 <a href="/game/" style="text-decoration: none; padding: 8px 0">QAcrew Game</a>
 <a href="/game/" style="text-decoration: none; padding: 8px 0 8px 14px; border-left: 2px solid var(--line2); color: var(--muted)">AhaPath</a>
 <a href="/travel/" style="text-decoration: none; padding: 8px 0">QAcrew Travel</a>
-<a href="/forge/" style="text-decoration: none; padding: 8px 0">QAcrew Forge</a>
+<a href="/business/" style="text-decoration: none; padding: 8px 0">QAcrew Business</a><a href="/asistra/" style="text-decoration: none; padding: 8px 0">Asistra</a><a href="/forge/" style="text-decoration: none; padding: 8px 0">QAcrew Forge</a>
 <a href="https://qacrew.etsy.com" style="text-decoration: none; padding: 8px 0">QA Şablonları</a>
 </nav>
 <nav aria-label="Stüdyo" style="display: flex; flex-direction: column; gap: 4px">
@@ -412,5 +413,5 @@ body:has(#qs-theme:checked) .qs-sun{display:none}body:has(#qs-theme:checked) .qs
   var form=document.getElementById('studio-interest-form'); if(form) form.addEventListener('submit',function(e){e.preventDefault();var email=document.getElementById('studio-email').value.trim();if(!email)return;var subject=encodeURIComponent('QAcrew Studio product updates');var body=encodeURIComponent('Please add this email to product update inquiries: '+email);location.href='mailto:info@qacrew.it?subject='+subject+'&body='+body;});
 })();
 </script>
-</body>
+<script src="/js/studio-integration.js?v=20261111"></script></body>
 </html>

@@ -1,58 +1,249 @@
 <!doctype html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8">
-  <script>try{document.documentElement.dataset.theme=localStorage.getItem("qacrew-theme")||"dark"}catch(_){document.documentElement.dataset.theme="dark"}</script>
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0F3D2E">
-  <title>Samet Arabacı — QA Test &amp; Analiz Uzmanı</title>
-  <meta name="description" content="İstanbul'da mobil uygulama test uzmanı ve gereksinim analisti. Freelance QA: sürüm testi, mobil test, test senaryosu yazımı.">
-  <meta property="og:title" content="Samet Arabacı — QA Test &amp; Analysis">
-  <meta property="og:description" content="Mobile app QA specialist and requirements analyst. Open to freelance projects.">
-  <meta property="og:type" content="profile">
-  <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="/favicon-qa.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="/forge/css/fonts.css">
-  <link rel="stylesheet" href="/css/styles-v6.css?v=mobile-nav-photo-1">
-  <link rel="stylesheet" href="/css/portal-theme.css">
-  <script type="application/ld+json" id="person-schema">{"@context":"https://schema.org","@type":"Person","name":"Samet Arabacı","jobTitle":"QA Test & Analysis Specialist","address":{"@type":"PostalAddress","addressLocality":"Istanbul","addressCountry":"TR"},"sameAs":["https://www.linkedin.com/in/smtrbci/","https://www.instagram.com/qacrew.it"],"image":"/assets/img/samet-arabaci-800.webp"}</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Samet Arabacı — Portfolyo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+body{margin:0}
+.qs-root{--bg:#F4F5F7;--surface:#FFFFFF;--ink:#0E1116;--muted:#4B5563;--body:#3A4150;--line:#DDE0E6;--line2:#C9CDD6;--field:#8C93A1;--btn:#0E1116;--btn-fg:#FFFFFF;--shadow:rgba(14,17,22,.14);--acc:#1F4B8F;--acc-bg:#E1EAF7;--acc-fg:#173A70;--ok:#0A5F58;font-family:Inter,system-ui,sans-serif;color:var(--ink);background:var(--bg);box-sizing:border-box}
+body:has(#qs-theme:checked) .qs-root{--bg:#0B0D11;--surface:#151920;--ink:#F1F3F6;--muted:#A9B0BC;--body:#C3C9D3;--line:#262B35;--line2:#343A46;--field:#6B7483;--btn:#F1F3F6;--btn-fg:#0B0D11;--shadow:rgba(0,0,0,.5);--acc:#A9C7F5;--acc-bg:#162840;--acc-fg:#BCD4F8;--ok:#8FE0D4}
+body:not(:has(#qs-lang:checked)) .en{display:none!important}
+body:has(#qs-lang:checked) .tr{display:none!important}
+.qs-root a{color:var(--ink)}.qs-root a:hover{color:var(--muted)}
+.qs-root,.qs-root *{transition:background-color .35s ease,border-color .35s ease,color .35s ease}
+.w{max-width:1200px;margin:0 auto;padding-left:24px;padding-right:24px}
+.sec{padding-top:88px;padding-bottom:88px}
+.col{display:flex;flex-direction:column}
+.h1,.h2,.h3{font-family:'Space Grotesk',sans-serif;margin:0}
+.h1{font-weight:700;font-size:clamp(38px,5vw,72px);line-height:1.03;letter-spacing:-.03em}
+.h2{font-weight:700;font-size:clamp(28px,3.2vw,42px);line-height:1.1;letter-spacing:-.02em}
+.h3{font-weight:600;font-size:21px}
+.p{margin:0;font-size:16px;line-height:1.6;color:var(--body)}
+.lead{margin:0;font-size:clamp(17px,1.5vw,20px);line-height:1.55;color:var(--body)}
+.eb{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--acc)}
+.badge{font-size:13px;font-weight:600;background:var(--acc-bg);color:var(--acc-fg);border-radius:999px;padding:5px 12px;display:inline-block;align-self:flex-start}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:12px;transition:transform .28s cubic-bezier(.2,.7,.2,1),box-shadow .28s ease,background-color .35s ease,border-color .35s ease}
+.card:hover{transform:translateY(-6px);box-shadow:0 20px 40px var(--shadow)}
+.btn,.btn2{display:inline-flex;align-items:center;gap:8px;min-height:52px;padding:0 26px;border-radius:12px;font:inherit;font-weight:600;font-size:16px;text-decoration:none;cursor:pointer;box-sizing:border-box;transition:transform .2s ease,box-shadow .2s ease,background-color .35s ease,color .35s ease}
+.btn{background:var(--btn);border:0}.qs-root a.btn,.qs-root a.btn:hover,.btn{color:var(--btn-fg)}
+.btn2{border:1px solid var(--field);background:transparent;color:var(--ink)}
+.btn:hover,.btn2:hover{transform:translateY(-2px);box-shadow:0 10px 22px var(--shadow)}
+.nav{position:relative;text-decoration:none;padding:12px 0;font-size:15px;font-weight:500}
+.nav::after{content:"";position:absolute;left:0;right:0;bottom:6px;height:2px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .25s ease}.nav:hover::after{transform:scaleX(1)}
+.back{display:inline-flex;align-items:center;gap:8px;min-height:44px;text-decoration:none;font-size:14px;font-weight:600}
+.back svg{transition:transform .2s ease}.back:hover svg{transform:translateX(-4px)}
+#qs-theme{appearance:none;-webkit-appearance:none;margin:0;width:60px;height:34px;border-radius:999px;background:var(--line2);position:relative;cursor:pointer;flex:none}
+#qs-theme::before{content:"";position:absolute;top:4px;left:4px;width:26px;height:26px;border-radius:50%;background:var(--surface);box-shadow:0 2px 6px var(--shadow);transition:transform .3s cubic-bezier(.3,1.4,.5,1)}
+#qs-theme:checked::before{transform:translateX(26px)}
+#qs-theme:focus-visible,.lang:has(:focus-visible){outline:2px solid var(--ink);outline-offset:3px}
+.sun{display:block}.moon{display:none}body:has(#qs-theme:checked) .sun{display:none}body:has(#qs-theme:checked) .moon{display:block}
+.lang{display:inline-flex;gap:4px;border:1px solid var(--line2);border-radius:999px;padding:4px;cursor:pointer;position:relative}
+#qs-lang{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.l1,.l2{font-size:13px;font-weight:600;padding:8px 14px;border-radius:999px;min-height:20px}
+.l1{background:var(--btn);color:var(--btn-fg)}
+body:has(#qs-lang:checked) .l1{background:transparent;color:var(--ink)}body:has(#qs-lang:checked) .l2{background:var(--btn);color:var(--btn-fg)}
+.chip{font-size:15px;font-weight:500;border:1px solid var(--line2);border-radius:999px;padding:10px 16px;background:var(--surface);transition:transform .2s ease,border-color .2s ease}
+.chip:hover{transform:translateY(-3px);border-color:var(--acc)}
+.run{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;background:var(--bg);font-size:15px}
+.lnk{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:44px;padding:20px 0;border-top:1px solid var(--line2);text-decoration:none;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:21px}
+.lnk svg{transition:transform .2s ease}.lnk:hover svg{transform:translate(4px,-4px)}
+@keyframes dash{to{stroke-dashoffset:-22}}
+@keyframes pop{0%,100%{transform:scale(.9);opacity:.45}50%{transform:scale(1);opacity:1}}
+@keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+.flow{animation:dash 1.1s linear infinite}
+.pop{transform-box:fill-box;transform-origin:center;animation:pop 2.8s ease-in-out infinite}
+.blink{animation:blink 2.4s ease-in-out infinite}
+.work{padding:0;overflow:hidden;gap:0;text-decoration:none}
+.work:hover .art{transform:scale(1.06)}
+.art{transition:transform .5s ease}
+@keyframes up{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes tick{0%,10%{opacity:0;transform:scale(.4)}22%,90%{opacity:1;transform:scale(1)}100%{opacity:0}}
+@keyframes flt{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes bar{0%{width:0}75%,95%{width:100%}100%{width:0}}
+@keyframes caret{50%{opacity:0}}
+.in{animation:up .8s cubic-bezier(.2,.7,.2,1) both}
+.tick{animation:tick 8s ease infinite}
+.flt{animation:flt 6s ease-in-out infinite}
+.bar{animation:bar 8s ease-in-out infinite}
+.caret{animation:caret 1s steps(1) infinite}
+@supports (animation-timeline:view()){.rv{animation:up linear both;animation-timeline:view();animation-range:entry 0% entry 40%}}
+@media (prefers-reduced-motion:reduce){.qs-root *,.qs-root *::before,.qs-root *::after{animation:none!important;transition:none!important}}
+</style>
+<link rel="icon" href="/favicon.svg"><link rel="stylesheet" href="/css/studio-integration.css?v=20261111">
+<link rel="canonical" href="https://www.qacrew.it/portfolio/">
 </head>
-<body class="portfolio-page">
-  <a class="skip" href="#main" data-i18n="skip">İçeriğe geç</a>
-  <header class="top">
-    <div class="wrap top-inner">
-      <a class="brand text-brand" href="#top" aria-label="QAcrew Studio"><span class="wordmark"><b>QAcrew</b><em>Portfolio</em></span></a>
-      <button class="menu-toggle" type="button" aria-label="Menüyü aç" aria-expanded="false" aria-controls="main-nav"><span></span><span></span><span></span></button>
-      <nav id="main-nav" aria-label="Ana menü">
-        <a class="studio-link" href="/">QAcrew Studio</a>
-        <a href="#hakkimda" data-i18n="nav.about">Hakkımda</a><a href="#deneyim" data-i18n="nav.experience">Deneyim</a><a href="#calismalar" data-i18n="nav.work">Çalışmalar</a><a href="#hizmetler" data-i18n="nav.services">Hizmetler</a><a href="#iletisim" data-i18n="nav.contact">İletişim</a>
-      </nav>
-      <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="tr" aria-pressed="true">TR</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div>
-    </div>
-  </header>
-  <main id="main">
-    <section class="hero dark" id="top" aria-labelledby="hero-title">
-      <div class="wrap">
-        <div class="report-id mono"><span><i data-i18n="hero.report">Rapor</i> <b>QA-PROFILE-001</b></span><span><i data-i18n="hero.location">Konum</i> <b data-i18n="hero.city">İstanbul, TR</b></span><span><i data-i18n="hero.languages">Dil</i> <b>TR · EN</b></span><span class="status" data-i18n="hero.open">Freelance projelere açık</span></div>
-        <div class="hero-grid">
-          <div class="hero-main"><h1 id="hero-title">Samet Arabacı<br><i data-i18n="hero.title">test &amp; analiz</i></h1><p class="role" data-i18n="hero.desc">Sağlık teknolojisinde mobil uygulama test uzmanı ve gereksinim analisti. Hataları kullanıcılardan önce buluyor, ekiplerin anlayacağı user story ve test dokümanları yazıyorum.</p><div class="ctas"><a class="btn btn-lime" href="#iletisim" data-i18n="hero.cta">Birlikte çalışalım</a><a class="btn btn-line" href="#calismalar" data-i18n="hero.work">Çalışmalarım</a></div></div>
-          <aside class="hero-side"><picture><source type="image/webp" srcset="/assets/img/samet-arabaci-400.webp 400w, /assets/img/samet-arabaci-800.webp 800w" sizes="(max-width: 820px) 160px, 300px"><img class="photo" src="/assets/img/samet-arabaci.jpg" width="800" height="800" alt="Samet Arabacı" fetchpriority="high"></picture><div class="photo-cap mono"><span data-i18n="hero.photoPlace">Kadıköy, İstanbul</span><span>2026</span></div></aside>
-        </div>
-      </div>
-    </section>
-    <section class="summary" aria-label="Özet"><div class="wrap summary-grid"><div class="sum"><span class="k" data-i18n="summary.experience">QA deneyimi</span><b class="v" data-i18n="summary.since">2023'ten beri</b></div><div class="sum"><span class="k" data-i18n="summary.domain">Alan</span><b class="v" data-i18n="summary.health">Sağlık teknolojisi</b></div><div class="sum"><span class="k">Platform</span><b class="v">iOS · Android · Web</b></div><div class="sum"><span class="k" data-i18n="summary.cert">Sertifika</span><b class="v">ISTQB CTFL · <em data-i18n="summary.progress">hazırlanıyor</em></b></div></div></section>
-    <section class="sec wrap" id="hakkimda" aria-labelledby="about-title"><div class="about"><div class="label" id="about-title" data-i18n="about.label">01 · HAKKIMDA</div><div><p class="lead" data-i18n-html="about.lead">Bir uygulamanın <i>neden</i> bozulduğunu anlamakla, onu ekibin hızla düzeltebileceği şekilde anlatmak arasında köprü kuruyorum.</p><div class="body"><p data-i18n="about.p1">Ağustos 2023'ten beri MLPCARE'de Proje Yönetim Uzmanı (QA Test &amp; Analiz) olarak çalışıyorum. Günlük işim hastaların kullandığı mobil uygulamaları test etmek, gereksinimleri analiz edip Azure DevOps'ta user story'lere dönüştürmek.</p><p data-i18n="about.p2">Test dışında hasta yönetim sistemleri için UI/UX tasarımı ve portal geçiş projelerinde de yer alıyorum. Bilgisayar programcılığı eğitimim ve e-ticaret operasyonu geçmişim, hem teknik ekiple hem de iş tarafıyla aynı dili konuşmamı sağlıyor.</p><p data-i18n="about.p3">Yan projem QAcrew'da günlük kullandığım test şablonlarını ve test dokümanı üreten bir uygulamayı diğer test uzmanlarıyla paylaşıyorum.</p></div></div></div></section>
-    <section class="sec wrap" id="deneyim" aria-labelledby="exp-title"><div class="sec-head"><div class="label" data-i18n="exp.label">02 · DENEYİM</div><div><h2 id="exp-title" data-i18n="exp.title">Test kayıtları</h2><p data-i18n="exp.subtitle">Execution log</p></div></div><div class="log" id="experience-list"></div></section>
-    <section class="sec wrap" id="yetkinlikler" aria-labelledby="skills-title"><div class="sec-head"><div class="label" data-i18n="skills.label">03 · YETKİNLİKLER</div><div><h2 id="skills-title" data-i18n="skills.title">Ne yapıyorum</h2><p data-i18n="skills.subtitle">What I do</p></div></div><div class="skills" id="skill-list"></div><div class="tools mono"><span>Azure DevOps</span><span>Jira</span><span>Trello</span><span>Postman</span><span>SQL</span><span>Java</span><span>Selenium</span><span>Appium</span><span>Swift</span><span>Flutter</span></div></section>
-    <section class="work-section" id="calismalar" aria-labelledby="work-title"><div class="wrap sec"><div class="sec-head"><div class="label" data-i18n="work.label">04 · ÇALIŞMALAR</div><div><h2 id="work-title" data-i18n="work.title">Seçili çalışmalar</h2><p data-i18n="work.note">Şirket içi projelerde gizlilik gereği ekran görüntüsü paylaşmıyorum; ne yaptığımı ve nasıl yaklaştığımı anlatıyorum.</p></div></div><div class="work" id="work-list"></div></div></section>
-    <section class="sec wrap" id="sertifika" aria-labelledby="cert-title"><div class="sec-head"><div class="label" data-i18n="cert.label">05 · SERTİFİKA</div><div><h2 id="cert-title">ISTQB CTFL</h2></div></div><div class="cert-card"><div><h3>ISTQB Certified Tester Foundation Level (CTFL)</h3><p data-i18n="cert.desc">Sınava hazırlanıyorum. Hedef: test sürecini uluslararası standart terimlerle belgelemek.</p><ul class="earned-certs"><li><strong>Software Testing &amp; Quality Assurance</strong> · Teedo, 2026</li><li><strong>Postman API Testing &amp; Automation</strong> · Udemy, 2025</li><li><strong>Appium Mobile Testing</strong> · Udemy, 2024</li><li><strong>iOS &amp; Swift</strong> · Meta / Coursera, Turkcell</li></ul></div><ol class="steps" id="cert-steps"></ol></div></section>
-    <section class="services dark" id="hizmetler" aria-labelledby="services-title"><div class="wrap sec"><div class="sec-head"><div class="label" data-i18n="services.label">06 · HİZMETLER</div><div><h2 id="services-title" data-i18n="services.title">Freelance olarak nasıl yardımcı olurum</h2><p data-i18n="services.desc">Uzaktan, Türkçe veya İngilizce. Startup'lar ve küçük ürün ekipleri için.</p></div></div><div class="service-grid" id="service-list"></div></div></section>
-    <section class="sec wrap contact" id="iletisim" aria-labelledby="contact-title"><div><div class="label" data-i18n="contact.label">07 · İLETİŞİM</div><h2 id="contact-title" data-i18n-html="contact.title">Uygulamanızı <i>birlikte</i> test edelim.</h2></div><div class="contact-list"><div class="contact-row"><span data-i18n="contact.email">E-posta</span><div><a id="mail" href="mailto:" aria-label="Email Samet Arabacı"></a> <button class="copy" id="copyMail" type="button" data-i18n="contact.copy">Kopyala</button></div></div><div class="contact-row"><span>LinkedIn</span><a href="https://www.linkedin.com/in/smtrbci/" target="_blank" rel="noopener">linkedin.com/in/smtrbci</a></div><div class="contact-row"><span>QAcrew</span><a href="https://qacrew.etsy.com" target="_blank" rel="noopener">qacrew.etsy.com</a></div><div class="contact-row"><span>Instagram</span><a href="https://www.instagram.com/qacrew.it" target="_blank" rel="noopener">@qacrew.it</a></div><div class="cv-links" aria-label="CV / Curriculum vitae"><a class="btn btn-dark" href="/assets/cv/samet-arabaci-cv-tr.pdf" download data-i18n="contact.cvTr">Türkçe CV (PDF)</a><a class="btn btn-dark" href="/assets/cv/samet-arabaci-cv-en.pdf" download data-i18n="contact.cvEn">English CV (PDF)</a></div></div></section>
-  </main>
-  <footer class="footer"><div class="wrap"><span>© <span id="year"></span> Samet Arabacı · QAcrew</span><span data-i18n="footer">İstanbul'da test edildi.</span></div></footer>
-  <script src="/js/i18n-v2.js"></script><script src="/js/main-v2.js"></script>
-<script src="/js/portal-theme.js" defer></script>
+<body>
+<div class="qs-root" id="top">
+
+<header style="position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line)">
+<div class="w" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; padding-bottom: 12px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px">
+<a class="back" href="/" style="color: var(--muted)"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9H4m4-4L4 9l4 4"/></svg>QAcrew Studio</a>
+<span aria-hidden="true" style="width: 1px; height: 22px; background: var(--line2)"></span>
+<a href="#top" style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 20px; text-decoration: none">Samet Arabacı</a>
+</div>
+<nav aria-label="Portfolyo" style="display: flex; flex-wrap: wrap; align-items: center; gap: 22px">
+<a class="nav" href="#hakkimda"><span class="tr">Hakkımda</span><span class="en">About</span></a>
+<a class="nav" href="#deneyim"><span class="tr">Deneyim</span><span class="en">Experience</span></a>
+<a class="nav" href="#calismalar"><span class="tr">Çalışmalar</span><span class="en">Work</span></a>
+<a class="nav" href="#hizmetler"><span class="tr">Hizmetler</span><span class="en">Services</span></a>
+<a class="nav" href="#iletisim"><span class="tr">İletişim</span><span class="en">Contact</span></a>
+<label for="qs-theme" style="display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; color: var(--muted)">
+<svg class="sun" aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="10" r="3.6"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M4.3 15.7l1.4-1.4M14.3 5.7l1.4-1.4"/></svg>
+<svg class="moon" aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 11.8A7 7 0 0 1 8.2 3.5a7 7 0 1 0 8.3 8.3z"/></svg>
+<input id="qs-theme" type="checkbox" aria-label="Gece modu / Dark mode">
+</label>
+<label class="lang" for="qs-lang"><input id="qs-lang" type="checkbox" aria-label="English"><span class="l1">TR</span><span class="l2">EN</span></label>
+</nav>
+</div>
+</header>
+
+<main>
+
+<section class="w" style="padding-top: 72px; padding-bottom: 72px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 48px; align-items: center">
+<div class="col" style="gap: 24px">
+<span class="badge in"><span class="tr">Freelance projelere açık</span><span class="en">Open to freelance projects</span></span>
+<h1 class="h1 in" style="animation-delay: .08s">Samet Arabacı<br><span style="color: var(--acc)"><span class="tr">test &amp; analiz</span><span class="en">test &amp; analysis</span></span><span class="caret" aria-hidden="true" style="color: var(--acc)">_</span></h1>
+<p class="lead in" style="animation-delay: .2s"><span class="tr">Sağlık teknolojilerinde mobil uygulama test uzmanı ve gereksinim analisti. iOS, Android ve web.</span><span class="en">Mobile app test specialist and requirements analyst in healthcare technology. iOS, Android and web.</span></p>
+<div class="in" style="display: flex; flex-wrap: wrap; gap: 12px; animation-delay: .32s">
+<a class="btn" href="#iletisim"><span class="tr">Birlikte çalışalım</span><span class="en">Let's work together</span></a>
+<a class="btn2" href="#deneyim"><span class="tr">Deneyimim</span><span class="en">My experience</span></a>
+</div>
+</div>
+<div class="in" style="animation-delay: .3s; display: flex; justify-content: center">
+<div class="flt col" aria-hidden="true" style="gap: 12px; width: 100%; max-width: 420px; background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: 24px; box-shadow: 0 24px 50px var(--shadow); box-sizing: border-box">
+<div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: var(--muted)"><span>test-run.log</span><span style="color: var(--ok)"><span class="tr">çalışıyor</span><span class="en">running</span></span></div>
+<div style="height: 6px; border-radius: 3px; background: var(--line); overflow: hidden"><span class="bar" style="display: block; height: 100%; border-radius: 3px; background: var(--ok)"></span></div>
+<div class="run"><svg class="tick" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--ok)"><path d="m4 10 4 4 8-9"/></svg><span><span class="tr">Mobil test · iOS ve Android</span><span class="en">Mobile testing · iOS and Android</span></span></div>
+<div class="run"><svg class="tick" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--ok); animation-delay: .8s"><path d="m4 10 4 4 8-9"/></svg><span><span class="tr">Web testi</span><span class="en">Web testing</span></span></div>
+<div class="run"><svg class="tick" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--ok); animation-delay: 1.6s"><path d="m4 10 4 4 8-9"/></svg><span><span class="tr">Gereksinim analizi · user story</span><span class="en">Requirements analysis · user stories</span></span></div>
+<div class="run"><svg class="tick" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--ok); animation-delay: 2.4s"><path d="m4 10 4 4 8-9"/></svg><span><span class="tr">API testi · Postman</span><span class="en">API testing · Postman</span></span></div>
+</div>
+</div>
+</section>
+
+<section class="w" style="padding-bottom: 88px">
+<dl class="rv" style="margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 20px; overflow: hidden">
+<div class="col" style="gap: 6px; padding: 22px; background: var(--surface)"><dt class="eb" style="color: var(--muted)"><span class="tr">Konum</span><span class="en">Location</span></dt><dd style="margin: 0; font-weight: 600">İstanbul, TR</dd></div>
+<div class="col" style="gap: 6px; padding: 22px; background: var(--surface)"><dt class="eb" style="color: var(--muted)"><span class="tr">Diller</span><span class="en">Languages</span></dt><dd style="margin: 0; font-weight: 600">TR · EN</dd></div>
+<div class="col" style="gap: 6px; padding: 22px; background: var(--surface)"><dt class="eb" style="color: var(--muted)"><span class="tr">QA deneyimi</span><span class="en">QA experience</span></dt><dd style="margin: 0; font-weight: 600"><span class="tr">2023'ten beri</span><span class="en">Since 2023</span></dd></div>
+<div class="col" style="gap: 6px; padding: 22px; background: var(--surface)"><dt class="eb" style="color: var(--muted)"><span class="tr">Alan</span><span class="en">Domain</span></dt><dd style="margin: 0; font-weight: 600"><span class="tr">Sağlık teknolojileri</span><span class="en">Healthcare technology</span></dd></div>
+<div class="col" style="gap: 6px; padding: 22px; background: var(--surface)"><dt class="eb" style="color: var(--muted)"><span class="tr">Sertifika</span><span class="en">Certification</span></dt><dd style="margin: 0; font-weight: 600"><span class="tr">ISTQB CTFL (hazırlık)</span><span class="en">ISTQB CTFL (in preparation)</span></dd></div>
+</dl>
+</section>
+
+<section id="hakkimda" style="background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line)">
+<div class="w sec" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 48px; align-items: start">
+<div class="col rv" style="gap: 12px">
+<span class="eb"><span class="tr">Hakkımda</span><span class="en">About</span></span>
+<h2 class="h2"><span class="tr">Hastaların kullandığı uygulamaları test ediyorum.</span><span class="en">I test the apps patients rely on.</span></h2>
+<img class="portfolio-photo" src="/ui-v2/assets/samet-arabaci.jpg" alt="Samet Arabacı" width="220" height="220" style="width:220px;max-width:100%;aspect-ratio:1;object-fit:cover;border-radius:28px">
+</div>
+<div class="col rv" style="gap: 16px">
+<p class="p"><span class="tr">Ağustos 2023'ten beri MLPCARE'de Proje Yönetim Uzmanı (QA Test &amp; Analiz) olarak çalışıyorum. Hastalara yönelik mobil uygulamaları test ediyor, gereksinimleri Azure DevOps'ta user story'lere dönüştürüyorum.</span><span class="en">Since August 2023 I have worked at MLPCARE as a Project Management Specialist (QA Test &amp; Analysis). I test patient-facing mobile apps and turn requirements into user stories in Azure DevOps.</span></p>
+<p class="p"><span class="tr">Hasta yönetim sistemleri ve portal geçiş projelerinde UI/UX tasarımı da yapıyorum. Bilgisayar programcılığı eğitimim ve e-ticaret operasyon deneyimim var.</span><span class="en">I also do UI/UX design for patient management systems and portal migration projects. My background is in computer programming and e-commerce operations.</span></p>
+<p class="p"><span class="tr">Yan projem QAcrew Studio: test şablonları, bir QA doküman aracı ve kendi ürünlerim.</span><span class="en">My side project is QAcrew Studio: test templates, a QA document tool and my own products.</span></p>
+</div>
+</div>
+</section>
+
+<section id="deneyim" class="w sec col" style="gap: 36px">
+<div class="col rv" style="gap: 12px">
+<span class="eb"><span class="tr">Deneyim</span><span class="en">Experience</span></span>
+<h2 class="h2"><span class="tr">Test kayıtları</span><span class="en">Execution log</span></h2>
+</div>
+<ol class="col" style="list-style: none; margin: 0; padding: 0">
+<li class="rv" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px 32px; align-items: baseline; padding: 26px 0; border-top: 1px solid var(--line2)"><span style="font-weight: 600; color: var(--acc)"><span class="tr">Ağu 2023 – bugün</span><span class="en">Aug 2023 – present</span></span><h3 class="h3">MLPCARE</h3><p class="p"><span class="tr">Proje Yönetim Uzmanı (QA Test &amp; Analiz). Mobil uygulama testi, gereksinim analizi, user story.</span><span class="en">Project Management Specialist (QA Test &amp; Analysis). Mobile app testing, requirements analysis, user stories.</span></p></li>
+<li class="rv" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px 32px; align-items: baseline; padding: 26px 0; border-top: 1px solid var(--line2)"><span style="font-weight: 600; color: var(--acc)">2023</span><h3 class="h3">Trendyol Express</h3><p class="p"><span class="tr">E-Ticaret Operasyon Uzmanı.</span><span class="en">E-Commerce Operations Specialist.</span></p></li>
+<li class="rv" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px 32px; align-items: baseline; padding: 26px 0; border-top: 1px solid var(--line2); border-bottom: 1px solid var(--line2)"><span style="font-weight: 600; color: var(--acc)">2020 – 2022</span><h3 class="h3">Uşak Üniversitesi</h3><p class="p"><span class="tr">Bilgisayar Programcılığı.</span><span class="en">Computer Programming.</span></p></li>
+</ol>
+<p class="p rv"><span class="tr">Şirket projeleri gizli olduğu için ekran görüntüsü paylaşmıyorum; işi ve yaklaşımı anlatıyorum.</span><span class="en">Company projects are confidential, so I don't share screenshots; I describe the work and the approach instead.</span></p>
+<div class="col rv" style="gap: 16px">
+<h3 class="h3"><span class="tr">Araçlar</span><span class="en">Tools</span></h3>
+<ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px">
+<li class="chip">Azure DevOps</li><li class="chip">Jira</li><li class="chip">Trello</li><li class="chip">Postman</li><li class="chip">SQL</li><li class="chip">Java</li><li class="chip">Selenium</li><li class="chip">Appium</li><li class="chip">Swift</li><li class="chip">Flutter</li>
+</ul>
+</div>
+<div class="col rv" style="gap: 16px">
+<h3 class="h3"><span class="tr">Sertifika ve kurslar</span><span class="en">Certification and courses</span></h3>
+<ul class="grid" style="list-style: none; margin: 0; padding: 0">
+<li class="card"><span class="badge"><span class="tr">Hazırlık</span><span class="en">In preparation</span></span><h4 class="h3">ISTQB CTFL</h4></li>
+<li class="card"><span class="eb">Teedo · 2026</span><h4 class="h3">Software Testing &amp; QA</h4></li>
+<li class="card"><span class="eb">Udemy · 2025</span><h4 class="h3">Postman API Testing &amp; Automation</h4></li>
+<li class="card"><span class="eb">Udemy · 2024</span><h4 class="h3">Appium Mobile Testing</h4></li>
+<li class="card"><span class="eb">Meta / Coursera · Turkcell</span><h4 class="h3">iOS &amp; Swift</h4></li>
+</ul>
+</div>
+</section>
+
+<section id="calismalar" class="w col" style="gap: 36px; padding-bottom: 88px">
+<div class="col rv" style="gap: 12px; max-width: 640px">
+<span class="eb"><span class="tr">Çalışmalar</span><span class="en">Work</span></span>
+<h2 class="h2"><span class="tr">QAcrew Studio'da geliştirdiğim ürünler.</span><span class="en">Products I build at QAcrew Studio.</span></h2>
+</div>
+<div class="grid">
+<a class="card work rv" href="/forge/">
+<div style="background: #14110F; height: 190px; display: flex; align-items: center; justify-content: center; overflow: hidden"><svg class="art" aria-hidden="true" width="220" height="120" viewBox="0 0 220 120" fill="none" stroke="#F2A26B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="14" width="80" height="92" rx="8"/><path class="blink" d="M26 38h48"/><path class="blink" d="M26 56h48" style="animation-delay: .3s"/><path class="blink" d="M26 74h30" style="animation-delay: .6s"/><path d="M104 60h22m-8-8 8 8-8 8"/><rect x="138" y="14" width="72" height="92" rx="8"/><path class="blink" d="m152 40 6 6 10-12M178 40h18" style="animation-delay: .9s"/><path class="blink" d="m152 62 6 6 10-12M178 62h18" style="animation-delay: 1.2s"/><path class="blink" d="m152 84 6 6 10-12M178 84h18" style="animation-delay: 1.5s"/></svg></div>
+<div class="col" style="padding: 24px; gap: 8px"><span class="eb"><span class="tr">QA aracı · Demo</span><span class="en">QA tool · Demo</span></span><h3 class="h3">QAcrew Forge</h3><p class="p"><span class="tr">Notlardan test dokümanı üreten araç.</span><span class="en">A tool that turns notes into test documents.</span></p></div>
+</a>
+<a class="card work rv" href="/game/">
+<div style="background: #1B2060; height: 190px; display: flex; align-items: center; justify-content: center; overflow: hidden"><svg class="art" aria-hidden="true" width="240" height="80" viewBox="0 0 240 80" fill="none" stroke="#B9C0FF" stroke-width="2.5" stroke-linejoin="round"><circle class="pop" cx="28" cy="40" r="18"/><rect class="pop" x="66" y="22" width="36" height="36" rx="4" style="animation-delay: .35s"/><path class="pop" d="M140 20l20 38h-40z" style="animation-delay: .7s"/><g class="pop" style="animation-delay: 1.05s"><circle cx="198" cy="40" r="18" stroke-dasharray="5 6"/><path d="M192 34c0-8 12-8 12 0 0 5-6 5-6 10m0 6v1" stroke-linecap="round"/></g></svg></div>
+<div class="col" style="padding: 24px; gap: 8px"><span class="eb"><span class="tr">Mobil oyun · Test aşamasında</span><span class="en">Mobile game · In testing</span></span><h3 class="h3">QAcrew Game · AhaPath</h3><p class="p"><span class="tr">50 aşamalı çevrimdışı bulmaca oyunu.</span><span class="en">An offline puzzle game with 50 stages.</span></p></div>
+</a>
+<a class="card work rv" href="/travel/">
+<div style="background: #0A3F3B; height: 190px; display: flex; align-items: center; justify-content: center; overflow: hidden"><svg class="art" aria-hidden="true" width="240" height="110" viewBox="0 0 240 110" fill="none" stroke="#8FE0D4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path class="flow" d="M24 86c30-60 60 10 96-30s60-20 96-34" stroke-dasharray="2 9"/><rect x="12" y="76" width="22" height="22" rx="4"/><circle class="pop" cx="120" cy="56" r="8"/><circle class="pop" cx="170" cy="36" r="8" style="animation-delay: .5s"/><circle class="pop" cx="216" cy="22" r="8" style="animation-delay: 1s"/></svg></div>
+<div class="col" style="padding: 24px; gap: 8px"><span class="eb"><span class="tr">Seyahat · Önizleme</span><span class="en">Travel · Preview</span></span><h3 class="h3">QAcrew Travel</h3><p class="p"><span class="tr">Otelden başlayan günlük yürüyüş rotaları.</span><span class="en">Daily walking routes that start at your hotel.</span></p></div>
+</a>
+</div>
+</section>
+
+<section id="hizmetler" style="background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line)">
+<div class="w sec col" style="gap: 36px">
+<div class="col rv" style="gap: 12px; max-width: 680px">
+<span class="eb"><span class="tr">Hizmetler</span><span class="en">Services</span></span>
+<h2 class="h2"><span class="tr">Startup'lar ve küçük ürün ekipleri için uzaktan QA.</span><span class="en">Remote QA for startups and small product teams.</span></h2>
+<p class="p"><span class="tr">Türkçe ya da İngilizce çalışırım.</span><span class="en">I work in Turkish or English.</span></p>
+</div>
+<ul class="grid" style="list-style: none; margin: 0; padding: 0">
+<li class="card rv" style="background: var(--bg)"><h3 class="h3"><span class="tr">Mobil ve web testi</span><span class="en">Mobile and web testing</span></h3><p class="p"><span class="tr">iOS, Android ve web uygulamalarında manuel test.</span><span class="en">Manual testing on iOS, Android and web apps.</span></p></li>
+<li class="card rv" style="background: var(--bg)"><h3 class="h3"><span class="tr">Gereksinim analizi</span><span class="en">Requirements analysis</span></h3><p class="p"><span class="tr">Gereksinimleri net, test edilebilir user story'lere dönüştürme.</span><span class="en">Turning requirements into clear, testable user stories.</span></p></li>
+<li class="card rv" style="background: var(--bg)"><h3 class="h3"><span class="tr">Test dokümantasyonu</span><span class="en">Test documentation</span></h3><p class="p"><span class="tr">Test senaryoları, hata raporları ve kontrol listeleri.</span><span class="en">Test cases, bug reports and checklists.</span></p></li>
+</ul>
+</div>
+</section>
+
+<section id="iletisim" class="w sec" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 48px; align-items: start">
+<div class="col rv" style="gap: 20px">
+<span class="eb"><span class="tr">İletişim</span><span class="en">Contact</span></span>
+<h2 class="h1"><span class="tr">Uygulamanızı birlikte test edelim.</span><span class="en">Let's test your app together.</span></h2>
+<div style="display: flex; flex-wrap: wrap; gap: 12px">
+<a class="btn" href="mailto:info@qacrew.it"><span class="tr">E-posta gönder</span><span class="en">Send an email</span></a>
+<a class="btn2" href="/ui-v2/assets/samet-arabaci-cv-tr.pdf" download><span class="tr">CV indir (TR)</span><span class="en">Download CV (TR)</span></a>
+<a class="btn2" href="/ui-v2/assets/samet-arabaci-cv-en.pdf" download><span class="tr">CV indir (EN)</span><span class="en">Download CV (EN)</span></a>
+</div>
+</div>
+<nav aria-label="Bağlantılar" class="col rv" style="border-bottom: 1px solid var(--line2)">
+<a class="lnk" href="https://www.linkedin.com/in/smtrbci">LinkedIn<svg aria-hidden="true" width="22" height="22" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12 12 6M7 6h5v5"/></svg></a>
+<a class="lnk" href="https://www.instagram.com/qacrew.it">Instagram<svg aria-hidden="true" width="22" height="22" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12 12 6M7 6h5v5"/></svg></a>
+<a class="lnk" href="https://qacrew.etsy.com"><span><span class="tr">Etsy mağazası</span><span class="en">Etsy shop</span></span><svg aria-hidden="true" width="22" height="22" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12 12 6M7 6h5v5"/></svg></a>
+<a class="lnk" href="/">QAcrew Studio<svg aria-hidden="true" width="22" height="22" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12 12 6M7 6h5v5"/></svg></a>
+</nav>
+</section>
+
+</main>
+
+<footer style="border-top: 1px solid var(--line)">
+<div class="w" style="padding-top: 32px; padding-bottom: 32px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-size: 14px; color: var(--muted)">
+<span>© 2026 Samet Arabacı</span>
+<a href="/" style="text-decoration: none; color: var(--muted)">QAcrew Studio</a>
+</div>
+</footer>
+
+</div>
+
+<script src="/js/studio-integration.js?v=20261111"></script>
 </body>
 </html>
