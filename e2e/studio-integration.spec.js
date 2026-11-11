@@ -32,3 +32,9 @@ test('Travel local plan is saved and searchable without claiming a real booking'
 test('game sample responds to both correct and incorrect answers',async({page})=>{
  await page.goto('/game/');await page.locator('.opt').first().click();await expect(page.locator('#puzzleFeedback')).toContainText('Tekrar dene');await page.locator('.opt').nth(1).click();await expect(page.locator('#puzzleFeedback')).toContainText('Doğru');
 });
+test('Forge navigation is fully visible and anchored to the viewport',async({page,isMobile},testInfo)=>{
+ await page.goto('/forge/app/');await page.locator('#fillDemoCredentials').click();await page.locator('#demoLoginForm button[type=submit]').click();
+ for(const name of ['panel','docs','tpl','qa'])await expect(page.locator('[data-tab="'+name+'"]').first()).toBeInViewport();
+ if(!isMobile){const box=await page.locator('.tabs').boundingBox();expect(box.x).toBe(0);expect(box.y).toBe(0);expect(box.height).toBe(page.viewportSize().height);}
+ await page.screenshot({path:testInfo.outputPath('forge-panel.png'),fullPage:true,animations:'disabled'});
+});

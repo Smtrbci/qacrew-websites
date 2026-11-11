@@ -8,3 +8,7 @@
 @media(max-width:1099px){#appShell>.topbar>.wrap{padding:12px 20px}.tabs{order:10;width:100%;display:flex;overflow:auto;flex-wrap:wrap}.tabs .tab{flex:1;white-space:nowrap}.login-col{gap:30px}.studio-login-art{gap:7px}.studio-login-art span{padding:12px}}
 @media(max-width:680px){.login-col{grid-template-columns:1fr}.studio-login-intro{display:none}.login-utility{justify-content:center}.login-card{padding:24px 20px}.app.wrap{padding:22px 16px}.page-head h1{font-size:26px}#appShell>.topbar>.wrap{gap:8px;padding:12px 16px}.panel-home{display:none}.tabs .tab{padding:10px;font-size:12px}.tool .wrap{padding-inline:16px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+/* A filtered ancestor would trap the fixed desktop navigation inside the header. */
+#appShell>.topbar{backdrop-filter:none;-webkit-backdrop-filter:none}
+#appShell>.topbar>.wrap{height:auto;min-height:64px}
+#appShell>.topbar .logo span{display:inline}
