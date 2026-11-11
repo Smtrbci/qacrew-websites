@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>QAcrew Studio — Arayüz önizlemesi</title>
+<title>QAcrew Studio — Ürün stüdyosu</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
 <style>
 body{margin:0}
@@ -48,7 +48,6 @@ body:has(#qs-theme:checked) .qs-sun{display:none}body:has(#qs-theme:checked) .qs
 </style>
 </head>
 <body>
-<div role="note" style="position:relative;z-index:20;padding:9px 16px;text-align:center;background:#B8E986;color:#111;font:600 13px/1.45 Inter,system-ui,sans-serif">Yeni arayüz önizlemesi · Bu sayfa yerel taslaktır; burada görünmeyen servisler etkin değildir.</div>
 <div class="qs-root" style="font-family: Inter, system-ui, sans-serif; color: var(--ink); background: var(--bg); min-height: 3500px; box-sizing: border-box">
 
 <header style="border-bottom: 1px solid var(--line); background: var(--bg); position: sticky; top: 0; z-index: 5">
@@ -406,7 +405,7 @@ body:has(#qs-theme:checked) .qs-sun{display:none}body:has(#qs-theme:checked) .qs
       }
     });
     document.querySelectorAll('button[data-lang]').forEach(function(b){var active=b.dataset.lang===lang;b.setAttribute('aria-pressed',active?'true':'false');b.style.background=active?'var(--btn)':'transparent';b.style.color=active?'var(--btn-fg)':'var(--ink)';});
-    document.title=en?'QAcrew Studio — Local UI preview':'QAcrew Studio — Arayüz önizlemesi';
+    document.title=en?'QAcrew Studio — Product studio':'QAcrew Studio — Ürün stüdyosu';
     document.querySelectorAll('[placeholder]').forEach(function(el){if(!el.dataset.placeholderTr){el.dataset.placeholderTr=el.placeholder;el.dataset.placeholderEn=el.id==='studio-email'?'name@example.com':el.placeholder;}el.placeholder=en?el.dataset.placeholderEn:el.dataset.placeholderTr;});
     document.querySelectorAll('[aria-label]').forEach(function(el){if(!el.dataset.labelTr){el.dataset.labelTr=el.getAttribute('aria-label');el.dataset.labelEn=el.id==='qs-theme'?'Dark mode':(el.tagName==='NAV'?'Main navigation':(translations[el.getAttribute('aria-label')]||el.getAttribute('aria-label')));}el.setAttribute('aria-label',en?el.dataset.labelEn:el.dataset.labelTr);});
     try{localStorage.setItem('qs-language',lang);}catch(e){}
