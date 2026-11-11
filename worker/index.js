@@ -1,3 +1,4 @@
+export { WorkspaceStore } from "./workspace.js";
 import { buildPrompt, parseModelJson, validResult, validateJob } from "./prompts.js";
 
 const encoder = new TextEncoder();
@@ -35,7 +36,10 @@ function originAllowed(request) {
 async function sessionUser(request, env) {
   if (!env.SESSION_SECRET) return null;
   const data = await verify(cookie(request), env.SESSION_SECRET);
-  return data?.email ? data : null;
+  if(!data?.email)return null;
+  const member=members(env).find(x=>x.email.toLowerCase()===data.email.toLowerCase());
+  if(!member&&!data.demo&&data.email.toLowerCase()!==String(env.FORGE_LOGIN_EMAIL||'').toLowerCase())return null;
+  return {...data,role:member?.role || (data.demo ? "qa" : "admin")};
 }
 async function bodyJson(request, maxBytes) {
   const declared = Number(request.headers.get("content-length") || 0);
@@ -85,7 +89,7 @@ async function handleSession(request, env) {
   if (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32) return failure(503, "sampling_disabled", "Giriş servisi şu an yapılandırılmamış.");
   if (request.method === "GET") {
     const user = await sessionUser(request, env);
-    return user ? json({ user: { email: user.email, demo: user.demo === true } }) : failure(401, "unauthorized", "Oturum açın.");
+    return user ? json({ user: { email: user.email, demo: user.demo === true, role:user.role } }) : failure(401, "unauthorized", "Oturum açın.");
   }
   if (!originAllowed(request)) return failure(403, "invalid_request", "İstek kaynağı geçersiz.");
   if (request.method === "DELETE") return json({ ok: true }, 200, { "set-cookie": secureCookie(request, "", 0) });
@@ -99,11 +103,13 @@ async function handleSession(request, env) {
   const email = body.value.email.toLowerCase();
   const isDemo = email === DEMO_LOGIN.email && body.value.password === DEMO_LOGIN.password;
   const isConfiguredUser = env.FORGE_LOGIN_EMAIL && env.FORGE_LOGIN_PASSWORD && email === env.FORGE_LOGIN_EMAIL.toLowerCase() && body.value.password === env.FORGE_LOGIN_PASSWORD;
-  if (!isDemo && !isConfiguredUser) return failure(401, "unauthorized", "E-posta veya şifre hatalı.");
+  const member=members(env).find(x=>x.email.toLowerCase()===email);
+  const isMember=member&&await checkPassword(body.value.password,member);
+  if (!isDemo && !isConfiguredUser && !isMember) return failure(401, "unauthorized", "E-posta veya şifre hatalı.");
   const exp = Date.now() + 12 * 60 * 60 * 1000;
   const sessionEmail = isDemo ? DEMO_LOGIN.email : email;
   const token = await sign({ email: sessionEmail, demo: isDemo, exp }, env.SESSION_SECRET);
-  return json({ user: { email: sessionEmail, demo: isDemo } }, 200, { "set-cookie": secureCookie(request, token, 12 * 60 * 60) });
+  return json({ user: { email: sessionEmail, demo: isDemo, role:member?.role||(isDemo?"qa":"admin") } }, 200, { "set-cookie": secureCookie(request, token, 12 * 60 * 60) });
 }
 
 async function handleGenerate(request, env) {
@@ -181,9 +187,61 @@ async function handlePublicTry(request, env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if(url.pathname.startsWith("/api/workspace"))return handleWorkspace(request,env);
     if (url.pathname === "/api/session") return handleSession(request, env);
     if (url.pathname === "/api/generate") return handleGenerate(request, env);
     if (url.pathname === "/api/public-try") return handlePublicTry(request, env);
     return env.ASSETS.fetch(request);
   }
 };
+
+function members(env){try{const list=JSON.parse(env.FORGE_USERS_JSON||'[]');return Array.isArray(list)?list.filter(x=>typeof x.email==='string'&&['admin','qa','dev','pm','pmo'].includes(x.role)):[];}catch{return [];}}
+async function checkPassword(password,member){
+ if(typeof member.salt!=='string'||typeof member.hash!=='string')return false;
+ const key=await crypto.subtle.importKey('raw',encoder.encode(password),'PBKDF2',false,['deriveBits']);
+ const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:encoder.encode(member.salt),iterations:100000,hash:'SHA-256'},key,256);
+ const hash=[...new Uint8Array(bits)].map(b=>b.toString(16).padStart(2,'0')).join('');
+ if(hash.length!==member.hash.length)return false;let diff=0;for(let i=0;i<hash.length;i++)diff|=hash.charCodeAt(i)^member.hash.charCodeAt(i);return diff===0;
+}
+async function handleWorkspace(request,env){
+ const url=new URL(request.url),path=url.pathname.slice('/api/workspace'.length)||'/state';
+ if(path==='/config')return json({preview:env.FORGE_PREVIEW_MODE==='true',ai:!!env.ANTHROPIC_API_KEY,github:!!(env.GITHUB_TOKEN&&env.GITHUB_REPOSITORY),repository:env.GITHUB_REPOSITORY||'',accounts:env.FORGE_PREVIEW_MODE==='true'?members(env).map(({email,role})=>({email,role})):[]});
+ if(!env.WORKSPACE)return failure(503,'workspace_disabled','Çalışma alanı sunucu deposu yapılandırılmamış.');
+ if(path.startsWith('/shared/')){
+  const token=path.slice('/shared/'.length);if(!/^[a-f0-9-]{72}$/.test(token))return failure(404,'not_found','Paylaşım bulunamadı.');
+  // Public reports are isolated snapshots, addressed by unguessable, expiring tokens.
+  const stub=env.WORKSPACE.get(env.WORKSPACE.idFromName('share-index'));
+  return stub.fetch(new Request('https://workspace.internal/share/'+token));
+ }
+ const user=await sessionUser(request,env);if(!user)return failure(401,'unauthorized','Oturum açın / Sign in');
+ if(user.demo)return failure(403,'demo_read_only','Genel demo hesabı ortak çalışma alanına erişemez. Önizleme hesabı kullanın.');
+ if(!['GET','POST'].includes(request.method))return failure(405,'invalid_method','Unsupported method');
+ if(request.method==='POST'&&!originAllowed(request))return failure(403,'invalid_origin','İstek kaynağı geçersiz');
+ const key=env.FORGE_WORKSPACE_ID||user.email,stub=env.WORKSPACE.get(env.WORKSPACE.idFromName('workspace:'+key));
+ if(path==='/members')return json({members:members(env).map(({email,role})=>({email,role})),user});
+ if(path.startsWith('/github')){try{return await githubWorkspace(request,env,user,path);}catch{return failure(502,'github_unavailable','GitHub bağlantısı kurulamadı. Tekrar deneyin.');}}
+ const allowed=request.method==='GET'?(path==='/state'||/^\/evidence\/[a-f0-9-]+$/.test(path)):['/command','/evidence','/share'].includes(path);
+ if(!allowed)return failure(404,'not_found','Not found');
+ let body;
+ if(request.method==='POST'){const parsed=await bodyJson(request,path==='/evidence'?7100000:3200000);if(parsed.invalid||parsed.tooLarge)return failure(413,'invalid_body','İstek çok büyük veya geçersiz');body=JSON.stringify(parsed.value);}
+ const result=await stub.fetch(new Request('https://workspace.internal'+path,{method:request.method,headers:{'x-workspace-user':JSON.stringify(user),'content-type':'application/json'},body}));
+ if(path==='/share'&&result.ok){const data=await result.json(),snapshot=await stub.fetch(new Request('https://workspace.internal/share/'+data.token));
+  const index=env.WORKSPACE.get(env.WORKSPACE.idFromName('share-index'));await index.fetch(new Request('https://workspace.internal/publish',{method:'POST',headers:{'x-workspace-user':JSON.stringify(user)},body:JSON.stringify({token:data.token,snapshot:await snapshot.json()})}));return json(data);}
+ return result;
+}
+async function githubWorkspace(request,env,user,path){
+ if(!env.GITHUB_REPOSITORY)return failure(503,'github_not_configured','GitHub için sunucuda GITHUB_REPOSITORY ayarlanmalı.');
+ const repository=env.GITHUB_REPOSITORY;if(!/^[\w.-]+\/[\w.-]+$/.test(repository))return failure(503,'invalid_repository','Geçersiz GitHub deposu');
+ const headers={...(env.GITHUB_TOKEN?{Authorization:'Bearer '+env.GITHUB_TOKEN}:{}),Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'QAcrew-Forge','content-type':'application/json'};
+ if(path==='/github/issue'&&request.method==='GET'){
+  const number=new URL(request.url).searchParams.get('number');if(!/^[1-9]\d{0,8}$/.test(number||''))return failure(400,'invalid_issue','İş kalemi numarası gerekli');
+  const r=await fetch('https://api.github.com/repos/'+repository+'/issues/'+number,{headers,signal:AbortSignal.timeout(15000)});if(!r.ok)return failure(502,'github_error','GitHub iş kalemi okunamadı ('+r.status+')');const item=await r.json();return json({title:item.title,input:item.body||'',source:item.html_url});
+ }
+ if(path==='/github/export'&&request.method==='POST'){
+  if(!env.GITHUB_TOKEN)return failure(503,'github_not_configured','Doğrudan aktarım için sunucuda GitHub yetkisi gerekli. GitHub taslak bağlantısını kullanın.');
+  if(!['admin','qa','dev','pm'].includes(user.role))return failure(403,'forbidden','Aktarım yetkiniz yok');
+  const parsed=await bodyJson(request,64000),data=parsed.value;if(parsed.invalid||parsed.tooLarge||!data||typeof data.title!=='string'||typeof data.body!=='string'||data.title.length>256||data.body.length>60000)return failure(400,'invalid_issue','Geçersiz hata içeriği');
+  const r=await fetch('https://api.github.com/repos/'+repository+'/issues',{method:'POST',headers,body:JSON.stringify({title:data.title,body:data.body}),signal:AbortSignal.timeout(15000)});if(!r.ok)return failure(502,'github_error','GitHub aktarımı başarısız ('+r.status+')');const issue=await r.json();return json({url:issue.html_url,number:issue.number});
+ }
+ return failure(404,'not_found','Not found');
+}

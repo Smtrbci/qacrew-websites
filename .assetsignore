@@ -17,3 +17,8 @@ README-deploy.md
 
 node_modules/**
 .gitignore
+
+scripts/**
+playwright.workspace.config.js
+
+fixtures/**

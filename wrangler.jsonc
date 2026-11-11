@@ -3,13 +3,24 @@
   "name": "qacrew-websites",
   "main": "worker/index.js",
   "compatibility_date": "2026-10-29",
+  "routes": [
+    { "pattern": "qacrew.it/forge/*", "zone_name": "qacrew.it" },
+    { "pattern": "www.qacrew.it/forge/*", "zone_name": "qacrew.it" },
+    { "pattern": "qacrew.it/api/*", "zone_name": "qacrew.it" },
+    { "pattern": "www.qacrew.it/api/*", "zone_name": "qacrew.it" }
+  ],
+  "vars": {
+    "FORGE_LOGIN_EMAIL": "sametarabacitr@gmail.com",
+    "FORGE_WORKSPACE_ID": "qacrew-production",
+    "GITHUB_REPOSITORY": "Smtrbci/qacrew-websites"
+  },
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
     "run_worker_first": ["/api/*"]
   },
   "durable_objects": {
-    "bindings": [{ "name": "QUOTA", "class_name": "QuotaCounter" }]
+    "bindings": [{ "name": "QUOTA", "class_name": "QuotaCounter" }, { "name": "WORKSPACE", "class_name": "WorkspaceStore" }]
   },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["QuotaCounter"] }]
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["QuotaCounter"] }, { "tag": "v2-workspace", "new_sqlite_classes": ["WorkspaceStore"] }]
 }
