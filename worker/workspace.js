@@ -73,7 +73,7 @@ export function createDemoState(){
  let state=blank();const user={email:'demo@qacrew.it',role:'admin'};
  const cmd=(action,payload)=>{state=applyCommand(state,{action,payload},user);return state;};
  const project=(name)=>{cmd('project.create',{name});return state.projects.at(-1);};
- const scenario=(projectId,requirementId,title,expected,priority='Medium',platform='Web')=>cmd('scenario.save',{projectId,requirementId,title,steps:['İlgili ekrana git','Örnek koşulu uygula','Sonucu doğrula'],expected,priority,platform,estimate:5,approved:true});
+ const scenario=(projectId,requirementId,title,expected,priority='Medium',platform='Web')=>{cmd('scenario.save',{projectId,requirementId,title,steps:['İlgili ekrana git','Örnek koşulu uygula','Sonucu doğrula'],expected,priority,platform,estimate:5,approved:true});return state.projects.find(p=>p.id===projectId).scenarios.at(-1);};
  const requirement=(projectId,title,input,questions=[])=>{cmd('requirement.save',{projectId,title,input,questions});return state.projects.find(p=>p.id===projectId).requirements.at(-1);};
  const plan=(projectId,title,version,environment,scenarioIds)=>{cmd('plan.save',{projectId,title,version,environment,platform:'Web',scenarioIds,budget:30,assignee:user.email});return state.projects.find(p=>p.id===projectId).plans.at(-1);};
  const shop=project('Örnek · ShopFlow');
