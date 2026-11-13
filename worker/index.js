@@ -214,7 +214,12 @@ async function handleWorkspace(request,env){
   return stub.fetch(new Request('https://workspace.internal/share/'+token));
  }
  const user=await sessionUser(request,env);if(!user)return failure(401,'unauthorized','Oturum açın / Sign in');
- if(user.demo)return failure(403,'demo_read_only','Genel demo hesabı ortak çalışma alanına erişemez. Önizleme hesabı kullanın.');
+ if(user.demo){
+  if(request.method!=='GET')return failure(403,'demo_read_only','Demo hesabı salt okunurdur.');
+  if(path==='/members')return json({members:[{email:'qa@demo.qacrew.it',role:'qa'},{email:'developer@demo.qacrew.it',role:'dev'},{email:'pm@demo.qacrew.it',role:'pm'}],user});
+  if(path==='/state'){const demo=env.WORKSPACE.get(env.WORKSPACE.idFromName('public-demo-workspace'));return demo.fetch(new Request('https://workspace.internal/demo-state'));}
+  return failure(403,'demo_read_only','Demo hesabında bu işlem salt okunur modda kullanılamaz.');
+ }
  if(!['GET','POST'].includes(request.method))return failure(405,'invalid_method','Unsupported method');
  if(request.method==='POST'&&!originAllowed(request))return failure(403,'invalid_origin','İstek kaynağı geçersiz');
  const key=env.FORGE_WORKSPACE_ID||user.email,stub=env.WORKSPACE.get(env.WORKSPACE.idFromName('workspace:'+key));

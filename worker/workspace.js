@@ -69,6 +69,24 @@ export function applyCommand(state,command,user){
  }
  s.revision++;s.audit.push({id:id(),action,by:user.email,role:user.role,at:stamp,projectId:p.projectId||null});s.audit=s.audit.slice(-2000);return s;
 }
+export function createDemoState(){
+ let state=blank();const user={email:'demo@qacrew.it',role:'admin'};
+ const cmd=(action,payload)=>{state=applyCommand(state,{action,payload},user);return state;};
+ const project=(name)=>{cmd('project.create',{name});return state.projects.at(-1);};
+ const scenario=(projectId,requirementId,title,expected,priority='Medium',platform='Web')=>cmd('scenario.save',{projectId,requirementId,title,steps:['İlgili ekrana git','Örnek koşulu uygula','Sonucu doğrula'],expected,priority,platform,estimate:5,approved:true});
+ const requirement=(projectId,title,input,questions=[])=>{cmd('requirement.save',{projectId,title,input,questions});return state.projects.find(p=>p.id===projectId).requirements.at(-1);};
+ const plan=(projectId,title,version,environment,scenarioIds)=>{cmd('plan.save',{projectId,title,version,environment,platform:'Web',scenarioIds,budget:30,assignee:user.email});return state.projects.find(p=>p.id===projectId).plans.at(-1);};
+ const shop=project('Örnek · ShopFlow');
+ const pay=requirement(shop.id,'Kayıtlı kartla ödeme','Kullanıcı kayıtlı kartla ödeme yapabilir. Yetersiz bakiyede açık uyarı gösterilir. Başarılı ödemede sipariş onayı görünür.',[{question:'Ödeme zaman aşımında yeniden deneme kuralı nedir?',answer:'',status:'unknown'}]);
+ const shopCases=[scenario(shop.id,pay.id,'Geçerli kayıtlı kart','Sipariş onayı ve işlem numarası görünür.','High'),scenario(shop.id,pay.id,'Yetersiz bakiye','Ödeme reddedilir ve anlaşılır uyarı gösterilir.','Medium'),scenario(shop.id,pay.id,'Çift tıklama koruması','Tek sipariş ve tek tahsilat oluşur.','Critical'),scenario(shop.id,pay.id,'Sipariş geçmişi','Tamamlanan sipariş geçmişte görünür.','Medium')];
+ requirement(shop.id,'Kupon doğrulama','Geçerli kupon indirimi toplam tutara uygulanır; süresi dolmuş kupon için neden açıklanır.');
+ for(const [type,title] of [['test','ShopFlow ödeme senaryoları'],['bug','Ödeme hatası örnek raporu'],['smoke','Yayın öncesi smoke listesi'],['reg','Sepet regresyon seti']])cmd('document.save',{projectId:shop.id,title,type,platform:'Web',language:'tr',requirementId:pay.id,rows:shopCases.slice(0,3).map(s=>({title:s.title,steps:s.steps.join('\n'),expected:s.expected,priority:s.priority})),questions:[{question:'Zaman aşımında tekrar deneme?',answer:''}],sample:true});
+ const p10=plan(shop.id,'Ödeme temel akışı','v1.0','Staging · Chrome',shopCases.map(s=>s.id));cmd('run.create',{projectId:shop.id,planId:p10.id});let run=state.projects.find(p=>p.id===shop.id).runs.at(-1);cmd('run.bulk',{projectId:shop.id,runId:run.id,caseIds:run.cases.map(c=>c.id)});
+ cmd('decision.save',{projectId:shop.id,version:'v1.0',status:'approved',note:'Örnek karar: kapsam içindeki dört senaryo geçti.'});
+ const p11=plan(shop.id,'Kupon ve ödeme regresyonu','v1.1','Staging · Chrome',shopCases.map(s=>s.id));cmd('run.create',{projectId:shop.id,planId:p11.id});run=state.projects.find(p=>p.id===shop.id).runs.at(-1);cmd('run.result',{projectId:shop.id,runId:run.id,caseId:run.cases[0].id,status:'passed',note:''});cmd('run.result',{projectId:shop.id,runId:run.id,caseId:run.cases[1].id,status:'failed',note:'Örnek bulgu: yetersiz bakiye uyarısı görünmüyor.',bug:{title:'Bakiye uyarısı görünmüyor',severity:'Medium',assignee:'developer@demo.qacrew.it'}});cmd('decision.save',{projectId:shop.id,version:'v1.1',status:'hold',note:'Örnek karar: hata düzeltildikten ve QA tekrar testinden sonra yeniden değerlendir.'});
+ const mobile=project('Örnek · CareMobile');const auth=requirement(mobile.id,'Güvenli oturum','Kullanıcı geçerli bilgilerle giriş yapar. Oturum süresi dolunca güvenli biçimde tekrar giriş ister.');const mobileCases=[scenario(mobile.id,auth.id,'Başarılı giriş','Ana sayfa ve kullanıcı adı görünür.','High','Android'),scenario(mobile.id,auth.id,'Hatalı parola','Genel güvenlik uyarısı görünür, oturum açılmaz.','High','iOS'),scenario(mobile.id,auth.id,'Oturum süresi dolması','Kullanıcı güvenli giriş ekranına yönlendirilir.','Medium','Android')];const p=plan(mobile.id,'Mobil giriş smoke','2.4.0','Android · Pixel / iOS · iPhone',mobileCases.map(s=>s.id));cmd('run.create',{projectId:mobile.id,planId:p.id});run=state.projects.find(x=>x.id===mobile.id).runs.at(-1);cmd('run.bulk',{projectId:mobile.id,runId:run.id,caseIds:run.cases.slice(0,2).map(c=>c.id)});
+ return state;
+}
 export class WorkspaceStore{
  constructor(ctx){this.ctx=ctx;}
  async read(storage=this.ctx.storage){const count=await storage.get('state-count');if(!count)return blank();let raw='';for(let i=0;i<count;i++)raw+=await storage.get('state-'+i);return JSON.parse(raw);}
@@ -76,6 +94,7 @@ export class WorkspaceStore{
  async fetch(request){try{
   const path=new URL(request.url).pathname;
   if(path.startsWith('/share/')){const share=await this.ctx.storage.get('share:'+path.split('/').pop());return share&&share.expires>Date.now()?json(share):json({error:'Paylaşım bulunamadı veya süresi doldu'},404);}
+  if(path==='/demo-state'){const state=await this.ctx.storage.transaction(async storage=>{let data=await storage.get('demo-state-v1');if(!data){data=createDemoState();await storage.put('demo-state-v1',data);}return data;});return json({state});}
   const user=JSON.parse(request.headers.get('x-workspace-user')||'null');if(!user)return json({error:'Unauthorized'},401);
   if(path==='/publish'){const p=await request.json();if(!permissions.share.includes(user.role))throw fail('Not permitted',403);await this.ctx.storage.put('share:'+p.token,p.snapshot);return json({ok:true});}
   if(path==='/state')return json({state:await this.read()});
