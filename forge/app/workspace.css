@@ -13,3 +13,23 @@
 @media(max-width:680px){.login-page{grid-template-columns:1fr}.login-panel{min-height:100svh;padding:20px 22px}.login-card-wrap{width:min(100%,430px);padding:36px 0}.login-visual{display:none}.login-card-wrap h1{font-size:28px}.demo-card .toolbar{flex-wrap:nowrap}.demo-fill{max-width:150px}}
 
 .demo-session .resultForm{display:none}
+
+/* Subtle motion in the sign-in workflow illustration */
+.login-visual .orbit-one{animation:forge-orbit 42s linear infinite}
+.login-visual .orbit-two{animation:forge-orbit 31s linear infinite reverse}
+.login-visual:before{animation:forge-orbit 58s linear infinite}
+.visual-stack{animation:forge-float 6s ease-in-out infinite}
+.visual-note{animation:forge-note-float 7s ease-in-out infinite}
+.visual-tests{animation:forge-tests-float 7s ease-in-out infinite}
+.visual-row{animation:forge-row-focus 5.6s ease-in-out infinite;animation-delay:calc(var(--row-index,0)*1.4s)}
+.visual-row:nth-of-type(2){--row-index:0}.visual-row:nth-of-type(3){--row-index:1}.visual-row:nth-of-type(4){--row-index:2}.visual-row:nth-of-type(5){--row-index:3}
+.visual-row i{position:relative;overflow:hidden}
+.visual-row i:after{position:absolute;inset:0 auto 0 0;width:34%;border-radius:inherit;background:linear-gradient(90deg,transparent,#fff9,transparent);content:"";animation:forge-scan 5.6s ease-in-out infinite;animation-delay:calc(var(--row-index,0)*1.4s)}
+.visual-row> b{animation:forge-status 5.6s ease-in-out infinite;animation-delay:calc(var(--row-index,0)*1.4s)}
+@keyframes forge-orbit{to{transform:rotate(360deg)}}
+@keyframes forge-float{0%,100%{transform:translateY(6px)}50%{transform:translateY(-5px)}}
+@keyframes forge-note-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes forge-tests-float{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+@keyframes forge-row-focus{0%,15%,100%{box-shadow:0 0 0 0 #f5a06c00}7%{box-shadow:0 0 0 2px #f5a06c88}}
+@keyframes forge-scan{0%,100%{transform:translateX(-120%);opacity:0}15%,70%{opacity:.85}85%{transform:translateX(330%);opacity:0}}
+@keyframes forge-status{0%,15%,100%{transform:scale(1)}7%{transform:scale(1.13)}}
