@@ -39,6 +39,7 @@ async function sessionUser(request, env) {
   const data = await verify(cookie(request), env.SESSION_SECRET);
   if(!data?.email)return null;
   const member=members(env).find(x=>x.email.toLowerCase()===data.email.toLowerCase());
+  if(data.registered){const account=await getRegisteredUser(env,data.email);if(!account)return null;return {...data,role:account.role,workspaceKey:account.workspace_key};}
   if(!member&&!data.demo&&data.email.toLowerCase()!==String(env.FORGE_LOGIN_EMAIL||'').toLowerCase())return null;
   return {...data,role:member?.role || (data.demo ? "qa" : "admin")};
 }
@@ -270,6 +271,41 @@ async function handleSubscriptionLookup(request, env) {
   const active = !!subscription && ACTIVE_SUBSCRIPTION_STATUSES.has(subscription.status);
   return json({ status: subscription?.status || "pending", active, plan: active ? subscription.plan : null, transactionId: txn, subscriptionId: subscription?.subscription_id || null, updatedAt: subscription?.updated_at || null });
 }
+async function getRegisteredUser(env,email,includeCredentials=false){
+  if(!env.SUPABASE_URL||!env.SUPABASE_SERVICE_ROLE_KEY)return null;
+  const query=new URLSearchParams({email:'eq.'+email,select:includeCredentials?'email,password_salt,password_hash,workspace_key,role':'email,workspace_key,role',limit:'1'});
+  const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/rest/v1/forge_users?'+query,{headers:supabaseHeaders(env),signal:AbortSignal.timeout(10000)});
+  if(!response.ok)throw new Error('Supabase account lookup failed '+response.status);
+  return (await response.json())[0]||null;
+}
+async function passwordHash(password,salt){
+  const key=await crypto.subtle.importKey('raw',encoder.encode(password),'PBKDF2',false,['deriveBits']);
+  const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:encoder.encode(salt),iterations:100000,hash:'SHA-256'},key,256);
+  return [...new Uint8Array(bits)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function handleRegistration(request,env){
+  if(request.method!=='POST')return failure(405,'invalid_method','Method not allowed.');
+  if(!originAllowed(request))return failure(403,'invalid_origin','İstek kaynağı geçersiz.');
+  if(!env.SESSION_SECRET||env.SESSION_SECRET.length<32||!env.SUPABASE_URL||!env.SUPABASE_SERVICE_ROLE_KEY||!env.QUOTA)return failure(503,'registration_unavailable','Üyelik şu an yapılandırılmamış.');
+  const ip=request.headers.get('cf-connecting-ip')||'unknown';
+  const limit=await consume(env,'register:'+ip,5,60*60*1000);
+  if(!limit.allowed)return failure(429,'rate_limited','Çok fazla kayıt denemesi. Bir saat sonra tekrar dene.');
+  const parsed=await bodyJson(request,4096),body=parsed.value;
+  if(parsed.tooLarge||parsed.invalid||!body||typeof body.email!=='string'||typeof body.password!=='string')return failure(400,'invalid_request','E-posta ve şifre gerekli.');
+  const email=body.email.trim().toLowerCase(),password=body.password;
+  if(email.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return failure(400,'invalid_email','Geçerli bir e-posta adresi gir.');
+  if(password.length<12||password.length>256)return failure(400,'invalid_password','Şifre en az 12, en fazla 256 karakter olmalı.');
+  if(email===DEMO_LOGIN.email||email===String(env.FORGE_LOGIN_EMAIL||'').toLowerCase()||members(env,false).some(x=>x.email.toLowerCase()===email))return failure(409,'account_exists','Bu e-posta zaten kayıtlı. Giriş yapmayı dene.');
+  try{
+    if(await getRegisteredUser(env,email))return failure(409,'account_exists','Bu e-posta zaten kayıtlı. Giriş yapmayı dene.');
+    const salt=b64url(crypto.getRandomValues(new Uint8Array(24))),hash=await passwordHash(password,salt),workspaceKey='user:'+crypto.randomUUID();
+    const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/rest/v1/forge_users',{method:'POST',headers:{...supabaseHeaders(env),Prefer:'return=minimal'},body:JSON.stringify({email,password_salt:salt,password_hash:hash,workspace_key:workspaceKey,role:'admin'}),signal:AbortSignal.timeout(10000)});
+    if(response.status===409)return failure(409,'account_exists','Bu e-posta zaten kayıtlı. Giriş yapmayı dene.');
+    if(!response.ok)throw new Error('Supabase account insert failed '+response.status);
+    const exp=Date.now()+12*60*60*1000,token=await sign({email,registered:true,exp},env.SESSION_SECRET);
+    return json({user:{email,role:'admin',demo:false} },201,{'set-cookie':secureCookie(request,token,12*60*60)});
+  }catch(error){console.error('Forge registration failed:',String(error?.message||error));return failure(503,'registration_unavailable','Hesap oluşturulamadı. Biraz sonra tekrar dene.');}
+}
 async function handleSession(request, env) {
   if (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32) return failure(503, "sampling_disabled", "Giriş servisi şu an yapılandırılmamış.");
   if (request.method === "GET") {
@@ -290,10 +326,12 @@ async function handleSession(request, env) {
   const isConfiguredUser = env.FORGE_LOGIN_EMAIL && env.FORGE_LOGIN_PASSWORD && email === env.FORGE_LOGIN_EMAIL.toLowerCase() && body.value.password === env.FORGE_LOGIN_PASSWORD;
   const member=members(env).find(x=>x.email.toLowerCase()===email);
   const isMember=member&&await checkPassword(body.value.password,member);
-  if (!isDemo && !isConfiguredUser && !isMember) return failure(401, "unauthorized", "E-posta veya şifre hatalı.");
+  let registered=null,isRegistered=false;
+  if(!isDemo&&!isConfiguredUser&&!isMember){try{registered=await getRegisteredUser(env,email,true);isRegistered=!!registered&&await checkPassword(body.value.password,{salt:registered.password_salt,hash:registered.password_hash});}catch(error){console.error('Forge account login failed:',String(error?.message||error));return failure(503,'login_unavailable','Giriş servisi şu an kullanılamıyor.');}}
+  if (!isDemo && !isConfiguredUser && !isMember && !isRegistered) return failure(401, "unauthorized", "E-posta veya şifre hatalı.");
   const exp = Date.now() + 12 * 60 * 60 * 1000;
   const sessionEmail = isDemo ? DEMO_LOGIN.email : email;
-  const token = await sign({ email: sessionEmail, demo: isDemo, exp }, env.SESSION_SECRET);
+  const token = await sign({ email: sessionEmail, demo: isDemo, registered:isRegistered||undefined, exp }, env.SESSION_SECRET);
   return json({ user: { email: sessionEmail, demo: isDemo, role:member?.role||(isDemo?"qa":"admin") } }, 200, { "set-cookie": secureCookie(request, token, 12 * 60 * 60) });
 }
 
@@ -313,7 +351,7 @@ async function handleGenerate(request, env) {
   const minute = await consume(env, `ip:${ip}`, 3, 60_000);
   if (!minute.allowed) return failure(429, "rate_limited", "Dakikada en fazla 3 üretim isteği; biraz bekleyip tekrar dene.");
   const today = new Date().toISOString().slice(0, 10);
-  const plan = await effectivePlan(env, normalizedUserId(user.email)), month = today.slice(0, 7), workspace = env.FORGE_WORKSPACE_ID || user.email;
+  const plan = await effectivePlan(env, normalizedUserId(user.email)), month = today.slice(0, 7), workspace = user.workspaceKey || env.FORGE_WORKSPACE_ID || user.email;
   const monthly = await consume(env, `generation:${workspace}`, plan.generations, 32 * 24 * 60 * 60 * 1000, month);
   if (!monthly.allowed) return failure(429, "generation_quota_reached", `${plan.name} planının aylık ${plan.generations} üretim kotası doldu. Kota gelecek ayın ilk günü UTC saatinde yenilenir.`);
   const model = job.depth === "deep" ? (env.DEEP_MODEL || "claude-opus-5") : (env.QUICK_MODEL || "claude-sonnet-5");
@@ -381,6 +419,7 @@ export default {
       const sandbox = env.PADDLE_ENV === "sandbox" && token.startsWith("test_");
       return json({ enabled: sandbox, environment: "sandbox", token: sandbox ? token : "" });
     }
+    if (url.pathname === "/api/register") return handleRegistration(request, env);
     if(url.pathname.startsWith("/api/workspace"))return handleWorkspace(request,env);
     if (url.pathname === "/api/session") return handleSession(request, env);
     if (url.pathname === "/api/generate") return handleGenerate(request, env);
@@ -416,8 +455,8 @@ async function handleWorkspace(request,env){
  }
  if(!['GET','POST'].includes(request.method))return failure(405,'invalid_method','Unsupported method');
  if(request.method==='POST'&&!originAllowed(request))return failure(403,'invalid_origin','İstek kaynağı geçersiz');
- const key=env.FORGE_WORKSPACE_ID||user.email,stub=env.WORKSPACE.get(env.WORKSPACE.idFromName('workspace:'+key));
- if(path==='/members')return json({members:members(env).map(({email,role})=>({email,role})),user});
+ const key=user.workspaceKey||env.FORGE_WORKSPACE_ID||user.email,stub=env.WORKSPACE.get(env.WORKSPACE.idFromName('workspace:'+key));
+ if(path==='/members')return json({members:user.registered?[{email:user.email,role:user.role}]:members(env).map(({email,role})=>({email,role})),user});
  if(path.startsWith('/github')){try{return await githubWorkspace(request,env,user,path);}catch{return failure(502,'github_unavailable','GitHub bağlantısı kurulamadı. Tekrar deneyin.');}}
  if(path==='/share'&&request.method==='POST'&&env.SUPABASE_URL&&env.SUPABASE_SERVICE_ROLE_KEY){
   const parsed=await bodyJson(request,64000),p=parsed.value;if(parsed.invalid||parsed.tooLarge)return failure(400,'invalid_body','Geçersiz paylaşım isteği');
@@ -458,6 +497,7 @@ async function readForgeWorkspace(env,key,legacyStub){
  const root=String(env.SUPABASE_URL).replace(/\/$/,'');const query=new URLSearchParams({workspace_key:'eq.'+key,select:'state,revision'});
  const response=await fetch(root+'/rest/v1/forge_workspaces?'+query,{headers:supabaseHeaders(env),signal:AbortSignal.timeout(12000)});if(!response.ok)throw new Error('Supabase read failed '+response.status);
  const rows=await response.json();if(rows[0]?.state)return rows[0].state;
+ if(key.startsWith('user:')){const state={schema:1,revision:0,projects:[],audit:[]};await saveForgeWorkspace(env,key,null,state);const reread=await fetch(root+'/rest/v1/forge_workspaces?'+query,{headers:supabaseHeaders(env),signal:AbortSignal.timeout(12000)});if(!reread.ok)throw new Error('Supabase initialize failed');const saved=await reread.json();if(!saved[0]?.state)throw new Error('Workspace initialization conflict');return saved[0].state;}
  // First request performs a one-time, lossless copy from the existing Durable Object.
  const legacy=await legacyStub.fetch(new Request('https://workspace.internal/state',{headers:{'x-workspace-user':JSON.stringify({email:'migration',role:'admin'})}}));if(!legacy.ok)throw new Error('Legacy workspace read failed');
  const {state}=await legacy.json();await saveForgeWorkspace(env,key,null,state);const reread=await fetch(root+'/rest/v1/forge_workspaces?'+query,{headers:supabaseHeaders(env),signal:AbortSignal.timeout(12000)});if(!reread.ok)throw new Error('Supabase initialize failed');const saved=await reread.json();if(!saved[0]?.state)throw new Error('Workspace initialization conflict');return saved[0].state;
