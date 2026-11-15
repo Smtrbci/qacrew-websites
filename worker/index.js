@@ -63,15 +63,15 @@ function BufferlessConcat(chunks, length) { const out = new Uint8Array(length); 
 export class QuotaCounter {
   constructor(state) { this.state = state; }
   async fetch(request) {
-    const { key, limit, windowMs, now = Date.now() } = await request.json();
+    const { key, limit, windowMs, period = null, now = Date.now() } = await request.json();
     const storage = this.state.storage;
-    const slot = Math.floor(now / windowMs);
+    const slot = typeof period === "string" && /^\d{4}-\d{2}$/.test(period) ? period : Math.floor(now / windowMs);
     const result = await storage.transaction(async (txn) => {
       const saved = await txn.get(key);
       const current = saved?.slot === slot ? saved.count : 0;
-      if (current >= limit) return { allowed: false, remaining: 0 };
+      if (current >= limit) return { allowed: false, remaining: 0, used: current };
       await txn.put(key, { slot, count: current + 1 });
-      return { allowed: true, remaining: limit - current - 1 };
+      return { allowed: true, remaining: limit - current - 1, used: current + 1 };
     });
     await storage.setAlarm(now + windowMs * 2);
     return json(result);
@@ -79,11 +79,15 @@ export class QuotaCounter {
   async alarm() { await this.state.storage.deleteAll(); }
 }
 
-async function consume(env, identity, limit, windowMs) {
+async function consume(env, identity, limit, windowMs, period = null) {
   const id = env.QUOTA.idFromName(await digest(identity));
   const stub = env.QUOTA.get(id);
-  const response = await stub.fetch("https://quota.internal/consume", { method: "POST", body: JSON.stringify({ key: identity, limit, windowMs }) });
+  const response = await stub.fetch("https://quota.internal/consume", { method: "POST", body: JSON.stringify({ key: identity, limit, windowMs, period }) });
   return response.json();
+}
+function planFor(env) {
+  const plans = { starter: { name: "Starter", generations: 50, seats: 1 }, pro: { name: "Pro", generations: 250, seats: 1 }, team: { name: "Team", generations: 1000, seats: 5 } };
+  return plans[String(env.FORGE_PLAN || "starter").toLowerCase()] || plans.starter;
 }
 async function handleSession(request, env) {
   if (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32) return failure(503, "sampling_disabled", "Giriş servisi şu an yapılandırılmamış.");
@@ -128,13 +132,14 @@ async function handleGenerate(request, env) {
   const minute = await consume(env, `ip:${ip}`, 3, 60_000);
   if (!minute.allowed) return failure(429, "rate_limited", "Dakikada en fazla 3 üretim isteği; biraz bekleyip tekrar dene.");
   const today = new Date().toISOString().slice(0, 10);
-  const daily = await consume(env, `user:${user.email}:${today}`, 10, 24 * 60 * 60 * 1000);
-  if (!daily.allowed) return failure(429, "rate_limited", "Günlük deneme hakkın doldu, yarın tekrar dene");
+  const plan = planFor(env), month = today.slice(0, 7), workspace = env.FORGE_WORKSPACE_ID || user.email;
+  const monthly = await consume(env, `generation:${workspace}`, plan.generations, 32 * 24 * 60 * 60 * 1000, month);
+  if (!monthly.allowed) return failure(429, "generation_quota_reached", `${plan.name} planının aylık ${plan.generations} üretim kotası doldu. Kota gelecek ayın ilk günü UTC saatinde yenilenir.`);
   const model = job.depth === "deep" ? (env.DEEP_MODEL || "claude-opus-5") : (env.QUICK_MODEL || "claude-sonnet-5");
-  return runModel(job, env, model);
+  return runModel(job, env, model, { plan: plan.name, limit: plan.generations, used: monthly.used, remaining: monthly.remaining, resets: new Date(Date.UTC(Number(month.slice(0, 4)), Number(month.slice(5, 7)), 1)).toISOString() });
 }
 
-async function runModel(job, env, model) {
+async function runModel(job, env, model, quota = null) {
   let upstream;
   try {
     upstream = await fetch("https://api.anthropic.com/v1/messages", {
@@ -155,7 +160,7 @@ async function runModel(job, env, model) {
   const raw = Array.isArray(payload.content) ? payload.content.map((part) => part.type === "text" ? part.text : "").join("\n") : "";
   const result = parseModelJson(raw);
   if (!validResult(job.type, result)) return failure(502, "invalid_json", "Yanıt okunamadı, yeniden üret");
-  return json({ result });
+  return json(quota ? { result, quota } : { result });
 }
 
 async function handlePublicTry(request, env) {
@@ -187,6 +192,11 @@ async function handlePublicTry(request, env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === "/api/billing/config" && request.method === "GET") {
+      const token = String(env.PADDLE_CLIENT_TOKEN || "");
+      const sandbox = env.PADDLE_ENV === "sandbox" && token.startsWith("test_");
+      return json({ enabled: sandbox, environment: "sandbox", token: sandbox ? token : "" });
+    }
     if(url.pathname.startsWith("/api/workspace"))return handleWorkspace(request,env);
     if (url.pathname === "/api/session") return handleSession(request, env);
     if (url.pathname === "/api/generate") return handleGenerate(request, env);
@@ -195,7 +205,7 @@ export default {
   }
 };
 
-function members(env){try{const list=JSON.parse(env.FORGE_USERS_JSON||'[]');return Array.isArray(list)?list.filter(x=>typeof x.email==='string'&&['admin','qa','dev','pm','pmo'].includes(x.role)):[];}catch{return [];}}
+function members(env,enforceSeats=true){try{const list=JSON.parse(env.FORGE_USERS_JSON||'[]');if(!Array.isArray(list))return [];const valid=list.filter(x=>typeof x.email==='string'&&['admin','qa','dev','pm','pmo'].includes(x.role));if(!enforceSeats||env.FORGE_PREVIEW_MODE==='true')return valid;const owner=String(env.FORGE_LOGIN_EMAIL||'').toLowerCase(),seen=new Set(owner?[owner]:[]),active=[];for(const member of valid){const email=member.email.toLowerCase();if(seen.has(email))continue;seen.add(email);active.push(member);}return active.slice(0,Math.max(0,planFor(env).seats-(owner?1:0)));}catch{return [];}}
 async function checkPassword(password,member){
  if(typeof member.salt!=='string'||typeof member.hash!=='string')return false;
  const key=await crypto.subtle.importKey('raw',encoder.encode(password),'PBKDF2',false,['deriveBits']);
@@ -205,7 +215,7 @@ async function checkPassword(password,member){
 }
 async function handleWorkspace(request,env){
  const url=new URL(request.url),path=url.pathname.slice('/api/workspace'.length)||'/state';
- if(path==='/config')return json({preview:env.FORGE_PREVIEW_MODE==='true',ai:!!env.ANTHROPIC_API_KEY,github:!!(env.GITHUB_TOKEN&&env.GITHUB_REPOSITORY),repository:env.GITHUB_REPOSITORY||'',accounts:env.FORGE_PREVIEW_MODE==='true'?members(env).map(({email,role})=>({email,role})):[]});
+ if(path==='/config')return json({preview:env.FORGE_PREVIEW_MODE==='true',ai:!!env.ANTHROPIC_API_KEY,github:!!(env.GITHUB_TOKEN&&env.GITHUB_REPOSITORY),repository:env.GITHUB_REPOSITORY||'',plan:planFor(env),accounts:env.FORGE_PREVIEW_MODE==='true'?members(env,false).map(({email,role})=>({email,role})):[]});
  if(!env.WORKSPACE)return failure(503,'workspace_disabled','Çalışma alanı sunucu deposu yapılandırılmamış.');
  if(path.startsWith('/shared/')){
   const token=path.slice('/shared/'.length);if(!/^[a-f0-9-]{72}$/.test(token))return failure(404,'not_found','Paylaşım bulunamadı.');

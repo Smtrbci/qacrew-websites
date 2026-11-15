@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0d11">
+<title>QAcrew Forge · Fiyatlar</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="/forge/pricing/pricing.css">
+<script defer src="/forge/pricing/pricing.js"></script>
+</head>
+<body>
+<div class="page">
+  <header class="top"><a class="brand" href="/forge/">QAcrew <span>Forge</span></a><nav><a href="/forge/">Ürün</a><a href="#plans" aria-current="page">Fiyatlar</a><a href="#features">Paket içerikleri</a><a href="/forge/app/">Panele giriş</a></nav><div class="actions"><label class="currency">Para birimi <select id="currency" aria-label="Para birimi"><option value="USD">USD $</option><option value="EUR">EUR €</option><option value="TRY">TRY ₺</option></select></label><button class="mode" type="button" aria-label="Temayı değiştir">☼</button><button class="lang" type="button" aria-label="Switch language">EN</button></div></header>
+  <main>
+    <section class="hero"><span class="eyebrow">QAcrew Forge / Fiyatlar</span><h1>Gereksinimden yayına,<br>ekibinle aynı akışta.</h1><p>İhtiyacına uygun paketi seç. Tüm paketlerde gereksinim, senaryo, test yürütme ve raporlama akışı var.</p><div class="period" role="group" aria-label="Faturalama dönemi"><button type="button" data-period="monthly" aria-pressed="true">Aylık</button><button type="button" data-period="yearly" aria-pressed="false">Yıllık <span>%16,7 avantaj</span></button></div><small>Starter ve Pro paketlerinde 7 gün ücretsiz deneme. Team planında deneme süresi yok.</small></section>
+    <section id="plans" class="plans" aria-label="Forge paketleri">
+      <article class="plan"><div class="plan-head"><div><span class="tag">Bireysel</span><h2>Starter</h2><p>Forge’u günlük QA işlerinde kullanmaya başla.</p></div><strong class="price" data-price="starter"><span>₺149</span><small>/ ay</small></strong></div><ul><li>Gereksinim ve açık soru takibi</li><li>Senaryo kütüphanesi ve test planları</li><li>Test koşumları ve hata kayıtları</li><li>Raporlar ve CSV dışa aktarma</li><li>Ayda 50 üretim</li><li>1 kullanıcı · 7 gün deneme</li></ul><a class="button secondary" data-checkout="starter" href="/forge/checkout/?plan=starter&amp;period=monthly">Starter’ı seç</a></article>
+      <article class="plan featured"><div class="plan-head"><div><span class="tag">En çok tercih edilen</span><h2>Pro</h2><p>Tek başına çalışan QA uzmanı için tam çalışma alanı.</p></div><strong class="price" data-price="pro"><span>₺499</span><small>/ ay</small></strong></div><ul><li>Starter’daki tüm özellikler</li><li>Birden fazla proje ve sürüm takibi</li><li>GitHub iş kalemi içe/dışa aktarma</li><li>Paylaşılabilir rapor bağlantıları</li><li>Ayda 250 üretim</li><li>1 kullanıcı · 7 gün deneme</li></ul><a class="button primary" data-checkout="pro" href="/forge/checkout/?plan=pro&amp;period=monthly">Pro’yu seç</a></article>
+      <article class="plan"><div class="plan-head"><div><span class="tag">Ekip</span><h2>Team</h2><p>QA, geliştirme ve ürün ekiplerini ortak akışta buluştur.</p></div><strong class="price" data-price="team"><span>₺1.399</span><small>/ ay</small></strong></div><ul><li>Pro’daki tüm özellikler</li><li>QA, geliştirici ve PM rolleri</li><li>Ortak projeler ve ekip portföyü</li><li>Ayda 1.000 üretim</li><li>5 kullanıcı koltuğu</li><li>Öncelikli destek · deneme yok</li></ul><a class="button secondary" data-checkout="team" href="/forge/checkout/?plan=team&amp;period=monthly">Team’i seç</a></article>
+    </section>
+    <p class="price-note">Gösterilen fiyatlara vergi dahil değildir. Ödeme sırasında Paddle, bulunduğun ülkeye göre yerel fiyatı ve vergiyi gösterir. Fiyat kimlikleri plan ve döneme göre belirlenmiştir.</p>
+    <section id="features" class="feature-section"><div><span class="eyebrow">Karşılaştır</span><h2>Paket içerikleri</h2><p>Özellik kapsamı, ürünün mevcut akışı ve paylaşılan plan taslağı temel alınarak gösterilir.</p></div><div class="table-wrap"><table><thead><tr><th>Özellik</th><th>Starter</th><th>Pro</th><th>Team</th></tr></thead><tbody>
+      <tr class="group"><th colspan="4">QA iş akışı</th></tr><tr><th>Gereksinimler, sorular ve senaryolar</th><td>✓</td><td>✓</td><td>✓</td></tr><tr><th>Planlama, koşum ve hata döngüsü</th><td>✓</td><td>✓</td><td>✓</td></tr><tr><th>Raporlar ve CSV</th><td>✓</td><td>✓</td><td>✓</td></tr><tr><th>Aylık üretim kotası</th><td>50</td><td>250</td><td>1.000</td></tr>
+      <tr class="group"><th colspan="4">Projeler ve bağlantılar</th></tr><tr><th>Birden fazla proje ve sürüm takibi</th><td>—</td><td>✓</td><td>✓</td></tr><tr><th>GitHub iş kalemi bağlantısı</th><td>—</td><td>✓</td><td>✓</td></tr><tr><th>Paylaşılabilir rapor</th><td>—</td><td>✓</td><td>✓</td></tr>
+      <tr class="group"><th colspan="4">Ekip</th></tr><tr><th>Kullanıcı koltuğu</th><td>1</td><td>1</td><td>5</td></tr><tr><th>QA / Geliştirici / PM rolleri ve ortak portföy</th><td>—</td><td>—</td><td>✓</td></tr><tr><th>Destek</th><td>Topluluk</td><td>E-posta</td><td>Öncelikli</td></tr>
+    </tbody></table></div><p class="disclaimer"><strong>Paket kapsamı notu:</strong> Aylık üretim kotası sunucu tarafında uygulanır. Ücretli aboneliklerin otomatik hesaba bağlanması ve paket bazlı özellik erişimi, imzalı Paddle webhook’u ve hesap eşlemesi tamamlanana kadar etkin değildir.</p></section>
+    <section class="faq"><h2>Sık sorulanlar</h2><details><summary>Ücretsiz deneme nasıl çalışıyor?</summary><p>Starter ve Pro planlarında ilk 7 gün için deneme uygulanır. Deneme ve ödeme koşulları Paddle ödeme adımında doğrulanır.</p></details><details><summary>Fiyatlar hangi para biriminde tahsil edilir?</summary><p>Fiyat tablosunda USD, EUR veya TRY görünümünü seçebilirsin. Kesin yerel tutar ve vergi, Paddle ödeme ekranında gösterilir.</p></details><details><summary>Planımı sonradan değiştirebilir miyim?</summary><p>Abonelik yönetimi ve plan değiştirme akışı test aşamasında; satın alma öncesinde koşullar ayrıca gösterilecektir.</p></details></section>
+  </main><footer><a class="brand" href="/forge/">QAcrew <span>Forge</span></a><span>© 2026 QAcrew</span><a href="mailto:info@qacrew.it">Destek</a></footer>
+</div>
+</body>
+</html>

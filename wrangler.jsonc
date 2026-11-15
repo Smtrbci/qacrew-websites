@@ -12,7 +12,9 @@
   "vars": {
     "FORGE_LOGIN_EMAIL": "sametarabacitr@gmail.com",
     "FORGE_WORKSPACE_ID": "qacrew-production",
-    "GITHUB_REPOSITORY": "Smtrbci/qacrew-websites"
+    "FORGE_PLAN": "starter",
+    "GITHUB_REPOSITORY": "Smtrbci/qacrew-websites",
+    "PADDLE_ENV": "sandbox"
   },
   "assets": {
     "directory": ".",
