@@ -33,3 +33,4 @@
 @keyframes forge-row-focus{0%,15%,100%{box-shadow:0 0 0 0 #f5a06c00}7%{box-shadow:0 0 0 2px #f5a06c88}}
 @keyframes forge-scan{0%,100%{transform:translateX(-120%);opacity:0}15%,70%{opacity:.85}85%{transform:translateX(330%);opacity:0}}
 @keyframes forge-status{0%,15%,100%{transform:scale(1)}7%{transform:scale(1.13)}}
+.login-notice{margin:0;color:#356b52;font-size:12px;line-height:1.5}.login-resend{justify-self:center;border:0;background:transparent;color:#74340e;font-size:12px;font-weight:700;text-decoration:underline;text-underline-offset:3px}.login-resend:disabled{opacity:.55;cursor:wait}

@@ -271,25 +271,28 @@ async function handleSubscriptionLookup(request, env) {
   const active = !!subscription && ACTIVE_SUBSCRIPTION_STATUSES.has(subscription.status);
   return json({ status: subscription?.status || "pending", active, plan: active ? subscription.plan : null, transactionId: txn, subscriptionId: subscription?.subscription_id || null, updatedAt: subscription?.updated_at || null });
 }
-async function getRegisteredUser(env,email,includeCredentials=false){
+function supabasePublishableKey(env){return String(env.SUPABASE_PUBLISHABLE_KEY||env.SUPABASE_ANON_KEY||'');}
+function supabaseAuthHeaders(env){const key=supabasePublishableKey(env);if(!key)throw new Error('Supabase publishable key missing');return {apikey:key,'content-type':'application/json'};}
+async function getRegisteredUser(env,email){
   if(!env.SUPABASE_URL||!env.SUPABASE_SERVICE_ROLE_KEY)return null;
-  const query=new URLSearchParams({email:'eq.'+email,select:includeCredentials?'email,password_salt,password_hash,workspace_key,role':'email,workspace_key,role',limit:'1'});
+  const query=new URLSearchParams({email:'eq.'+email,select:'email,workspace_key,role',limit:'1'});
   const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/rest/v1/forge_users?'+query,{headers:supabaseHeaders(env),signal:AbortSignal.timeout(10000)});
   if(!response.ok)throw new Error('Supabase account lookup failed '+response.status);
   return (await response.json())[0]||null;
 }
-async function passwordHash(password,salt){
-  const key=await crypto.subtle.importKey('raw',encoder.encode(password),'PBKDF2',false,['deriveBits']);
-  const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:encoder.encode(salt),iterations:100000,hash:'SHA-256'},key,256);
-  return [...new Uint8Array(bits)].map(b=>b.toString(16).padStart(2,'0')).join('');
+async function ensureRegisteredUser(env,email){
+  const current=await getRegisteredUser(env,email);if(current)return current;
+  const workspaceKey='user:'+crypto.randomUUID();
+  const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/rest/v1/forge_users',{method:'POST',headers:{...supabaseHeaders(env),Prefer:'return=minimal'},body:JSON.stringify({email,workspace_key:workspaceKey,role:'admin'}),signal:AbortSignal.timeout(10000)});
+  if(response.status===409)return await getRegisteredUser(env,email);
+  if(!response.ok)throw new Error('Supabase account profile insert failed '+response.status);
+  return {email,workspace_key:workspaceKey,role:'admin'};
 }
 async function handleRegistration(request,env){
   if(request.method!=='POST')return failure(405,'invalid_method','Method not allowed.');
   if(!originAllowed(request))return failure(403,'invalid_origin','İstek kaynağı geçersiz.');
-  if(!env.SESSION_SECRET||env.SESSION_SECRET.length<32||!env.SUPABASE_URL||!env.SUPABASE_SERVICE_ROLE_KEY||!env.QUOTA)return failure(503,'registration_unavailable','Üyelik şu an yapılandırılmamış.');
-  const ip=request.headers.get('cf-connecting-ip')||'unknown';
-  const limit=await consume(env,'register:'+ip,5,60*60*1000);
-  if(!limit.allowed)return failure(429,'rate_limited','Çok fazla kayıt denemesi. Bir saat sonra tekrar dene.');
+  if(!env.SESSION_SECRET||env.SESSION_SECRET.length<32||!env.SUPABASE_URL||!env.SUPABASE_SERVICE_ROLE_KEY||!supabasePublishableKey(env)||!env.QUOTA)return failure(503,'registration_unavailable','Üyelik servisi yapılandırılmamış.');
+  const ip=request.headers.get('cf-connecting-ip')||'unknown';const limit=await consume(env,'register:'+ip,5,60*60*1000);if(!limit.allowed)return failure(429,'rate_limited','Çok fazla kayıt denemesi. Bir saat sonra tekrar dene.');
   const parsed=await bodyJson(request,4096),body=parsed.value;
   if(parsed.tooLarge||parsed.invalid||!body||typeof body.email!=='string'||typeof body.password!=='string')return failure(400,'invalid_request','E-posta ve şifre gerekli.');
   const email=body.email.trim().toLowerCase(),password=body.password;
@@ -298,13 +301,34 @@ async function handleRegistration(request,env){
   if(email===DEMO_LOGIN.email||email===String(env.FORGE_LOGIN_EMAIL||'').toLowerCase()||members(env,false).some(x=>x.email.toLowerCase()===email))return failure(409,'account_exists','Bu e-posta zaten kayıtlı. Giriş yapmayı dene.');
   try{
     if(await getRegisteredUser(env,email))return failure(409,'account_exists','Bu e-posta zaten kayıtlı. Giriş yapmayı dene.');
-    const salt=b64url(crypto.getRandomValues(new Uint8Array(24))),hash=await passwordHash(password,salt),workspaceKey='user:'+crypto.randomUUID();
-    const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/rest/v1/forge_users',{method:'POST',headers:{...supabaseHeaders(env),Prefer:'return=minimal'},body:JSON.stringify({email,password_salt:salt,password_hash:hash,workspace_key:workspaceKey,role:'admin'}),signal:AbortSignal.timeout(10000)});
-    if(response.status===409)return failure(409,'account_exists','Bu e-posta zaten kayıtlı. Giriş yapmayı dene.');
-    if(!response.ok)throw new Error('Supabase account insert failed '+response.status);
-    const exp=Date.now()+12*60*60*1000,token=await sign({email,registered:true,exp},env.SESSION_SECRET);
-    return json({user:{email,role:'admin',demo:false} },201,{'set-cookie':secureCookie(request,token,12*60*60)});
-  }catch(error){console.error('Forge registration failed:',String(error?.message||error));return failure(503,'registration_unavailable','Hesap oluşturulamadı. Biraz sonra tekrar dene.');}
+    const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/auth/v1/signup',{method:'POST',headers:supabaseAuthHeaders(env),body:JSON.stringify({email,password}),signal:AbortSignal.timeout(15000)});
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok){if(response.status===429)return failure(429,'email_rate_limited','Doğrulama e-postası sınırına ulaşıldı. Biraz sonra tekrar dene.');if(response.status===422||response.status===400)return failure(409,'account_exists','Bu e-posta ile kayıt açılamadı. Adresi kontrol et veya giriş yapmayı dene.');throw new Error('Supabase Auth signup failed '+response.status);}
+    if(result.access_token||result.session)return failure(503,'email_confirmation_disabled','Supabase’te e-posta doğrulamasını etkinleştir.');
+    return json({verificationRequired:true,email},202);
+  }catch(error){console.error('Forge registration failed:',String(error?.message||error));return failure(503,'registration_unavailable','Hesap kaydı başlatılamadı. Biraz sonra tekrar dene.');}
+}
+async function handleRegistrationVerify(request,env){
+  if(request.method!=='POST')return failure(405,'invalid_method','Method not allowed.');if(!originAllowed(request))return failure(403,'invalid_origin','İstek kaynağı geçersiz.');
+  if(!env.SESSION_SECRET||env.SESSION_SECRET.length<32||!env.SUPABASE_URL||!env.SUPABASE_SERVICE_ROLE_KEY||!supabasePublishableKey(env)||!env.QUOTA)return failure(503,'registration_unavailable','Üyelik servisi yapılandırılmamış.');
+  const ip=request.headers.get('cf-connecting-ip')||'unknown';const limit=await consume(env,'verify:'+ip,12,60*60*1000);if(!limit.allowed)return failure(429,'rate_limited','Çok fazla kod denemesi. Biraz sonra tekrar dene.');
+  const parsed=await bodyJson(request,4096),body=parsed.value;if(parsed.invalid||parsed.tooLarge||typeof body?.email!=='string'||typeof body?.token!=='string')return failure(400,'invalid_request','E-posta ve doğrulama kodu gerekli.');
+  const email=body.email.trim().toLowerCase(),code=body.token.trim();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||!/^\d{6}$/.test(code))return failure(400,'invalid_request','E-posta veya 6 haneli kod geçersiz.');
+  try{
+    const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/auth/v1/verify',{method:'POST',headers:supabaseAuthHeaders(env),body:JSON.stringify({type:'signup',email,token:code}),signal:AbortSignal.timeout(15000)});
+    const result=await response.json().catch(()=>({}));if(!response.ok)return failure(response.status===429?429:400,'invalid_code',response.status===429?'Çok fazla kod isteği. Biraz sonra tekrar dene.':'Kod geçersiz veya süresi dolmuş. Yeni kod iste.');
+    const confirmedEmail=String(result.user?.email||'').trim().toLowerCase();if(confirmedEmail!==email||!(result.user?.email_confirmed_at||result.user?.confirmed_at))return failure(400,'email_not_confirmed','E-posta doğrulanamadı. Kodu kontrol edip tekrar dene.');
+    const profile=await ensureRegisteredUser(env,email),exp=Date.now()+12*60*60*1000,sessionToken=await sign({email,registered:true,exp},env.SESSION_SECRET);
+    return json({user:{email,role:profile.role,demo:false}},200,{'set-cookie':secureCookie(request,sessionToken,12*60*60)});
+  }catch(error){console.error('Forge email verification failed:',String(error?.message||error));return failure(503,'verification_unavailable','Doğrulama şu an tamamlanamadı. Biraz sonra tekrar dene.');}
+}
+async function handleRegistrationResend(request,env){
+  if(request.method!=='POST')return failure(405,'invalid_method','Method not allowed.');if(!originAllowed(request))return failure(403,'invalid_origin','İstek kaynağı geçersiz.');
+  if(!env.SUPABASE_URL||!supabasePublishableKey(env)||!env.QUOTA)return failure(503,'registration_unavailable','Üyelik servisi yapılandırılmamış.');
+  const ip=request.headers.get('cf-connecting-ip')||'unknown';const limit=await consume(env,'resend:'+ip,3,60*60*1000);if(!limit.allowed)return failure(429,'rate_limited','Yeni kod isteme sınırına ulaştın. Bir saat sonra tekrar dene.');
+  const parsed=await bodyJson(request,2048),email=typeof parsed.value?.email==='string'?parsed.value.email.trim().toLowerCase():'';if(parsed.invalid||parsed.tooLarge||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return failure(400,'invalid_request','Geçerli e-posta adresi gerekli.');
+  try{const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/auth/v1/resend',{method:'POST',headers:supabaseAuthHeaders(env),body:JSON.stringify({type:'signup',email}),signal:AbortSignal.timeout(15000)});if(!response.ok){if(response.status===429)return failure(429,'email_rate_limited','E-posta gönderim sınırına ulaşıldı. Biraz sonra tekrar dene.');throw new Error('Supabase Auth resend failed '+response.status);}return json({sent:true});}
+  catch(error){console.error('Forge verification resend failed:',String(error?.message||error));return failure(503,'resend_unavailable','Yeni kod gönderilemedi. Biraz sonra tekrar dene.');}
 }
 async function handleSession(request, env) {
   if (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32) return failure(503, "sampling_disabled", "Giriş servisi şu an yapılandırılmamış.");
@@ -327,7 +351,16 @@ async function handleSession(request, env) {
   const member=members(env).find(x=>x.email.toLowerCase()===email);
   const isMember=member&&await checkPassword(body.value.password,member);
   let registered=null,isRegistered=false;
-  if(!isDemo&&!isConfiguredUser&&!isMember){try{registered=await getRegisteredUser(env,email,true);isRegistered=!!registered&&await checkPassword(body.value.password,{salt:registered.password_salt,hash:registered.password_hash});}catch(error){console.error('Forge account login failed:',String(error?.message||error));return failure(503,'login_unavailable','Giriş servisi şu an kullanılamıyor.');}}
+  if(!isDemo&&!isConfiguredUser&&!isMember){
+    try{
+      if(supabasePublishableKey(env)&&env.SUPABASE_URL&&env.SUPABASE_SERVICE_ROLE_KEY){
+        const authResponse=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/auth/v1/token?grant_type=password',{method:'POST',headers:supabaseAuthHeaders(env),body:JSON.stringify({email,password:body.value.password}),signal:AbortSignal.timeout(15000)});
+        if(authResponse.ok){const auth=await authResponse.json(),confirmed=String(auth.user?.email||'').toLowerCase()===email&&(auth.user?.email_confirmed_at||auth.user?.confirmed_at);if(confirmed){registered=await ensureRegisteredUser(env,email);isRegistered=!!registered;}}
+        else if(authResponse.status>=500)throw new Error('Supabase Auth login failed '+authResponse.status);
+        else{const authError=await authResponse.json().catch(()=>({}));if(authError.code==='email_not_confirmed'||/email not confirmed/i.test(authError.msg||authError.message||''))return failure(403,'email_not_confirmed','Giriş yapmadan önce e-posta adresini doğrula.');}
+      }
+    }catch(error){console.error('Forge account login failed:',String(error?.message||error));return failure(503,'login_unavailable','Giriş servisi şu an kullanılamıyor.');}
+  }
   if (!isDemo && !isConfiguredUser && !isMember && !isRegistered) return failure(401, "unauthorized", "E-posta veya şifre hatalı.");
   const exp = Date.now() + 12 * 60 * 60 * 1000;
   const sessionEmail = isDemo ? DEMO_LOGIN.email : email;
@@ -420,6 +453,8 @@ export default {
       return json({ enabled: sandbox, environment: "sandbox", token: sandbox ? token : "" });
     }
     if (url.pathname === "/api/register") return handleRegistration(request, env);
+    if (url.pathname === "/api/register/verify") return handleRegistrationVerify(request, env);
+    if (url.pathname === "/api/register/resend") return handleRegistrationResend(request, env);
     if(url.pathname.startsWith("/api/workspace"))return handleWorkspace(request,env);
     if (url.pathname === "/api/session") return handleSession(request, env);
     if (url.pathname === "/api/generate") return handleGenerate(request, env);
