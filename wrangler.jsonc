@@ -14,7 +14,8 @@
     "FORGE_WORKSPACE_ID": "qacrew-production",
     "FORGE_PLAN": "starter",
     "GITHUB_REPOSITORY": "Smtrbci/qacrew-websites",
-    "PADDLE_ENV": "sandbox"
+    "PADDLE_ENV": "sandbox",
+    "SUPABASE_URL": "https://zjlldnhmrixqvavvdbbu.supabase.co"
   },
   "assets": {
     "directory": ".",
