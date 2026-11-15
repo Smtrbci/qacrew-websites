@@ -1,4 +1,5 @@
 export { WorkspaceStore } from "./workspace.js";
+import { applyCommand } from "./workspace.js";
 import { buildPrompt, parseModelJson, validResult, validateJob } from "./prompts.js";
 
 const encoder = new TextEncoder();
@@ -418,14 +419,52 @@ async function handleWorkspace(request,env){
  const key=env.FORGE_WORKSPACE_ID||user.email,stub=env.WORKSPACE.get(env.WORKSPACE.idFromName('workspace:'+key));
  if(path==='/members')return json({members:members(env).map(({email,role})=>({email,role})),user});
  if(path.startsWith('/github')){try{return await githubWorkspace(request,env,user,path);}catch{return failure(502,'github_unavailable','GitHub bağlantısı kurulamadı. Tekrar deneyin.');}}
+ if(path==='/share'&&request.method==='POST'&&env.SUPABASE_URL&&env.SUPABASE_SERVICE_ROLE_KEY){
+  const parsed=await bodyJson(request,64000),p=parsed.value;if(parsed.invalid||parsed.tooLarge)return failure(400,'invalid_body','Geçersiz paylaşım isteği');
+  try{const {state}=await readForgeWorkspace(env,key,stub),project=state.projects.find(x=>x.id===p?.projectId);if(!project)return failure(404,'not_found','Proje bulunamadı');
+   const runs=project.runs.filter(r=>r.version===p.version);if(!runs.length)return failure(400,'no_runs','Koşum yok');
+   const token=crypto.randomUUID()+crypto.randomUUID(),snapshot={project:project.name,version:p.version,runs:runs.map(r=>({title:r.title,platform:r.platform,environment:r.environment,cases:r.cases.map(c=>({title:c.title,priority:c.priority,status:c.status,note:c.note,executedAt:c.executedAt,executedBy:c.executedBy}))})),bugs:project.bugs.filter(b=>b.version===p.version).map(b=>({id:b.id,title:b.title,status:b.status,severity:b.severity})),decision:project.decisions.filter(d=>d.version===p.version).at(-1)||null,createdAt:new Date().toISOString(),by:user.email,expires:Date.now()+7*86400000};
+   const index=env.WORKSPACE.get(env.WORKSPACE.idFromName('share-index'));await index.fetch(new Request('https://workspace.internal/publish',{method:'POST',headers:{'x-workspace-user':JSON.stringify(user),'content-type':'application/json'},body:JSON.stringify({token,snapshot})}));return json({token,expires:snapshot.expires});
+  }catch(e){console.error('Forge Supabase share failed:',String(e?.message||e));return failure(502,'supabase_unavailable','Supabase çalışma alanına erişilemedi.');}
+ }
  const allowed=request.method==='GET'?(path==='/state'||/^\/evidence\/[a-f0-9-]+$/.test(path)):['/command','/evidence','/share'].includes(path);
  if(!allowed)return failure(404,'not_found','Not found');
  let body;
  if(request.method==='POST'){const parsed=await bodyJson(request,path==='/evidence'?7100000:3200000);if(parsed.invalid||parsed.tooLarge)return failure(413,'invalid_body','İstek çok büyük veya geçersiz');body=JSON.stringify(parsed.value);}
+ if(env.SUPABASE_URL&&env.SUPABASE_SERVICE_ROLE_KEY&&(path==='/state'||path==='/command')){
+  try{
+   if(path==='/state'){const {state}=await readForgeWorkspace(env,key,stub);return json({state});}
+   const command=JSON.parse(body),current=await readForgeWorkspace(env,key,stub);
+   if(command.revision!==current.revision)return failure(409,'revision_conflict','Başka kullanıcı kaydı güncelledi. Yenileyip tekrar deneyin / Conflict: reload and retry');
+   let next;try{next=applyCommand(current,command,user);}catch(e){return failure(e.status||400,'invalid_command',e.message||'İşlem gerçekleştirilemedi');}
+   if(!await saveForgeWorkspace(env,key,current.revision,next))return failure(409,'revision_conflict','Başka kullanıcı kaydı güncelledi. Yenileyip tekrar deneyin / Conflict: reload and retry');
+   return json({state:next});
+  }catch(e){console.error('Forge Supabase workspace request failed:',String(e?.message||e));return failure(502,'supabase_unavailable','Supabase çalışma alanına erişilemedi. Ayarları ve veritabanı geçişini kontrol edin.');}
+ }
  const result=await stub.fetch(new Request('https://workspace.internal'+path,{method:request.method,headers:{'x-workspace-user':JSON.stringify(user),'content-type':'application/json'},body}));
  if(path==='/share'&&result.ok){const data=await result.json(),snapshot=await stub.fetch(new Request('https://workspace.internal/share/'+data.token));
   const index=env.WORKSPACE.get(env.WORKSPACE.idFromName('share-index'));await index.fetch(new Request('https://workspace.internal/publish',{method:'POST',headers:{'x-workspace-user':JSON.stringify(user)},body:JSON.stringify({token:data.token,snapshot:await snapshot.json()})}));return json(data);}
  return result;
+}
+function supabaseHeaders(env){
+ const key=String(env.SUPABASE_SERVICE_ROLE_KEY||'');
+ const headers={apikey:key,'content-type':'application/json',Accept:'application/json'};
+ // New opaque Supabase secret keys are API keys, not JWTs; sending one as a
+ // Bearer token makes PostgREST reject the request with Invalid JWT.
+ if(!key.startsWith('sb_secret_'))headers.Authorization='Bearer '+key;
+ return headers;
+}
+async function readForgeWorkspace(env,key,legacyStub){
+ const root=String(env.SUPABASE_URL).replace(/\/$/,'');const query=new URLSearchParams({workspace_key:'eq.'+key,select:'state,revision'});
+ const response=await fetch(root+'/rest/v1/forge_workspaces?'+query,{headers:supabaseHeaders(env),signal:AbortSignal.timeout(12000)});if(!response.ok)throw new Error('Supabase read failed '+response.status);
+ const rows=await response.json();if(rows[0]?.state)return rows[0].state;
+ // First request performs a one-time, lossless copy from the existing Durable Object.
+ const legacy=await legacyStub.fetch(new Request('https://workspace.internal/state',{headers:{'x-workspace-user':JSON.stringify({email:'migration',role:'admin'})}}));if(!legacy.ok)throw new Error('Legacy workspace read failed');
+ const {state}=await legacy.json();await saveForgeWorkspace(env,key,null,state);const reread=await fetch(root+'/rest/v1/forge_workspaces?'+query,{headers:supabaseHeaders(env),signal:AbortSignal.timeout(12000)});if(!reread.ok)throw new Error('Supabase initialize failed');const saved=await reread.json();if(!saved[0]?.state)throw new Error('Workspace initialization conflict');return saved[0].state;
+}
+async function saveForgeWorkspace(env,key,expectedRevision,state){
+ const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/rest/v1/rpc/forge_save_workspace',{method:'POST',headers:supabaseHeaders(env),body:JSON.stringify({p_workspace_key:key,p_expected_revision:expectedRevision,p_state:state}),signal:AbortSignal.timeout(12000)});
+ if(!response.ok)throw new Error('Supabase save failed '+response.status);return response.json()===true;
 }
 async function githubWorkspace(request,env,user,path){
  if(!env.GITHUB_REPOSITORY)return failure(503,'github_not_configured','GitHub için sunucuda GITHUB_REPOSITORY ayarlanmalı.');

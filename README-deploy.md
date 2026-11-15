@@ -2,6 +2,12 @@
 
 The project is configured as a Cloudflare Worker with Static Assets. `wrangler.jsonc` serves this repository's static files and routes `/api/*` to `worker/index.js`. Quotas use the persistent SQLite-backed `QuotaCounter` Durable Object. Paddle events and subscription access are stored in the `BILLING_DB` D1 database using the SQL migrations in `worker/migrations/`.
 
+## Forge workspace database (Supabase)
+
+The linked Supabase project is `qacrew-dev` (`zjlldnhmrixqvavvdbbu`). Its Forge workspace table and compare-and-swap RPC are managed by `supabase/migrations/`. The migration has been applied to the linked project. `SUPABASE_URL` is configured in `wrangler.jsonc`; add the Supabase server-side secret key in Cloudflare Workers & Pages → `qacrew-websites` → Settings → Variables and Secrets as a **Secret** named `SUPABASE_SERVICE_ROLE_KEY` (a Supabase `sb_secret_...` key or legacy `service_role` key). Never put this key in browser code or commit it.
+
+Once the Worker is deployed with that secret, the first signed-in, non-demo request to `/api/workspace/state` copies the complete current `qacrew-production` workspace snapshot from its Durable Object into Supabase. Later reads and commands use Supabase with revision checks; evidence files and public share snapshots remain in the existing Durable Objects. Demo data stays isolated and read-only. Do not clear the existing Durable Objects until the migrated workspace has been checked in the app and in Supabase.
+
 ## Dashboard setup
 
 1. In Cloudflare, open **Workers & Pages → qacrew-websites → Settings → Variables and Secrets**.
