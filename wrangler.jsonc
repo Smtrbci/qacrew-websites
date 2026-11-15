@@ -21,6 +21,14 @@
     "binding": "ASSETS",
     "run_worker_first": ["/api/*"]
   },
+  "d1_databases": [
+    {
+      "binding": "BILLING_DB",
+      "database_name": "qacrew-forge-billing",
+      "database_id": "823f7ac2-7fa7-40eb-8a00-5b1e3b3cdec9",
+      "migrations_dir": "worker/migrations"
+    }
+  ],
   "durable_objects": {
     "bindings": [{ "name": "QUOTA", "class_name": "QuotaCounter" }, { "name": "WORKSPACE", "class_name": "WorkspaceStore" }]
   },

@@ -89,6 +89,186 @@ function planFor(env) {
   const plans = { starter: { name: "Starter", generations: 50, seats: 1 }, pro: { name: "Pro", generations: 250, seats: 1 }, team: { name: "Team", generations: 1000, seats: 5 } };
   return plans[String(env.FORGE_PLAN || "starter").toLowerCase()] || plans.starter;
 }
+const BILLING_PRICES = {
+  pri_01m7dt0d4kfckn1es9602kak1g: { plan: "starter", period: "monthly" },
+  pri_01m7dt0dbeye1gdctcsz6taafy: { plan: "starter", period: "yearly" },
+  pri_01m7dt0dy77cjwdhnq15r41v2w: { plan: "pro", period: "monthly" },
+  pri_01m7dt0e5zdvwwa9k4498ysnfx: { plan: "pro", period: "yearly" },
+  pri_01m7dt0enhx9qx29gvmvbztrac: { plan: "team", period: "monthly" },
+  pri_01m7dt0ewra0mj0ar69x34ndw0: { plan: "team", period: "yearly" }
+};
+const ACTIVE_SUBSCRIPTION_STATUSES = new Set(["active", "trialing"]);
+const CLOSED_SUBSCRIPTION_STATUSES = new Set(["canceled", "past_due", "paused"]);
+function billingPlanFromItems(items = []) {
+  for (const item of items) {
+    const priceId = item?.price?.id || item?.price_id || item?.priceId;
+    if (BILLING_PRICES[priceId]) return { ...BILLING_PRICES[priceId], priceId };
+  }
+  return null;
+}
+function billingCustomData(data = {}) { return data.custom_data || data.customData || {}; }
+function normalizedUserId(value) {
+  if (typeof value !== "string" || value.length > 254) return "";
+  const email = value.trim().toLowerCase();
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : "";
+}
+function isForgeAccount(email, env) {
+  if (!email) return false;
+  if (email === String(env.FORGE_LOGIN_EMAIL || "").toLowerCase()) return true;
+  return members(env, false).some((member) => member.email.toLowerCase() === email);
+}
+async function activeSubscription(env, userId) {
+  if (!env.BILLING_DB || !userId) return null;
+  return env.BILLING_DB.prepare(
+    "SELECT plan, status, subscription_id, price_id, updated_at FROM forge_subscriptions WHERE user_id = ? AND status IN ('active','trialing') ORDER BY updated_at DESC LIMIT 1"
+  ).bind(userId).first();
+}
+async function effectivePlan(env, userId) {
+  const subscription = await activeSubscription(env, userId);
+  return subscription ? planFor({ FORGE_PLAN: subscription.plan }) : planFor(env);
+}
+function constantTimeHexEqual(a, b) {
+  if (typeof a !== "string" || typeof b !== "string" || a.length !== b.length || !/^[\da-f]+$/i.test(a) || !/^[\da-f]+$/i.test(b)) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+async function verifyPaddleSignature(rawBody, header, secret, now = Date.now()) {
+  if (!secret || !header) return false;
+  const parts = header.split(";").map((part) => part.trim().split("=", 2));
+  const timestamp = parts.find(([key]) => key === "ts")?.[1];
+  const signatures = parts.filter(([key]) => key === "h1").map(([, value]) => value).filter(Boolean);
+  if (!timestamp || !/^\d{1,12}$/.test(timestamp) || !signatures.length) return false;
+  if (Math.abs(Math.floor(now / 1000) - Number(timestamp)) > 300) return false;
+  const key = await crypto.subtle.importKey("raw", encoder.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const signed = new Uint8Array(encoder.encode(`${timestamp}:`).length + rawBody.length);
+  signed.set(encoder.encode(`${timestamp}:`)); signed.set(rawBody, encoder.encode(`${timestamp}:`).length);
+  const expected = [...new Uint8Array(await crypto.subtle.sign("HMAC", key, signed))].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+  return signatures.some((signature) => constantTimeHexEqual(signature, expected));
+}
+async function readRawBody(request, maxBytes) {
+  const declared = Number(request.headers.get("content-length") || 0);
+  if (declared > maxBytes) return null;
+  const reader = request.body?.getReader();
+  if (!reader) return new Uint8Array();
+  const chunks = []; let size = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > maxBytes) { await reader.cancel(); return null; }
+    chunks.push(value);
+  }
+  const body = new Uint8Array(size); let offset = 0;
+  for (const chunk of chunks) { body.set(chunk, offset); offset += chunk.byteLength; }
+  return body;
+}
+async function createCheckoutIntent(request, env) {
+  if (request.method !== "POST" || !originAllowed(request)) return failure(400, "invalid_request", "İstek geçersiz.");
+  const user = await sessionUser(request, env);
+  if (!user || user.demo) return failure(401, "login_required", "Ödeme planını hesaba bağlamak için giriş yapın.");
+  if (!env.BILLING_DB) return failure(503, "billing_unavailable", "Ödeme abonelik deposu henüz yapılandırılmamış.");
+  const body = await bodyJson(request, 4096), plan = body.value?.plan, period = body.value?.period;
+  if (body.tooLarge || body.invalid || !body.value || typeof body.value !== "object" || Array.isArray(body.value)) return failure(400, "invalid_request", "Ödeme seçimi geçersiz.");
+  const price = Object.entries(BILLING_PRICES).find(([, value]) => value.plan === plan && value.period === period);
+  if (!price) return failure(400, "invalid_price", "Paket veya dönem geçersiz.");
+  const userId = normalizedUserId(user.email);
+  if (!userId || !isForgeAccount(userId, env)) return failure(403, "account_not_found", "Forge hesabı bulunamadı.");
+  const intent = await sign({ purpose: "paddle_checkout", userId, plan, period, priceId: price[0], exp: Date.now() + 30 * 24 * 60 * 60 * 1000 }, env.SESSION_SECRET);
+  return json({ customData: { userId, plan, period, priceId: price[0], intent } });
+}
+async function acceptPaddleEvent(env, event) {
+  const db = env.BILLING_DB;
+  if (!db) return failure(503, "billing_unavailable", "Abonelik deposu yapılandırılmamış.");
+  const eventId = typeof event.event_id === "string" ? event.event_id : "";
+  if (!/^evt_[a-z\d]{20,40}$/i.test(eventId) || !event.data || typeof event.data !== "object") return failure(400, "invalid_event", "Paddle olayı geçersiz.");
+  const eventType = event.event_type;
+  if (!new Set(["subscription.created", "subscription.updated", "transaction.completed"]).has(eventType)) return json({ ok: true, ignored: true });
+  const occurredAt = typeof event.occurred_at === "string" && Number.isFinite(Date.parse(event.occurred_at)) ? event.occurred_at : new Date().toISOString();
+  const data = event.data, custom = billingCustomData(data);
+  let userId = normalizedUserId(custom.userId || custom.user_id);
+  let picked = billingPlanFromItems(data.items);
+  let subscriptionId = eventType.startsWith("subscription.") ? data.id : data.subscription_id;
+  let transactionId = eventType === "transaction.completed" ? data.id : (eventType === "subscription.created" ? data.transaction_id : null);
+  let status = eventType.startsWith("subscription.") ? String(data.status || "").toLowerCase() : "completed";
+  let intent = null;
+  if (custom.intent && env.SESSION_SECRET) intent = await verify(custom.intent, env.SESSION_SECRET);
+  if (intent?.purpose === "paddle_checkout" && intent.exp > Date.now() && intent.userId === userId && intent.priceId === picked?.priceId && intent.plan === picked?.plan) {
+    // Signed checkout intent binds the Paddle custom data to the authenticated Forge account.
+  } else {
+    intent = null;
+    userId = "";
+  }
+  if (eventType === "subscription.updated" && !userId && typeof subscriptionId === "string") {
+    const previous = await db.prepare("SELECT user_id, plan, period, price_id FROM forge_subscriptions WHERE subscription_id = ?").bind(subscriptionId).first();
+    if (previous) { userId = previous.user_id; if (!picked) picked = { plan: previous.plan, period: previous.period, priceId: previous.price_id }; }
+  }
+  if (eventType === "transaction.completed" && !userId && typeof transactionId === "string") {
+    const previous = await db.prepare("SELECT user_id, plan, period, price_id FROM paddle_transactions WHERE transaction_id = ?").bind(transactionId).first();
+    if (previous) { userId = previous.user_id; if (!picked) picked = { plan: previous.plan, period: previous.period, priceId: previous.price_id }; }
+  }
+  if (userId && !isForgeAccount(userId, env)) userId = "";
+  if (userId && (!picked || !BILLING_PRICES[picked.priceId])) userId = "";
+  await db.prepare("INSERT OR IGNORE INTO paddle_events (event_id, event_type, occurred_at, processed, received_at) VALUES (?, ?, ?, 0, ?)")
+    .bind(eventId, eventType, occurredAt, new Date().toISOString()).run();
+  const existingEvent = await db.prepare("SELECT processed FROM paddle_events WHERE event_id = ?").bind(eventId).first();
+  if (existingEvent?.processed) return json({ ok: true, duplicate: true });
+  const statements = [];
+  if (eventType.startsWith("subscription.") && userId && picked && typeof subscriptionId === "string" && /^sub_[a-z\d]{20,40}$/i.test(subscriptionId) && (ACTIVE_SUBSCRIPTION_STATUSES.has(status) || CLOSED_SUBSCRIPTION_STATUSES.has(status))) {
+    statements.push(db.prepare(`INSERT INTO forge_subscriptions (subscription_id,user_id,plan,period,price_id,status,transaction_id,occurred_at,updated_at)
+      SELECT ?,?,?,?,?,?,?,?,?
+      WHERE EXISTS (SELECT 1 FROM paddle_events WHERE event_id=? AND processed=0)
+      ON CONFLICT(subscription_id) DO UPDATE SET user_id=excluded.user_id,plan=excluded.plan,period=excluded.period,price_id=excluded.price_id,status=excluded.status,transaction_id=COALESCE(excluded.transaction_id,forge_subscriptions.transaction_id),occurred_at=excluded.occurred_at,updated_at=excluded.updated_at
+      WHERE excluded.occurred_at >= forge_subscriptions.occurred_at`)
+      .bind(subscriptionId, userId, picked.plan, picked.period, picked.priceId, status, transactionId, occurredAt, new Date().toISOString(), eventId));
+    if (transactionId && /^txn_[a-z\d]{20,40}$/i.test(transactionId)) {
+      statements.push(db.prepare(`INSERT INTO paddle_transactions (transaction_id,user_id,subscription_id,plan,period,price_id,status,event_id,occurred_at)
+        SELECT ?,?,?,?,?,?,?,?,? WHERE EXISTS (SELECT 1 FROM paddle_events WHERE event_id=? AND processed=0)
+        ON CONFLICT(transaction_id) DO UPDATE SET user_id=excluded.user_id,subscription_id=excluded.subscription_id,plan=excluded.plan,period=excluded.period,price_id=excluded.price_id,status=excluded.status,event_id=excluded.event_id,occurred_at=excluded.occurred_at
+        WHERE excluded.occurred_at >= paddle_transactions.occurred_at`)
+        .bind(transactionId,userId,subscriptionId,picked.plan,picked.period,picked.priceId,status,eventId,occurredAt,eventId));
+    }
+    statements.push(db.prepare(`UPDATE paddle_transactions SET user_id=?,subscription_id=?,plan=?,period=?,price_id=?,status=?,occurred_at=?
+      WHERE transaction_id=? AND EXISTS (SELECT 1 FROM paddle_events WHERE event_id=? AND processed=0)`)
+      .bind(userId,subscriptionId,picked.plan,picked.period,picked.priceId,status,occurredAt,transactionId,eventId));
+  } else if (eventType === "transaction.completed" && userId && picked && typeof transactionId === "string" && /^txn_[a-z\d]{20,40}$/i.test(transactionId)) {
+    statements.push(db.prepare(`INSERT INTO paddle_transactions (transaction_id,user_id,subscription_id,plan,period,price_id,status,event_id,occurred_at)
+      SELECT ?,?,?,?,?,?,?,?,? WHERE EXISTS (SELECT 1 FROM paddle_events WHERE event_id=? AND processed=0)
+      ON CONFLICT(transaction_id) DO UPDATE SET user_id=excluded.user_id,subscription_id=COALESCE(excluded.subscription_id,paddle_transactions.subscription_id),plan=excluded.plan,period=excluded.period,price_id=excluded.price_id,status=excluded.status,event_id=excluded.event_id,occurred_at=excluded.occurred_at
+      WHERE excluded.occurred_at >= paddle_transactions.occurred_at`)
+      .bind(transactionId,userId,subscriptionId,picked.plan,picked.period,picked.priceId,"completed",eventId,occurredAt,eventId));
+  }
+  statements.push(db.prepare("UPDATE paddle_events SET processed=1 WHERE event_id=? AND processed=0").bind(eventId));
+  await db.batch(statements);
+  return json({ ok: true });
+}
+async function handlePaddleWebhook(request, env) {
+  if (request.method !== "POST") return failure(405, "method_not_allowed", "POST gerekli.");
+  if (!env.PADDLE_WEBHOOK_SECRET) return failure(503, "webhook_unconfigured", "Paddle webhook secret yapılandırılmamış.");
+  const rawBody = await readRawBody(request, 1024 * 1024);
+  if (!rawBody) return failure(413, "payload_too_large", "Webhook gövdesi çok büyük.");
+  const valid = await verifyPaddleSignature(rawBody, request.headers.get("Paddle-Signature"), env.PADDLE_WEBHOOK_SECRET);
+  if (!valid) return failure(401, "invalid_signature", "Paddle webhook imzası geçersiz veya süresi dolmuş.");
+  let event;
+  try { event = JSON.parse(new TextDecoder().decode(rawBody)); }
+  catch { return failure(400, "invalid_json", "Webhook JSON gövdesi geçersiz."); }
+  return acceptPaddleEvent(env, event);
+}
+async function handleSubscriptionLookup(request, env) {
+  if (request.method !== "GET") return failure(405, "method_not_allowed", "GET gerekli.");
+  const user = await sessionUser(request, env);
+  if (!user || user.demo) return failure(401, "login_required", "Abonelik durumunu görmek için giriş yapın.");
+  if (!env.BILLING_DB) return failure(503, "billing_unavailable", "Abonelik deposu henüz yapılandırılmamış.");
+  const txn = new URL(request.url).searchParams.get("txn") || "";
+  if (!/^txn_[a-z\d]{20,40}$/i.test(txn)) return failure(400, "invalid_transaction", "İşlem kimliği geçersiz.");
+  const userId = normalizedUserId(user.email);
+  const transaction = await env.BILLING_DB.prepare("SELECT user_id, subscription_id, plan FROM paddle_transactions WHERE transaction_id=?").bind(txn).first();
+  if (!transaction) return json({ status: "pending", active: false });
+  if (transaction.user_id !== userId) return failure(404, "not_found", "İşlem bulunamadı.");
+  const subscription = transaction.subscription_id ? await env.BILLING_DB.prepare("SELECT plan,status,subscription_id,price_id,updated_at FROM forge_subscriptions WHERE subscription_id=? AND user_id=?").bind(transaction.subscription_id,userId).first() : null;
+  const active = !!subscription && ACTIVE_SUBSCRIPTION_STATUSES.has(subscription.status);
+  return json({ status: subscription?.status || "pending", active, plan: active ? subscription.plan : null, transactionId: txn, subscriptionId: subscription?.subscription_id || null, updatedAt: subscription?.updated_at || null });
+}
 async function handleSession(request, env) {
   if (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32) return failure(503, "sampling_disabled", "Giriş servisi şu an yapılandırılmamış.");
   if (request.method === "GET") {
@@ -132,7 +312,7 @@ async function handleGenerate(request, env) {
   const minute = await consume(env, `ip:${ip}`, 3, 60_000);
   if (!minute.allowed) return failure(429, "rate_limited", "Dakikada en fazla 3 üretim isteği; biraz bekleyip tekrar dene.");
   const today = new Date().toISOString().slice(0, 10);
-  const plan = planFor(env), month = today.slice(0, 7), workspace = env.FORGE_WORKSPACE_ID || user.email;
+  const plan = await effectivePlan(env, normalizedUserId(user.email)), month = today.slice(0, 7), workspace = env.FORGE_WORKSPACE_ID || user.email;
   const monthly = await consume(env, `generation:${workspace}`, plan.generations, 32 * 24 * 60 * 60 * 1000, month);
   if (!monthly.allowed) return failure(429, "generation_quota_reached", `${plan.name} planının aylık ${plan.generations} üretim kotası doldu. Kota gelecek ayın ilk günü UTC saatinde yenilenir.`);
   const model = job.depth === "deep" ? (env.DEEP_MODEL || "claude-opus-5") : (env.QUICK_MODEL || "claude-sonnet-5");
@@ -192,6 +372,9 @@ async function handlePublicTry(request, env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === "/api/paddle/webhook") return handlePaddleWebhook(request, env);
+    if (url.pathname === "/api/billing/checkout-intent") return createCheckoutIntent(request, env);
+    if (url.pathname === "/api/forge/subscription") return handleSubscriptionLookup(request, env);
     if (url.pathname === "/api/billing/config" && request.method === "GET") {
       const token = String(env.PADDLE_CLIENT_TOKEN || "");
       const sandbox = env.PADDLE_ENV === "sandbox" && token.startsWith("test_");

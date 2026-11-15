@@ -1,1 +1,83 @@
-<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0d11"><title>QAcrew Forge · Test işlemi</title><link rel="stylesheet" href="/forge/pricing/pricing.css"><style>.done{max-width:700px;margin:110px auto;text-align:center;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:44px}.mark{width:60px;height:60px;margin:0 auto 22px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font-size:30px}.done h1{font:700 38px "Space Grotesk",sans-serif}.done p{color:var(--muted);margin:18px 0}.done code{display:block;overflow-wrap:anywhere;color:var(--accent);padding:12px;background:var(--bg);border-radius:10px;margin:20px 0}.done a{display:inline-flex;padding:12px 18px;border-radius:10px;background:var(--text);color:var(--bg);font-weight:700;text-decoration:none}@media(max-width:600px){.done{padding:28px 18px;margin:60px auto}.done h1{font-size:30px}}</style></head><body><div class="page"><header class="top"><a class="brand" href="/forge/">QAcrew <span>Forge</span></a><nav><a href="/forge/pricing/">Fiyatlar</a></nav><div class="actions"><button class="lang" type="button" aria-label="Switch language">EN</button></div></header><main class="done"><div class="mark" aria-hidden="true">✓</div><span class="eyebrow">Paddle Sandbox</span><h1>Test ödeme adımı tamamlandı</h1><p>Bu dönüş, Paddle checkout akışının tamamlandığını gösterir. Aboneliğin ve paket erişiminin doğrulanması yalnızca imzası kontrol edilmiş sunucu webhook’u ile yapılmalıdır.</p><p>İşlem kimliği</p><code id="txn">Paddle dönüşünde sağlanmadı</code><a href="/forge/pricing/">Paketlere dön</a></main><footer><a class="brand" href="/forge/">QAcrew <span>Forge</span></a><a href="mailto:info@qacrew.it">Destek</a></footer></div><script>const id=new URLSearchParams(location.search).get("transaction_id");if(id&&/^txn_[a-z\d]+$/i.test(id))document.querySelector("#txn").textContent=id;document.querySelector(".lang").addEventListener("click",e=>{const en=document.documentElement.lang!=="en";document.documentElement.lang=en?"en":"tr";e.currentTarget.textContent=en?"TR":"EN";document.querySelector("main h1").textContent=en?"Test checkout step completed":"Test ödeme adımı tamamlandı";document.querySelector("main>p").textContent=en?"This return means Paddle Checkout completed. Subscription activation and plan access must be verified only through a server-side webhook with a valid signature.":"Bu dönüş, Paddle checkout akışının tamamlandığını gösterir. Aboneliğin ve paket erişiminin doğrulanması yalnızca imzası kontrol edilmiş sunucu webhook’u ile yapılmalıdır."})</script></body></html>
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0d11">
+  <title>QAcrew Forge · Abonelik durumu</title><link rel="stylesheet" href="/forge/pricing/pricing.css">
+  <style>
+    .done{max-width:700px;margin:110px auto;text-align:center;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:44px}
+    .mark{width:60px;height:60px;margin:0 auto 22px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font-size:30px}
+    .mark.waiting{animation:pulse 1.4s ease-in-out infinite alternate}
+    @keyframes pulse{to{opacity:.45;transform:scale(.94)}}
+    .done h1{font:700 38px "Space Grotesk",sans-serif}.done p{color:var(--muted);margin:18px 0}.done code{display:block;overflow-wrap:anywhere;color:var(--accent);padding:12px;background:var(--bg);border-radius:10px;margin:20px 0}
+    .done a,.done button{display:inline-flex;padding:12px 18px;border-radius:10px;background:var(--text);color:var(--bg);font:inherit;font-weight:700;text-decoration:none;border:0;cursor:pointer;margin:4px}
+    .done button{background:transparent;color:var(--text);border:1px solid var(--line)}.status{min-height:24px}
+    @media(max-width:600px){.done{padding:28px 18px;margin:60px auto}.done h1{font-size:30px}}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="top"><a class="brand" href="/forge/">QAcrew <span>Forge</span></a><nav><a href="/forge/pricing/">Fiyatlar</a></nav><div class="actions"><button class="lang" type="button" aria-label="Switch language">EN</button></div></header>
+    <main class="done">
+      <div class="mark waiting" id="mark" aria-hidden="true">…</div><span class="eyebrow">Paddle Sandbox</span>
+      <h1 id="heading">Ödeme doğrulanıyor</h1>
+      <p class="status" id="status" role="status" aria-live="polite">İmzalı Paddle bildirimi bekleniyor. Bu işlem birkaç saniye sürebilir.</p>
+      <p>İşlem kimliği</p><code id="txn">Belirtilmedi</code>
+      <p id="plan" hidden></p>
+      <button id="retry" type="button">Durumu tekrar kontrol et</button>
+      <a href="/forge/app/" id="workspace">Forge’a dön</a>
+    </main>
+    <footer><a class="brand" href="/forge/">QAcrew <span>Forge</span></a><a href="mailto:info@qacrew.it">Destek</a></footer>
+  </div>
+  <script>
+    (() => {
+      const params = new URLSearchParams(location.search);
+      const transactionId = params.get("txn") || "";
+      const txnNode = document.querySelector("#txn");
+      const heading = document.querySelector("#heading");
+      const status = document.querySelector("#status");
+      const mark = document.querySelector("#mark");
+      const planNode = document.querySelector("#plan");
+      const retry = document.querySelector("#retry");
+      const plans = { starter: "Starter", pro: "Pro", team: "Team" };
+      let language = "tr", attempts = 0, finished = false;
+      const copy = {
+        tr: { checking: "Ödeme doğrulanıyor", waiting: "İmzalı Paddle bildirimi bekleniyor. Bu işlem birkaç saniye sürebilir.", active: "Planın aktif", login: "Durumu görmek için Forge hesabına giriş yapmalısın.", closed: "Ödeme kaydı alındı; abonelik şu anda aktif değil.", missing: "İşlem kimliği bulunamadı. Ödeme geçmişini Paddle Sandbox panelinden kontrol et.", retry: "Durumu tekrar kontrol et", workspace: "Forge’a dön", error: "Abonelik durumu şu an alınamıyor. Biraz sonra tekrar deneyin." },
+        en: { checking: "Verifying payment", waiting: "Waiting for Paddle’s signed notification. This may take a few seconds.", active: "Your plan is active", login: "Sign in to your Forge account to view its status.", closed: "The payment was recorded; the subscription is not active right now.", missing: "No transaction ID was provided. Check your payment in Paddle Sandbox.", retry: "Check status again", workspace: "Back to Forge", error: "Subscription status is unavailable right now. Try again shortly." }
+      };
+      txnNode.textContent = /^txn_[a-z\d]{20,40}$/i.test(transactionId) ? transactionId : "Belirtilmedi";
+      function setLanguage(next) {
+        language = next; document.documentElement.lang = language;
+        document.querySelector(".lang").textContent = language === "tr" ? "EN" : "TR";
+        retry.textContent = copy[language].retry;
+        document.querySelector("#workspace").textContent = copy[language].workspace;
+        if (!finished) { heading.textContent = copy[language].checking; status.textContent = copy[language].waiting; }
+      }
+      document.querySelector(".lang").addEventListener("click", () => setLanguage(language === "tr" ? "en" : "tr"));
+      async function refresh() {
+        if (finished) return;
+        if (!/^txn_[a-z\d]{20,40}$/i.test(transactionId)) { heading.textContent = copy[language].checking; status.textContent = copy[language].missing; mark.classList.remove("waiting"); mark.textContent = "!"; finished = true; return; }
+        try {
+          const response = await fetch(`/api/forge/subscription?txn=${encodeURIComponent(transactionId)}`, { credentials: "same-origin", cache: "no-store" });
+          if (response.status === 401) { finished = true; heading.textContent = language === "tr" ? "Giriş gerekli" : "Sign in required"; status.textContent = copy[language].login; mark.classList.remove("waiting"); mark.textContent = "→"; return; }
+          if (!response.ok) throw new Error("subscription lookup failed");
+          const result = await response.json();
+          if (result.active) {
+            finished = true; mark.classList.remove("waiting"); mark.textContent = "✓"; heading.textContent = copy[language].active;
+            status.textContent = language === "tr" ? `${plans[result.plan] || result.plan} paketin Paddle tarafından doğrulandı ve hesabına bağlandı.` : `Your ${plans[result.plan] || result.plan} plan was verified by Paddle and linked to your account.`;
+            planNode.hidden = false; planNode.textContent = `${plans[result.plan] || result.plan} · ${result.status}`;
+            return;
+          }
+          if (["canceled", "past_due", "paused"].includes(result.status)) {
+            finished = true; mark.classList.remove("waiting"); mark.textContent = "!"; heading.textContent = language === "tr" ? "Plan aktif değil" : "Plan is not active"; status.textContent = copy[language].closed; planNode.hidden = false; planNode.textContent = result.status; return;
+          }
+          attempts++;
+          status.textContent = copy[language].waiting;
+          if (attempts < 30) setTimeout(refresh, 2000);
+        } catch { status.textContent = copy[language].error; }
+      }
+      retry.addEventListener("click", () => { attempts = 0; finished = false; mark.classList.add("waiting"); mark.textContent = "…"; refresh(); });
+      setLanguage("tr"); refresh();
+    })();
+  </script>
+</body>
+</html>
