@@ -313,7 +313,7 @@ async function handleRegistrationVerify(request,env){
   if(!env.SESSION_SECRET||env.SESSION_SECRET.length<32||!env.SUPABASE_URL||!env.SUPABASE_SERVICE_ROLE_KEY||!supabasePublishableKey(env)||!env.QUOTA)return failure(503,'registration_unavailable','Üyelik servisi yapılandırılmamış.');
   const ip=request.headers.get('cf-connecting-ip')||'unknown';const limit=await consume(env,'verify:'+ip,12,60*60*1000);if(!limit.allowed)return failure(429,'rate_limited','Çok fazla kod denemesi. Biraz sonra tekrar dene.');
   const parsed=await bodyJson(request,4096),body=parsed.value;if(parsed.invalid||parsed.tooLarge||typeof body?.email!=='string'||typeof body?.token!=='string')return failure(400,'invalid_request','E-posta ve doğrulama kodu gerekli.');
-  const email=body.email.trim().toLowerCase(),code=body.token.trim();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||!/^\d{6}$/.test(code))return failure(400,'invalid_request','E-posta veya 6 haneli kod geçersiz.');
+  const email=body.email.trim().toLowerCase(),code=body.token.trim();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||!/^\d{6,8}$/.test(code))return failure(400,'invalid_request','E-posta veya 6–8 haneli kod geçersiz.');
   try{
     const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/auth/v1/verify',{method:'POST',headers:supabaseAuthHeaders(env),body:JSON.stringify({type:'signup',email,token:code}),signal:AbortSignal.timeout(15000)});
     const result=await response.json().catch(()=>({}));if(!response.ok)return failure(response.status===429?429:400,'invalid_code',response.status===429?'Çok fazla kod isteği. Biraz sonra tekrar dene.':'Kod geçersiz veya süresi dolmuş. Yeni kod iste.');
