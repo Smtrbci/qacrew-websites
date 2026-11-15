@@ -261,7 +261,13 @@ async function handleSubscriptionLookup(request, env) {
   const user = await sessionUser(request, env);
   if (!user || user.demo) return failure(401, "login_required", "Abonelik durumunu görmek için giriş yapın.");
   if (!env.BILLING_DB) return failure(503, "billing_unavailable", "Abonelik deposu henüz yapılandırılmamış.");
-  const txn = new URL(request.url).searchParams.get("txn") || "";
+  const params = new URL(request.url).searchParams;
+  const txn = params.get("txn") || "";
+  if (!txn) {
+    const userId = normalizedUserId(user.email);
+    const subscription = await activeSubscription(env, userId);
+    return json({ active: !!subscription, status: subscription?.status || "none", plan: subscription?.plan || null, priceId: subscription?.price_id || null, updatedAt: subscription?.updated_at || null, trialDays: 7, plans: { starter: { monthly: "pri_01m7dt0d4kfckn1es9602kak1g", yearly: "pri_01m7dt0dbeye1gdctcsz6taafy" }, pro: { monthly: "pri_01m7dt0dy77cjwdhnq15r41v2w", yearly: "pri_01m7dt0e5zdvwwa9k4498ysnfx" }, team: { monthly: "pri_01m7dt0enhx9qx29gvmvbztrac", yearly: "pri_01m7dt0ewra0mj0ar69x34ndw0" } } });
+  }
   if (!/^txn_[a-z\d]{20,40}$/i.test(txn)) return failure(400, "invalid_transaction", "İşlem kimliği geçersiz.");
   const userId = normalizedUserId(user.email);
   const transaction = await env.BILLING_DB.prepare("SELECT user_id, subscription_id, plan FROM paddle_transactions WHERE transaction_id=?").bind(txn).first();
@@ -280,13 +286,14 @@ async function getRegisteredUser(env,email){
   if(!response.ok)throw new Error('Supabase account lookup failed '+response.status);
   return (await response.json())[0]||null;
 }
-async function ensureRegisteredUser(env,email){
+async function ensureRegisteredUser(env,email,role='admin'){
+  if(!['admin','qa','dev','pm','pmo'].includes(role))role='admin';
   const current=await getRegisteredUser(env,email);if(current)return current;
   const workspaceKey='user:'+crypto.randomUUID();
-  const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/rest/v1/forge_users',{method:'POST',headers:{...supabaseHeaders(env),Prefer:'return=minimal'},body:JSON.stringify({email,workspace_key:workspaceKey,role:'admin'}),signal:AbortSignal.timeout(10000)});
+  const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/rest/v1/forge_users',{method:'POST',headers:{...supabaseHeaders(env),Prefer:'return=minimal'},body:JSON.stringify({email,workspace_key:workspaceKey,role}),signal:AbortSignal.timeout(10000)});
   if(response.status===409)return await getRegisteredUser(env,email);
   if(!response.ok)throw new Error('Supabase account profile insert failed '+response.status);
-  return {email,workspace_key:workspaceKey,role:'admin'};
+  return {email,workspace_key:workspaceKey,role};
 }
 async function handleRegistration(request,env){
   if(request.method!=='POST')return failure(405,'invalid_method','Method not allowed.');
@@ -296,12 +303,14 @@ async function handleRegistration(request,env){
   const parsed=await bodyJson(request,4096),body=parsed.value;
   if(parsed.tooLarge||parsed.invalid||!body||typeof body.email!=='string'||typeof body.password!=='string')return failure(400,'invalid_request','E-posta ve şifre gerekli.');
   const email=body.email.trim().toLowerCase(),password=body.password;
+  const role=typeof body.role==='string'?body.role:'qa';
+  if(!['qa','dev','pm','pmo'].includes(role))return failure(400,'invalid_role','QA, Developer, PM veya PMO rolü seç.');
   if(email.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return failure(400,'invalid_email','Geçerli bir e-posta adresi gir.');
   if(password.length<12||password.length>256)return failure(400,'invalid_password','Şifre en az 12, en fazla 256 karakter olmalı.');
   if(email===DEMO_LOGIN.email||email===String(env.FORGE_LOGIN_EMAIL||'').toLowerCase()||members(env,false).some(x=>x.email.toLowerCase()===email))return failure(409,'account_exists','Bu e-posta zaten kayıtlı. Giriş yapmayı dene.');
   try{
     if(await getRegisteredUser(env,email))return failure(409,'account_exists','Bu e-posta zaten kayıtlı. Giriş yapmayı dene.');
-    const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/auth/v1/signup',{method:'POST',headers:supabaseAuthHeaders(env),body:JSON.stringify({email,password}),signal:AbortSignal.timeout(15000)});
+    const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/auth/v1/signup',{method:'POST',headers:supabaseAuthHeaders(env),body:JSON.stringify({email,password,data:{forge_role:role}}),signal:AbortSignal.timeout(15000)});
     const result=await response.json().catch(()=>({}));
     if(!response.ok){if(response.status===429)return failure(429,'email_rate_limited','Doğrulama e-postası sınırına ulaşıldı. Biraz sonra tekrar dene.');if(response.status===422||response.status===400)return failure(409,'account_exists','Bu e-posta ile kayıt açılamadı. Adresi kontrol et veya giriş yapmayı dene.');throw new Error('Supabase Auth signup failed '+response.status);}
     if(result.access_token||result.session)return failure(503,'email_confirmation_disabled','Supabase’te e-posta doğrulamasını etkinleştir.');
@@ -318,7 +327,8 @@ async function handleRegistrationVerify(request,env){
     const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/auth/v1/verify',{method:'POST',headers:supabaseAuthHeaders(env),body:JSON.stringify({type:'signup',email,token:code}),signal:AbortSignal.timeout(15000)});
     const result=await response.json().catch(()=>({}));if(!response.ok)return failure(response.status===429?429:400,'invalid_code',response.status===429?'Çok fazla kod isteği. Biraz sonra tekrar dene.':'Kod geçersiz veya süresi dolmuş. Yeni kod iste.');
     const confirmedEmail=String(result.user?.email||'').trim().toLowerCase();if(confirmedEmail!==email||!(result.user?.email_confirmed_at||result.user?.confirmed_at))return failure(400,'email_not_confirmed','E-posta doğrulanamadı. Kodu kontrol edip tekrar dene.');
-    const profile=await ensureRegisteredUser(env,email),exp=Date.now()+12*60*60*1000,sessionToken=await sign({email,registered:true,exp},env.SESSION_SECRET);
+    const requestedRole=result.user?.user_metadata?.forge_role||'admin';
+    const profile=await ensureRegisteredUser(env,email,requestedRole),exp=Date.now()+12*60*60*1000,sessionToken=await sign({email,registered:true,exp},env.SESSION_SECRET);
     return json({user:{email,role:profile.role,demo:false}},200,{'set-cookie':secureCookie(request,sessionToken,12*60*60)});
   }catch(error){console.error('Forge email verification failed:',String(error?.message||error));return failure(503,'verification_unavailable','Doğrulama şu an tamamlanamadı. Biraz sonra tekrar dene.');}
 }
@@ -355,7 +365,7 @@ async function handleSession(request, env) {
     try{
       if(supabasePublishableKey(env)&&env.SUPABASE_URL&&env.SUPABASE_SERVICE_ROLE_KEY){
         const authResponse=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/auth/v1/token?grant_type=password',{method:'POST',headers:supabaseAuthHeaders(env),body:JSON.stringify({email,password:body.value.password}),signal:AbortSignal.timeout(15000)});
-        if(authResponse.ok){const auth=await authResponse.json(),confirmed=String(auth.user?.email||'').toLowerCase()===email&&(auth.user?.email_confirmed_at||auth.user?.confirmed_at);if(confirmed){registered=await ensureRegisteredUser(env,email);isRegistered=!!registered;}}
+        if(authResponse.ok){const auth=await authResponse.json(),confirmed=String(auth.user?.email||'').toLowerCase()===email&&(auth.user?.email_confirmed_at||auth.user?.confirmed_at);if(confirmed){registered=await ensureRegisteredUser(env,email,auth.user?.user_metadata?.forge_role||'admin');isRegistered=!!registered;}}
         else if(authResponse.status>=500)throw new Error('Supabase Auth login failed '+authResponse.status);
         else{const authError=await authResponse.json().catch(()=>({}));if(authError.code==='email_not_confirmed'||/email not confirmed/i.test(authError.msg||authError.message||''))return failure(403,'email_not_confirmed','Giriş yapmadan önce e-posta adresini doğrula.');}
       }

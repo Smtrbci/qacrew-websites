@@ -34,3 +34,8 @@
 @keyframes forge-scan{0%,100%{transform:translateX(-120%);opacity:0}15%,70%{opacity:.85}85%{transform:translateX(330%);opacity:0}}
 @keyframes forge-status{0%,15%,100%{transform:scale(1)}7%{transform:scale(1.13)}}
 .login-notice{margin:0;color:#356b52;font-size:12px;line-height:1.5}.login-resend{justify-self:center;border:0;background:transparent;color:#74340e;font-size:12px;font-weight:700;text-decoration:underline;text-underline-offset:3px}.login-resend:disabled{opacity:.55;cursor:wait}
+
+/* Inline progress feedback for actions that are processing */
+.button-spinner{display:inline-block;width:13px;height:13px;flex:none;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;vertical-align:-2px;animation:button-spinner-turn .7s linear infinite}
+button[aria-busy="true"]{cursor:wait;opacity:.84}
+@keyframes button-spinner-turn{to{transform:rotate(360deg)}}
