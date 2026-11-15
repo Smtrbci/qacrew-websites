@@ -259,7 +259,8 @@ async function handlePaddleWebhook(request, env) {
 async function handleSubscriptionLookup(request, env) {
   if (request.method !== "GET") return failure(405, "method_not_allowed", "GET gerekli.");
   const user = await sessionUser(request, env);
-  if (!user || user.demo) return failure(401, "login_required", "Abonelik durumunu görmek için giriş yapın.");
+  if (!user) return failure(401, "login_required", "Abonelik durumunu görmek için giriş yapın.");
+  if (user.demo) return json({ active: false, status: "demo", plan: null });
   if (!env.BILLING_DB) return failure(503, "billing_unavailable", "Abonelik deposu henüz yapılandırılmamış.");
   const params = new URL(request.url).searchParams;
   const txn = params.get("txn") || "";
