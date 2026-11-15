@@ -421,7 +421,7 @@ async function handleWorkspace(request,env){
  if(path.startsWith('/github')){try{return await githubWorkspace(request,env,user,path);}catch{return failure(502,'github_unavailable','GitHub bağlantısı kurulamadı. Tekrar deneyin.');}}
  if(path==='/share'&&request.method==='POST'&&env.SUPABASE_URL&&env.SUPABASE_SERVICE_ROLE_KEY){
   const parsed=await bodyJson(request,64000),p=parsed.value;if(parsed.invalid||parsed.tooLarge)return failure(400,'invalid_body','Geçersiz paylaşım isteği');
-  try{const {state}=await readForgeWorkspace(env,key,stub),project=state.projects.find(x=>x.id===p?.projectId);if(!project)return failure(404,'not_found','Proje bulunamadı');
+  try{const state=await readForgeWorkspace(env,key,stub),project=state.projects.find(x=>x.id===p?.projectId);if(!project)return failure(404,'not_found','Proje bulunamadı');
    const runs=project.runs.filter(r=>r.version===p.version);if(!runs.length)return failure(400,'no_runs','Koşum yok');
    const token=crypto.randomUUID()+crypto.randomUUID(),snapshot={project:project.name,version:p.version,runs:runs.map(r=>({title:r.title,platform:r.platform,environment:r.environment,cases:r.cases.map(c=>({title:c.title,priority:c.priority,status:c.status,note:c.note,executedAt:c.executedAt,executedBy:c.executedBy}))})),bugs:project.bugs.filter(b=>b.version===p.version).map(b=>({id:b.id,title:b.title,status:b.status,severity:b.severity})),decision:project.decisions.filter(d=>d.version===p.version).at(-1)||null,createdAt:new Date().toISOString(),by:user.email,expires:Date.now()+7*86400000};
    const index=env.WORKSPACE.get(env.WORKSPACE.idFromName('share-index'));await index.fetch(new Request('https://workspace.internal/publish',{method:'POST',headers:{'x-workspace-user':JSON.stringify(user),'content-type':'application/json'},body:JSON.stringify({token,snapshot})}));return json({token,expires:snapshot.expires});
@@ -433,7 +433,7 @@ async function handleWorkspace(request,env){
  if(request.method==='POST'){const parsed=await bodyJson(request,path==='/evidence'?7100000:3200000);if(parsed.invalid||parsed.tooLarge)return failure(413,'invalid_body','İstek çok büyük veya geçersiz');body=JSON.stringify(parsed.value);}
  if(env.SUPABASE_URL&&env.SUPABASE_SERVICE_ROLE_KEY&&(path==='/state'||path==='/command')){
   try{
-   if(path==='/state'){const {state}=await readForgeWorkspace(env,key,stub);return json({state});}
+   if(path==='/state'){const state=await readForgeWorkspace(env,key,stub);return json({state});}
    const command=JSON.parse(body),current=await readForgeWorkspace(env,key,stub);
    if(command.revision!==current.revision)return failure(409,'revision_conflict','Başka kullanıcı kaydı güncelledi. Yenileyip tekrar deneyin / Conflict: reload and retry');
    let next;try{next=applyCommand(current,command,user);}catch(e){return failure(e.status||400,'invalid_command',e.message||'İşlem gerçekleştirilemedi');}
