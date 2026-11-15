@@ -4,27 +4,28 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0d11">
   <title>QAcrew Forge · Abonelik durumu</title><link rel="stylesheet" href="/forge/pricing/pricing.css">
   <style>
-    .done{max-width:700px;margin:110px auto;text-align:center;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:44px}
-    .mark{width:60px;height:60px;margin:0 auto 22px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font-size:30px}
+    .done{position:relative;max-width:760px;margin:78px auto 100px;text-align:center;background:linear-gradient(155deg,color-mix(in srgb,var(--panel) 94%,var(--accent) 6%),var(--panel) 48%);border:1px solid var(--line);border-radius:24px;padding:52px;box-shadow:0 24px 70px #00000025}.success-steps{display:flex;justify-content:center;gap:12px;margin:0 0 34px;padding:0;list-style:none;color:var(--muted);font:600 10px ui-monospace,monospace;letter-spacing:.08em}.success-steps li{display:flex;align-items:center;gap:8px}.success-steps b{display:grid;place-items:center;width:26px;height:26px;border:1px solid var(--line);border-radius:50%}.success-steps [aria-current=step]{color:var(--accent)}.success-steps [aria-current=step] b{border-color:var(--accent);background:var(--accent-soft)}
+    .mark{width:68px;height:68px;margin:0 auto 22px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font-size:30px}
     .mark.waiting{animation:pulse 1.4s ease-in-out infinite alternate}
     @keyframes pulse{to{opacity:.45;transform:scale(.94)}}
     .done h1{font:700 38px "Space Grotesk",sans-serif}.done p{color:var(--muted);margin:18px 0}.done code{display:block;overflow-wrap:anywhere;color:var(--accent);padding:12px;background:var(--bg);border-radius:10px;margin:20px 0}
     .done a,.done button{display:inline-flex;padding:12px 18px;border-radius:10px;background:var(--text);color:var(--bg);font:inherit;font-weight:700;text-decoration:none;border:0;cursor:pointer;margin:4px}
     .done button{background:transparent;color:var(--text);border:1px solid var(--line)}.status{min-height:24px}
-    @media(max-width:600px){.done{padding:28px 18px;margin:60px auto}.done h1{font-size:30px}}
+    .done .eyebrow{display:block;margin-bottom:10px}.done code{max-width:100%}.done-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.done .status{max-width:570px;margin:18px auto}.mark:not(.waiting){animation:arrive .35s ease-out both}@keyframes arrive{from{transform:scale(.7);opacity:.3}to{transform:scale(1);opacity:1}}@media(max-width:600px){.done{padding:30px 18px;margin:48px auto 65px}.done h1{font-size:30px}.success-steps{gap:5px;font-size:9px}.success-steps li{gap:5px}.success-steps b{width:23px;height:23px}}
   </style>
 </head>
 <body>
   <div class="page">
     <header class="top"><a class="brand" href="/forge/">QAcrew <span>Forge</span></a><nav><a href="/forge/pricing/">Fiyatlar</a></nav><div class="actions"><button class="lang" type="button" aria-label="Switch language">EN</button></div></header>
     <main class="done">
+      <ol class="success-steps" aria-label="Satın alma adımları"><li><b>01</b><span>PLAN</span></li><li><b>02</b><span>ÖDEME</span></li><li aria-current="step"><b>03</b><span>ONAY</span></li></ol>
       <div class="mark waiting" id="mark" aria-hidden="true">…</div><span class="eyebrow">Paddle Sandbox</span>
       <h1 id="heading">Ödeme doğrulanıyor</h1>
       <p class="status" id="status" role="status" aria-live="polite">İmzalı Paddle bildirimi bekleniyor. Bu işlem birkaç saniye sürebilir.</p>
       <p>İşlem kimliği</p><code id="txn">Belirtilmedi</code>
       <p id="plan" hidden></p>
-      <button id="retry" type="button">Durumu tekrar kontrol et</button>
-      <a href="/forge/app/" id="workspace">Forge’a dön</a>
+      <div class="done-actions"><button id="retry" type="button">Durumu tekrar kontrol et</button>
+      <a href="/forge/app/" id="workspace">Forge’a dön</a></div>
     </main>
     <footer><a class="brand" href="/forge/">QAcrew <span>Forge</span></a><a href="mailto:info@qacrew.it">Destek</a></footer>
   </div>
@@ -48,6 +49,7 @@
       function setLanguage(next) {
         language = next; document.documentElement.lang = language;
         document.querySelector(".lang").textContent = language === "tr" ? "EN" : "TR";
+        document.querySelectorAll(".success-steps li span").forEach((label, index) => { label.textContent = (language === "tr" ? ["PLAN", "ÖDEME", "ONAY"] : ["PLAN", "PAYMENT", "CONFIRM"])[index]; });
         retry.textContent = copy[language].retry;
         document.querySelector("#workspace").textContent = copy[language].workspace;
         if (!finished) { heading.textContent = copy[language].checking; status.textContent = copy[language].waiting; }
