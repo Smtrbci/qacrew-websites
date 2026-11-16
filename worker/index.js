@@ -304,6 +304,7 @@ async function handleRegistration(request,env){
   const parsed=await bodyJson(request,4096),body=parsed.value;
   if(parsed.tooLarge||parsed.invalid||!body||typeof body.email!=='string'||typeof body.password!=='string')return failure(400,'invalid_request','E-posta ve şifre gerekli.');
   const email=body.email.trim().toLowerCase(),password=body.password;
+  if(body.legalConsent!==true||body.legalVersion!=='legal_v1_2026-11-16')return failure(400,'legal_consent_required','Kayıt için Kullanım Koşulları ve İade Politikası onayı gerekli.');
   const role=typeof body.role==='string'?body.role:'qa';
   if(!['qa','dev','pm','pmo'].includes(role))return failure(400,'invalid_role','QA, Developer, PM veya PMO rolü seç.');
   if(email.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return failure(400,'invalid_email','Geçerli bir e-posta adresi gir.');
@@ -311,7 +312,7 @@ async function handleRegistration(request,env){
   if(email===DEMO_LOGIN.email||email===String(env.FORGE_LOGIN_EMAIL||'').toLowerCase()||members(env,false).some(x=>x.email.toLowerCase()===email))return failure(409,'account_exists','Bu e-posta zaten kayıtlı. Giriş yapmayı dene.');
   try{
     if(await getRegisteredUser(env,email))return failure(409,'account_exists','Bu e-posta zaten kayıtlı. Giriş yapmayı dene.');
-    const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/auth/v1/signup',{method:'POST',headers:supabaseAuthHeaders(env),body:JSON.stringify({email,password,data:{forge_role:role}}),signal:AbortSignal.timeout(15000)});
+    const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/auth/v1/signup',{method:'POST',headers:supabaseAuthHeaders(env),body:JSON.stringify({email,password,data:{forge_role:role,forge_legal_consent:{version:body.legalVersion,terms_and_refund_accepted:true,privacy_notice_read:true,marketing_consent:body.marketingConsent===true,accepted_at:new Date().toISOString()}}}),signal:AbortSignal.timeout(15000)});
     const result=await response.json().catch(()=>({}));
     if(!response.ok){if(response.status===429)return failure(429,'email_rate_limited','Doğrulama e-postası sınırına ulaşıldı. Biraz sonra tekrar dene.');if(response.status===422||response.status===400)return failure(409,'account_exists','Bu e-posta ile kayıt açılamadı. Adresi kontrol et veya giriş yapmayı dene.');throw new Error('Supabase Auth signup failed '+response.status);}
     if(result.access_token||result.session)return failure(503,'email_confirmation_disabled','Supabase’te e-posta doğrulamasını etkinleştir.');
