@@ -40,24 +40,25 @@
       const planNode = document.querySelector("#plan");
       const retry = document.querySelector("#retry");
       const plans = { starter: "Starter", pro: "Pro", team: "Team" };
-      let language = "tr", attempts = 0, finished = false;
+      let language = "tr", attempts = 0, finished = false, checking = false, pollTimer = null;
       const copy = {
-        tr: { checking: "Ödeme doğrulanıyor", waiting: "İmzalı Paddle bildirimi bekleniyor. Bu işlem birkaç saniye sürebilir.", active: "Planın aktif", login: "Durumu görmek için Forge hesabına giriş yapmalısın.", closed: "Ödeme kaydı alındı; abonelik şu anda aktif değil.", missing: "İşlem kimliği bulunamadı. Ödeme geçmişini Paddle Sandbox panelinden kontrol et.", retry: "Durumu tekrar kontrol et", workspace: "Forge’a dön", error: "Abonelik durumu şu an alınamıyor. Biraz sonra tekrar deneyin." },
-        en: { checking: "Verifying payment", waiting: "Waiting for Paddle’s signed notification. This may take a few seconds.", active: "Your plan is active", login: "Sign in to your Forge account to view its status.", closed: "The payment was recorded; the subscription is not active right now.", missing: "No transaction ID was provided. Check your payment in Paddle Sandbox.", retry: "Check status again", workspace: "Back to Forge", error: "Subscription status is unavailable right now. Try again shortly." }
+        tr: { checking: "Ödeme doğrulanıyor", waiting: "İmzalı Paddle bildirimi bekleniyor. Bu işlem birkaç saniye sürebilir.", pending: "Paddle bildirimi henüz Forge’a ulaşmadı. Paddle Sandbox > Notifications bölümünde başarısız bildirimi yeniden gönderin; ardından tekrar kontrol edin.", active: "Planın aktif", login: "Durumu görmek için Forge hesabına giriş yapmalısın.", closed: "Ödeme kaydı alındı; abonelik şu anda aktif değil.", missing: "İşlem kimliği bulunamadı. Ödeme geçmişini Paddle Sandbox panelinden kontrol et.", retry: "Durumu tekrar kontrol et", checkingNow: "Kontrol ediliyor…", workspace: "Forge’a dön", error: "Abonelik durumu alınamadı. Bağlantını kontrol edip yeniden deneyin." },
+        en: { checking: "Verifying payment", waiting: "Waiting for Paddle’s signed notification. This may take a few seconds.", pending: "Paddle’s notification has not reached Forge yet. Resend the failed notification in Paddle Sandbox > Notifications, then check again.", active: "Your plan is active", login: "Sign in to your Forge account to view its status.", closed: "The payment was recorded; the subscription is not active right now.", missing: "No transaction ID was provided. Check your payment in Paddle Sandbox.", retry: "Check status again", checkingNow: "Checking…", workspace: "Back to Forge", error: "Could not load subscription status. Check your connection and try again." }
       };
       txnNode.textContent = /^txn_[a-z\d]{20,40}$/i.test(transactionId) ? transactionId : "Belirtilmedi";
       function setLanguage(next) {
         language = next; document.documentElement.lang = language;
         document.querySelector(".lang").textContent = language === "tr" ? "EN" : "TR";
         document.querySelectorAll(".success-steps li span").forEach((label, index) => { label.textContent = (language === "tr" ? ["PLAN", "ÖDEME", "ONAY"] : ["PLAN", "PAYMENT", "CONFIRM"])[index]; });
-        retry.textContent = copy[language].retry;
+        retry.textContent = checking ? copy[language].checkingNow : copy[language].retry;
         document.querySelector("#workspace").textContent = copy[language].workspace;
         if (!finished) { heading.textContent = copy[language].checking; status.textContent = copy[language].waiting; }
       }
       document.querySelector(".lang").addEventListener("click", () => setLanguage(language === "tr" ? "en" : "tr"));
       async function refresh() {
-        if (finished) return;
+        if (finished || checking) return;
         if (!/^txn_[a-z\d]{20,40}$/i.test(transactionId)) { heading.textContent = copy[language].checking; status.textContent = copy[language].missing; mark.classList.remove("waiting"); mark.textContent = "!"; finished = true; return; }
+        checking = true; retry.disabled = true; retry.textContent = copy[language].checkingNow; retry.setAttribute("aria-busy", "true");
         try {
           const response = await fetch(`/api/forge/subscription?txn=${encodeURIComponent(transactionId)}`, { credentials: "same-origin", cache: "no-store" });
           if (response.status === 401) { finished = true; heading.textContent = language === "tr" ? "Giriş gerekli" : "Sign in required"; status.textContent = copy[language].login; mark.classList.remove("waiting"); mark.textContent = "→"; return; }
@@ -73,11 +74,12 @@
             finished = true; mark.classList.remove("waiting"); mark.textContent = "!"; heading.textContent = language === "tr" ? "Plan aktif değil" : "Plan is not active"; status.textContent = copy[language].closed; planNode.hidden = false; planNode.textContent = result.status; return;
           }
           attempts++;
-          status.textContent = copy[language].waiting;
-          if (attempts < 30) setTimeout(refresh, 2000);
+          status.textContent = attempts < 30 ? copy[language].waiting : copy[language].pending;
+          if (attempts < 30) pollTimer = setTimeout(refresh, 2000);
         } catch { status.textContent = copy[language].error; }
+        finally { checking = false; retry.disabled = false; retry.removeAttribute("aria-busy"); retry.textContent = copy[language].retry; }
       }
-      retry.addEventListener("click", () => { attempts = 0; finished = false; mark.classList.add("waiting"); mark.textContent = "…"; refresh(); });
+      retry.addEventListener("click", () => { if (checking) return; clearTimeout(pollTimer); attempts = 0; finished = false; mark.classList.add("waiting"); mark.textContent = "…"; heading.textContent = copy[language].checking; status.textContent = copy[language].waiting; refresh(); });
       setLanguage("tr"); refresh();
     })();
   </script>
