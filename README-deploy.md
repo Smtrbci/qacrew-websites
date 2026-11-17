@@ -32,6 +32,8 @@ Create a Paddle Sandbox notification destination at `https://www.qacrew.it/api/p
 
 The six `priceId` values in `forge/checkout/checkout.js` must exist in the Paddle Sandbox catalog. Paddle's Sandbox and live catalogs are separate. Set the Sandbox default payment link to `https://www.qacrew.it/forge/checkout/`. The checkout's final localized amount and tax are determined by Paddle; the pricing-page currency choice is an estimate from the supplied price table.
 
+For the checkout account-verification and audit-log update, apply pending D1 migrations before deploying: `npx wrangler d1 migrations apply qacrew-forge-billing --remote`. This adds `billing_audit_log` to the existing `BILLING_DB`. It stores checkout-intent outcomes and accepted Paddle webhook outcomes, using a keyed hash for the account identifier; it does not store email addresses, card data, cookies, tokens, or webhook bodies. Entries older than 180 days are removed when the next billing audit row is written. Review the records from the Cloudflare D1 console. The existing `paddle_events`, `paddle_transactions`, and `forge_subscriptions` tables continue to hold webhook/subscription records.
+
 This integration is Sandbox-only. Before enabling live charges, configure a separate live client token, live catalog price IDs, and a live notification destination/secret, then verify production checkout and legal purchase terms. Never mix Sandbox and live credentials.
 
 Do not put secrets in source code, GitHub, client-side config, or a committed `.env` file. For local development, copy `.env.example` to `.dev.vars` and fill it locally; `.dev.vars` is ignored by Git and excluded from Worker assets.

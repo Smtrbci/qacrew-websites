@@ -1,6 +1,6 @@
 # QAcrew Proje Hafızası
 
-**Güncellendi:** 11 Kasım 2026 · **Sahip:** Samet Arabacı  
+**Güncellendi:** 17 Kasım 2026 · **Sahip:** Samet Arabacı  
 Bu dosya karar ve durumu özetler; bağlı belgelerdeki görev metinleri, tek başına tamamlanmış özellik kanıtı sayılmaz.
 
 ## 1. Proje ve hedef
@@ -76,7 +76,7 @@ Bu oturumda iki farklı kopya kullanıldı; karıştırılmamalı:
 
 ## 6. Tamamlanan / devam eden / bekleyen
 
-**Son doğrulanmış tamamlanan:** 11.11.2026 Cloudflare Worker dağıtımı ve Forge pazarlama/uygulama URL'lerinin 200 kontrolü (sürüm ID yukarıda). Canlı kaynak reposunda Forge release workflow iyileştirmeleri commit'i mevcuttu.
+**Son doğrulanmış tamamlanan:** 16.11.2026 Forge kayıt ekranı, şifre gücü yönergeleri ve TR/EN hukuki onay belgeleri PR #6 ile birleştirildi (`0a88f935a68e1a58fed9fcb234d3cdfbe326d19c`). GitHub'daki Cloudflare Pages ve `Workers Builds: qacrew-websites` kontrolleri tamamlandı ve başarılı. Kullanıcı e-posta doğrulamasını başarıyla tamamladığını bildirdi. Önceki 11.11 Studio yayını için sürüm ID yukarıdadır.
 
 **Çalışma alanında mevcut ama canlı olduğu kanıtlanmamış:** `src/ui-v2/` altındaki 15 ekran/varlık; `forge-workspace.html` ve `forge-workspace.js` rol odaklı lokal çalışma alanı taslağıdır. README'ye göre localStorage kullanır; gerçek auth/ekip paylaşımı, sunucu depolaması, AI, güvenli dosya depolama, Jira/Azure/TestRail etkin değildir. Bu taslaklar kullanıcı incelemesine göre canlı repo ile birleştirilmelidir; henüz otomatik yayınlama yapma.
 
@@ -86,7 +86,17 @@ Bu oturumda iki farklı kopya kullanıldı; karıştırılmamalı:
 
 **Polonya erişim teşhisi:** kullanıcının partneri iPhone Safari'de “server stopped responding” gördü. Cloudflare Analytics'te Polonya kaynaklı istekler, `/cdn-cgi/trace`, `/favicon.ico`, CSS/JS görülmüş; bir HTTP `/` isteği 504 iken aynı saniyedeki HTTPS `/` 200 ve varlıklar 200 döndü. Güvenlik Events ekranı yalnız güvenlik/örneklenmiş olayları gösterir; tüm ziyaretçi oturumlarının eksiksiz kaydı değildir. Bu kanıt ülke çapında erişilebilirlik garantisi vermez; yeniden test ederken tam URL'nin HTTPS olduğuna, gerçek kullanıcının IP/ülke/saati ve `www` yönlendirmesine bak.
 
-**Açık:** iki checkout'taki kod farklarının ve production versiyonuyla workspace commit `696df49` ilişkisinin çözülmesi; UI-v2'yi canlıya taşıma kararı/işi; Forge AI ve ödeme/kota durumu; Faz 3a SDK/auth canlı testleri; hukuki eksikler ve saklama kuralları; mağaza URL/yayın adımları.
+**Açık işler (17.11.2026):**
+
+1. **Paddle canlı ödeme:** README-deploy'daki akış Sandbox olarak tanımlı. Üretim tahsilatından önce Paddle Live token/katalog/notification destination ve webhook secret ayrı yapılandırılmalı; fiyat/vergiler ve başarılı, iptal, yenileme, iade akışları canlıya geçmeden doğrulanmalı. Mevcut Sandbox fiyatları Live katalogda geçerli varsayılmamalı.
+2. **7 günlük deneme:** kayıt ekranı deneme bilgisini gösteriyor; denemenin gerçek başlangıcı Paddle fiyat yapılandırmasına bağlı. Starter ve Pro'nun Sandbox ve Live fiyatlarında 7 gün tanımlı olduğunu panelden teyit et; kullanıcıya ücretsiz erişim verildiğini yalnızca bu doğrulamadan sonra söyle.
+3. **Team ve roller:** Team'de beş koltuk kararı var. Davet/koltuk yönetimi, rol bazlı ekran ve sunucu izinlerini iki farklı gerçek hesapla uçtan uca doğrula; ürün erişimini ve faturalandırmayı plan seviyesine göre tamamla. Sadece kayıt formunda rol seçilebilmesi yetki izolasyonunun kanıtı değildir.
+4. **Üyelik operasyonları:** OTP, yeni kayıt, tekrar giriş, şifre sıfırlama, e-posta tekrar gönderme ve hukuki onay kaydını farklı e-posta adresleriyle kontrol et. Kayıt onay metinleri/yürürlük tarihleri yayıncı tarafından hukuki incelemeden geçirilmeli.
+5. **Altyapı teyidi:** Cloudflare'da `BILLING_DB`, `SUPABASE_SERVICE_ROLE_KEY` ve gerekli Paddle değişken/secret'larının doğru ortamda bulunduğunu; D1 migration'larının uygulandığını ve Supabase profil/rol kayıtlarının oluştuğunu doğrula. Secret değerlerini raporlama.
+6. **Forge ürün kapsamı:** kullanıcı bazlı AI/aylık kota davranışı, Forge AI sağlayıcı çağrısı, PDF/Jira/Azure DevOps entegrasyonları ve SDK Faz 3a ayrı işlerdir. Pazarlama sayfalarında henüz etkin değilse mevcut özellik gibi sunma.
+7. **QA ve raporlar:** üretim kaydı/abonelik akışı için TR/EN masaüstü ve mobil regresyonu ile Team rol izolasyonu ve ödeme webhook tekrar denemesi senaryolarını sürüm raporuna kaydet. Bu kontroller bu durum güncellemesinde çalıştırılmadı.
+
+Öncelik sırası: **(1) trial ve plan davranışını doğrula, (2) Team davet/izin kapsamını netleştir, (3) Live ödeme öncesi altyapı ve hukuki hazır oluşu tamamla.**
 
 ## 7. Referans dosyalar
 
