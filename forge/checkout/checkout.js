@@ -47,8 +47,11 @@
   const selection = catalog[plan][period];
   const state = document.querySelector("#state");
   const button = document.querySelector("#start-checkout");
+  const planChangeWarning = document.querySelector("#plan-change-warning");
+  const planChangeCheck = document.querySelector("#confirm-plan-change");
   const loginLink = document.querySelector("#checkout-login-link");
   let currentState = "";
+  let currentSubscription = null, confirmationRequired = false, checkoutReady = false;
   let language = "tr";
   try { language = localStorage.getItem("qs-language") || (localStorage.getItem("qs-lang") === "1" ? "en" : "tr"); } catch {}
   if (!copy[language]) language = "tr";
@@ -57,6 +60,19 @@
     currentState = key;
     state.classList.toggle("error", error);
     state.textContent = copy[language][key];
+  }
+  function planLabel(value) { return language === "tr" ? ({ starter: "Starter", pro: "Pro", team: "Team" }[value] || value) : ({ starter: "Starter", pro: "Pro", team: "Team" }[value] || value); }
+  function syncCheckoutButton() { button.disabled = !checkoutReady || (confirmationRequired && !planChangeCheck.checked); }
+  function renderPlanChangeWarning() {
+    if (!confirmationRequired || !currentSubscription) { planChangeWarning.hidden = true; return; }
+    const current = planLabel(currentSubscription.plan), chosen = planLabel(plan);
+    document.querySelector("#plan-change-message").textContent = language === "tr"
+      ? `Mevcut ${current} aboneliğin (${currentSubscription.status}) etkin kalacak. ${chosen} için devam etmek yeni bir abonelik başlatabilir; mevcut aboneliğin otomatik iptal edilmez.`
+      : `Your current ${current} subscription (${currentSubscription.status}) will remain active. Continuing with ${chosen} may start another subscription; it will not automatically cancel your current one.`;
+    document.querySelector("#plan-change-confirm-label").textContent = language === "tr"
+      ? `Mevcut aboneliğimi anladım; ${chosen} için yeni abonelik başlatmak istiyorum.`
+      : `I understand and want to start a new ${chosen} subscription.`;
+    planChangeWarning.hidden = false;
   }
   function updateLabels() {
     document.documentElement.lang = language;
@@ -80,10 +96,12 @@
     document.querySelector(".box .muted").textContent = language === "tr" ? "Ödeme sonrası paket erişimi yalnızca imzası doğrulanmış Paddle webhook’u hesabına bağladığında etkinleşir." : copy.en.trust;
     loginLink.textContent = language === "tr" ? "Giriş yap / Forge hesabına dön" : copy.en.loginLink;
     button.textContent = copy[language].launch;
+    renderPlanChangeWarning();
     if (currentState) state.textContent = copy[language][currentState];
   }
   updateLabels();
   document.querySelector(".lang").addEventListener("click", () => { language = language === "tr" ? "en" : "tr"; updateLabels(); });
+  planChangeCheck.addEventListener("change", syncCheckoutButton);
 
   (async () => {
     try {
@@ -103,6 +121,15 @@
       }
       loginLink.hidden = true;
 
+      const subscriptionResponse = await fetch("/api/forge/subscription", { credentials: "same-origin", cache: "no-store" });
+      if (!subscriptionResponse.ok) throw new Error("subscription lookup failed");
+      const subscription = await subscriptionResponse.json();
+      if (subscription.active) {
+        currentSubscription = subscription;
+        confirmationRequired = true;
+        renderPlanChangeWarning();
+      }
+
       const configResponse = await fetch("/api/billing/config", { credentials: "same-origin", cache: "no-store" });
       const config = configResponse.ok ? await configResponse.json() : null;
       if (!config) { setState("config", true); return; }
@@ -120,7 +147,8 @@
           location.assign(url.toString());
         }
       } });
-      button.disabled = false;
+      checkoutReady = true;
+      syncCheckoutButton();
       setState("ready");
     } catch {
       setState("config", true);
@@ -128,7 +156,7 @@
   })();
 
   button.addEventListener("click", async () => {
-    if (button.disabled) return;
+    if (button.disabled || (confirmationRequired && !planChangeCheck.checked)) return;
     button.disabled = true;
     setState("starting");
     try {
@@ -147,7 +175,7 @@
         const reference = response.headers.get("x-request-id") || error.requestId;
         state.classList.add("error");
         state.textContent = `${error.message || copy[language].intent}${reference ? ` (${language === "tr" ? "referans" : "reference"}: ${reference})` : ""}`;
-        button.disabled = false;
+        syncCheckoutButton();
         return;
       }
       const { customData } = await response.json();
@@ -155,7 +183,7 @@
       setState("ready");
     } catch {
       setState("checkout", true);
-      button.disabled = false;
+      syncCheckoutButton();
     }
   });
 })();
