@@ -22,6 +22,7 @@
       <div class="mark waiting" id="mark" aria-hidden="true">…</div><span class="eyebrow">Paddle Sandbox</span>
       <h1 id="heading">Ödeme doğrulanıyor</h1>
       <p class="status" id="status" role="status" aria-live="polite">İmzalı Paddle bildirimi bekleniyor. Bu işlem birkaç saniye sürebilir.</p>
+      <p class="status" id="redirect-note" hidden></p>
       <p>İşlem kimliği</p><code id="txn">Belirtilmedi</code>
       <p id="plan" hidden></p>
       <div class="done-actions"><button id="retry" type="button">Durumu tekrar kontrol et</button>
@@ -40,10 +41,10 @@
       const planNode = document.querySelector("#plan");
       const retry = document.querySelector("#retry");
       const plans = { starter: "Starter", pro: "Pro", team: "Team" };
-      let language = "tr", attempts = 0, finished = false, checking = false, pollTimer = null;
+      let language = "tr", attempts = 0, finished = false, checking = false, pollTimer = null, redirectTimer = null, redirectSeconds = 30, activePlan = "";
       const copy = {
-        tr: { checking: "Ödeme doğrulanıyor", waiting: "İmzalı Paddle bildirimi bekleniyor. Bu işlem birkaç saniye sürebilir.", pending: "Paddle bildirimi henüz Forge’a ulaşmadı. Paddle Sandbox > Notifications bölümünde başarısız bildirimi yeniden gönderin; ardından tekrar kontrol edin.", active: "Planın aktif", login: "Durumu görmek için Forge hesabına giriş yapmalısın.", closed: "Ödeme kaydı alındı; abonelik şu anda aktif değil.", missing: "İşlem kimliği bulunamadı. Ödeme geçmişini Paddle Sandbox panelinden kontrol et.", retry: "Durumu tekrar kontrol et", checkingNow: "Kontrol ediliyor…", workspace: "Forge’a dön", error: "Abonelik durumu alınamadı. Bağlantını kontrol edip yeniden deneyin." },
-        en: { checking: "Verifying payment", waiting: "Waiting for Paddle’s signed notification. This may take a few seconds.", pending: "Paddle’s notification has not reached Forge yet. Resend the failed notification in Paddle Sandbox > Notifications, then check again.", active: "Your plan is active", login: "Sign in to your Forge account to view its status.", closed: "The payment was recorded; the subscription is not active right now.", missing: "No transaction ID was provided. Check your payment in Paddle Sandbox.", retry: "Check status again", checkingNow: "Checking…", workspace: "Back to Forge", error: "Could not load subscription status. Check your connection and try again." }
+        tr: { checking: "Ödeme doğrulanıyor", waiting: "İmzalı Paddle bildirimi bekleniyor. Bu işlem birkaç saniye sürebilir.", pending: "Paddle bildirimi henüz Forge’a ulaşmadı. Paddle Sandbox > Notifications bölümünde başarısız bildirimi yeniden gönderin; ardından tekrar kontrol edin.", active: "Planın aktif", login: "Durumu görmek için Forge hesabına giriş yapmalısın.", closed: "Ödeme kaydı alındı; abonelik şu anda aktif değil.", missing: "İşlem kimliği bulunamadı. Ödeme geçmişini Paddle Sandbox panelinden kontrol et.", retry: "Durumu tekrar kontrol et", checkingNow: "Kontrol ediliyor…", workspace: "Forge’a dön", redirect: "{plan} aboneliğin etkin. {seconds} saniye içinde Forge’a yönlendirileceksin.", error: "Abonelik durumu alınamadı. Bağlantını kontrol edip yeniden deneyin." },
+        en: { checking: "Verifying payment", waiting: "Waiting for Paddle’s signed notification. This may take a few seconds.", pending: "Paddle’s notification has not reached Forge yet. Resend the failed notification in Paddle Sandbox > Notifications, then check again.", active: "Your plan is active", login: "Sign in to your Forge account to view its status.", closed: "The payment was recorded; the subscription is not active right now.", missing: "No transaction ID was provided. Check your payment in Paddle Sandbox.", retry: "Check status again", checkingNow: "Checking…", workspace: "Back to Forge", redirect: "Your {plan} subscription is active. You’ll be redirected to Forge in {seconds} seconds.", error: "Could not load subscription status. Check your connection and try again." }
       };
       txnNode.textContent = /^txn_[a-z\d]{20,40}$/i.test(transactionId) ? transactionId : "Belirtilmedi";
       function setLanguage(next) {
@@ -52,7 +53,27 @@
         document.querySelectorAll(".success-steps li span").forEach((label, index) => { label.textContent = (language === "tr" ? ["PLAN", "ÖDEME", "ONAY"] : ["PLAN", "PAYMENT", "CONFIRM"])[index]; });
         retry.textContent = checking ? copy[language].checkingNow : copy[language].retry;
         document.querySelector("#workspace").textContent = copy[language].workspace;
+        if (redirectTimer) updateRedirectNote();
         if (!finished) { heading.textContent = copy[language].checking; status.textContent = copy[language].waiting; }
+      }
+      function updateRedirectNote() {
+        const note = document.querySelector("#redirect-note");
+        note.hidden = false;
+        note.textContent = copy[language].redirect.replace("{plan}", plans[activePlan] || activePlan).replace("{seconds}", redirectSeconds);
+      }
+      function startRedirect(plan) {
+        activePlan = plan;
+        const url = new URL("/forge/app/", location.origin);
+        url.searchParams.set("billing", "success");
+        url.searchParams.set("plan", plan);
+        document.querySelector("#workspace").href = url.toString();
+        document.querySelector("#retry").hidden = true;
+        updateRedirectNote();
+        redirectTimer = setInterval(() => {
+          redirectSeconds--;
+          if (redirectSeconds <= 0) { clearInterval(redirectTimer); location.assign(url.toString()); return; }
+          updateRedirectNote();
+        }, 1000);
       }
       document.querySelector(".lang").addEventListener("click", () => setLanguage(language === "tr" ? "en" : "tr"));
       async function refresh() {
@@ -68,6 +89,7 @@
             finished = true; mark.classList.remove("waiting"); mark.textContent = "✓"; heading.textContent = copy[language].active;
             status.textContent = language === "tr" ? `${plans[result.plan] || result.plan} paketin Paddle tarafından doğrulandı ve hesabına bağlandı.` : `Your ${plans[result.plan] || result.plan} plan was verified by Paddle and linked to your account.`;
             planNode.hidden = false; planNode.textContent = `${plans[result.plan] || result.plan} · ${result.status}`;
+            startRedirect(result.plan);
             return;
           }
           if (["canceled", "past_due", "paused"].includes(result.status)) {
