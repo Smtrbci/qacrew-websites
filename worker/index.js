@@ -114,10 +114,33 @@ function normalizedUserId(value) {
   const email = value.trim().toLowerCase();
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : "";
 }
-function isForgeAccount(email, env) {
+async function isForgeAccount(email, env) {
   if (!email) return false;
   if (email === String(env.FORGE_LOGIN_EMAIL || "").toLowerCase()) return true;
-  return members(env, false).some((member) => member.email.toLowerCase() === email);
+  if (members(env, false).some((member) => member.email.toLowerCase() === email)) return true;
+  return Boolean(await getRegisteredUser(env, email));
+}
+async function auditActorHash(email, secret) {
+  if (!email || !secret) return null;
+  const key = await crypto.subtle.importKey("raw", encoder.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const bytes = new Uint8Array(await crypto.subtle.sign("HMAC", key, encoder.encode(email.toLowerCase())));
+  return [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+async function writeBillingAudit(env, requestId, eventType, outcome, email, plan, referenceId, statusCode) {
+  if (!env.BILLING_DB) return;
+  try {
+    const actorHash = await auditActorHash(email, env.SESSION_SECRET);
+    await env.BILLING_DB.batch([
+      env.BILLING_DB.prepare(`INSERT INTO billing_audit_log
+        (id,request_id,event_type,outcome,actor_hash,plan,reference_id,status_code)
+        VALUES (?,?,?,?,?,?,?,?)`)
+        .bind(crypto.randomUUID(), requestId, eventType, outcome, actorHash, ["starter", "pro", "team"].includes(plan) ? plan : null, referenceId || null, statusCode || null),
+      env.BILLING_DB.prepare("DELETE FROM billing_audit_log WHERE created_at < datetime('now','-180 days')")
+    ]);
+  } catch {
+    // Keep checkout functional if audit storage is temporarily unavailable; never log email or tokens.
+    console.warn("Forge billing audit write failed", { requestId, eventType });
+  }
 }
 async function activeSubscription(env, userId) {
   if (!env.BILLING_DB || !userId) return null;
@@ -167,17 +190,44 @@ async function readRawBody(request, maxBytes) {
 }
 async function createCheckoutIntent(request, env) {
   if (request.method !== "POST" || !originAllowed(request)) return failure(400, "invalid_request", "İstek geçersiz.");
-  const user = await sessionUser(request, env);
-  if (!user || user.demo) return failure(401, "login_required", "Ödeme planını hesaba bağlamak için giriş yapın.");
-  if (!env.BILLING_DB) return failure(503, "billing_unavailable", "Ödeme abonelik deposu henüz yapılandırılmamış.");
+  const requestId = crypto.randomUUID();
+  let user;
+  try { user = await sessionUser(request, env); }
+  catch {
+    await writeBillingAudit(env, requestId, "checkout_intent", "session_lookup_failed", "", "", "", 503);
+    return json({ error: "session_lookup_failed", message: "Oturumun şu an doğrulanamıyor. Biraz sonra tekrar dene.", requestId }, 503, { "x-request-id": requestId });
+  }
+  if (!user || user.demo) {
+    await writeBillingAudit(env, requestId, "checkout_intent", "rejected_login_required", user?.email, "", "", 401);
+    return json({ error: "login_required", message: "Ödeme planını hesaba bağlamak için giriş yapın.", requestId }, 401, { "x-request-id": requestId });
+  }
+  if (!env.BILLING_DB) {
+    await writeBillingAudit(env, requestId, "checkout_intent", "billing_unavailable", user.email, "", "", 503);
+    return json({ error: "billing_unavailable", message: "Ödeme abonelik deposu henüz yapılandırılmamış.", requestId }, 503, { "x-request-id": requestId });
+  }
   const body = await bodyJson(request, 4096), plan = body.value?.plan, period = body.value?.period;
-  if (body.tooLarge || body.invalid || !body.value || typeof body.value !== "object" || Array.isArray(body.value)) return failure(400, "invalid_request", "Ödeme seçimi geçersiz.");
+  if (body.tooLarge || body.invalid || !body.value || typeof body.value !== "object" || Array.isArray(body.value)) {
+    await writeBillingAudit(env, requestId, "checkout_intent", "rejected_invalid_request", user.email, plan, "", 400);
+    return json({ error: "invalid_request", message: "Ödeme seçimi geçersiz.", requestId }, 400, { "x-request-id": requestId });
+  }
   const price = Object.entries(BILLING_PRICES).find(([, value]) => value.plan === plan && value.period === period);
-  if (!price) return failure(400, "invalid_price", "Paket veya dönem geçersiz.");
+  if (!price) {
+    await writeBillingAudit(env, requestId, "checkout_intent", "rejected_invalid_price", user.email, plan, "", 400);
+    return json({ error: "invalid_price", message: "Paket veya dönem geçersiz.", requestId }, 400, { "x-request-id": requestId });
+  }
   const userId = normalizedUserId(user.email);
-  if (!userId || !isForgeAccount(userId, env)) return failure(403, "account_not_found", "Forge hesabı bulunamadı.");
+  try {
+    if (!userId || !(user.registered || await isForgeAccount(userId, env))) {
+      await writeBillingAudit(env, requestId, "checkout_intent", "rejected_account_not_found", user.email, plan, price[0], 403);
+      return json({ error: "account_not_found", message: "Forge hesabın doğrulanamadı. Tekrar giriş yap veya destek ekibine başvur.", requestId }, 403, { "x-request-id": requestId });
+    }
+  } catch {
+    await writeBillingAudit(env, requestId, "checkout_intent", "account_lookup_failed", user.email, plan, price[0], 503);
+    return json({ error: "account_lookup_failed", message: "Hesap doğrulaması şu an yapılamıyor. Biraz sonra tekrar dene.", requestId }, 503, { "x-request-id": requestId });
+  }
   const intent = await sign({ purpose: "paddle_checkout", userId, plan, period, priceId: price[0], exp: Date.now() + 30 * 24 * 60 * 60 * 1000 }, env.SESSION_SECRET);
-  return json({ customData: { userId, plan, period, priceId: price[0], intent } });
+  await writeBillingAudit(env, requestId, "checkout_intent", "created", user.email, plan, price[0], 200);
+  return json({ customData: { userId, plan, period, priceId: price[0], intent }, requestId }, 200, { "x-request-id": requestId });
 }
 async function acceptPaddleEvent(env, event) {
   const db = env.BILLING_DB;
@@ -209,12 +259,15 @@ async function acceptPaddleEvent(env, event) {
     const previous = await db.prepare("SELECT user_id, plan, period, price_id FROM paddle_transactions WHERE transaction_id = ?").bind(transactionId).first();
     if (previous) { userId = previous.user_id; if (!picked) picked = { plan: previous.plan, period: previous.period, priceId: previous.price_id }; }
   }
-  if (userId && !isForgeAccount(userId, env)) userId = "";
+  if (userId && !await isForgeAccount(userId, env)) userId = "";
   if (userId && (!picked || !BILLING_PRICES[picked.priceId])) userId = "";
   await db.prepare("INSERT OR IGNORE INTO paddle_events (event_id, event_type, occurred_at, processed, received_at) VALUES (?, ?, ?, 0, ?)")
     .bind(eventId, eventType, occurredAt, new Date().toISOString()).run();
   const existingEvent = await db.prepare("SELECT processed FROM paddle_events WHERE event_id = ?").bind(eventId).first();
-  if (existingEvent?.processed) return json({ ok: true, duplicate: true });
+  if (existingEvent?.processed) {
+    await writeBillingAudit(env, crypto.randomUUID(), `paddle_${eventType}`, "duplicate", userId, picked?.plan, eventId, 200);
+    return json({ ok: true, duplicate: true });
+  }
   const statements = [];
   if (eventType.startsWith("subscription.") && userId && picked && typeof subscriptionId === "string" && /^sub_[a-z\d]{20,40}$/i.test(subscriptionId) && (ACTIVE_SUBSCRIPTION_STATUSES.has(status) || CLOSED_SUBSCRIPTION_STATUSES.has(status))) {
     statements.push(db.prepare(`INSERT INTO forge_subscriptions (subscription_id,user_id,plan,period,price_id,status,transaction_id,occurred_at,updated_at)
@@ -242,6 +295,7 @@ async function acceptPaddleEvent(env, event) {
   }
   statements.push(db.prepare("UPDATE paddle_events SET processed=1 WHERE event_id=? AND processed=0").bind(eventId));
   await db.batch(statements);
+  await writeBillingAudit(env, crypto.randomUUID(), `paddle_${eventType}`, userId ? "processed" : "unmatched", userId, picked?.plan, eventId, 200);
   return json({ ok: true });
 }
 async function handlePaddleWebhook(request, env) {

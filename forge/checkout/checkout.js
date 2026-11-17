@@ -47,6 +47,7 @@
   const selection = catalog[plan][period];
   const state = document.querySelector("#state");
   const button = document.querySelector("#start-checkout");
+  const loginLink = document.querySelector("#checkout-login-link");
   let currentState = "";
   let language = "tr";
   try { language = localStorage.getItem("qs-language") || (localStorage.getItem("qs-lang") === "1" ? "en" : "tr"); } catch {}
@@ -77,25 +78,37 @@
     document.querySelectorAll("#checkout-flow li")[1].textContent = language === "tr" ? "Test ödeme yöntemiyle abonelik işlemi oluşturulur." : copy.en.step2;
     document.querySelectorAll("#checkout-flow li")[2].textContent = language === "tr" ? "Sonuç, Paddle Sandbox panelindeki Transactions bölümünde görünür." : copy.en.step3;
     document.querySelector(".box .muted").textContent = language === "tr" ? "Ödeme sonrası paket erişimi yalnızca imzası doğrulanmış Paddle webhook’u hesabına bağladığında etkinleşir." : copy.en.trust;
-    document.querySelector(".login-link").textContent = language === "tr" ? "Giriş yap / Forge hesabına dön" : copy.en.loginLink;
+    loginLink.textContent = language === "tr" ? "Giriş yap / Forge hesabına dön" : copy.en.loginLink;
     button.textContent = copy[language].launch;
     if (currentState) state.textContent = copy[language][currentState];
   }
   updateLabels();
   document.querySelector(".lang").addEventListener("click", () => { language = language === "tr" ? "en" : "tr"; updateLabels(); });
 
-  fetch("/api/billing/config", { credentials: "same-origin", cache: "no-store" })
-    .then((response) => response.ok ? response.json() : Promise.reject())
-    .then(async (config) => {
+  (async () => {
+    try {
+      const sessionResponse = await fetch("/api/session", { credentials: "same-origin", cache: "no-store" });
+      if (!sessionResponse.ok) {
+        if (sessionResponse.status === 401) {
+          loginLink.hidden = false;
+          setState("login", true);
+        } else setState("config", true);
+        return;
+      }
+      const session = await sessionResponse.json();
+      if (!session.user || session.user.demo) {
+        loginLink.hidden = false;
+        setState("login", true);
+        return;
+      }
+      loginLink.hidden = true;
+
+      const configResponse = await fetch("/api/billing/config", { credentials: "same-origin", cache: "no-store" });
+      const config = configResponse.ok ? await configResponse.json() : null;
+      if (!config) { setState("config", true); return; }
       if (!config.enabled || !config.token) { setState("disabled", true); return; }
       if (!config.token.startsWith("test_")) { setState("unsafe", true); return; }
       if (!window.Paddle) { setState("sdk", true); return; }
-      let sessionResponse;
-      try { sessionResponse = await fetch("/api/session", { credentials: "same-origin", cache: "no-store" }); }
-      catch { setState("intent", true); return; }
-      if (!sessionResponse.ok) { setState("login", true); return; }
-      const session = await sessionResponse.json();
-      if (!session.user || session.user.demo) { setState("login", true); return; }
       Paddle.Environment.set("sandbox");
       Paddle.Initialize({ token: config.token, eventCallback: (event) => {
         if (event?.name !== "checkout.completed") return;
@@ -109,8 +122,10 @@
       } });
       button.disabled = false;
       setState("ready");
-    })
-    .catch(() => setState("config", true));
+    } catch {
+      setState("config", true);
+    }
+  })();
 
   button.addEventListener("click", async () => {
     if (button.disabled) return;
@@ -121,7 +136,20 @@
         method: "POST", credentials: "same-origin", headers: { "content-type": "application/json" },
         body: JSON.stringify({ plan, period })
       });
-      if (!response.ok) { setState(response.status === 401 ? "login" : "intent", true); button.disabled = response.status !== 401; return; }
+      if (!response.ok) {
+        if (response.status === 401) {
+          loginLink.hidden = false;
+          setState("login", true);
+          button.disabled = true;
+          return;
+        }
+        const error = await response.json().catch(() => ({}));
+        const reference = response.headers.get("x-request-id") || error.requestId;
+        state.classList.add("error");
+        state.textContent = `${error.message || copy[language].intent}${reference ? ` (${language === "tr" ? "referans" : "reference"}: ${reference})` : ""}`;
+        button.disabled = false;
+        return;
+      }
       const { customData } = await response.json();
       Paddle.Checkout.open({ items: [{ priceId: selection.id, quantity: 1 }], customData });
       setState("ready");
