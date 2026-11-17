@@ -2,8 +2,7 @@
 .git/**
 .env*
 .dev.vars*
-/supabase/.branches/**
-/supabase/.temp/**
+/supabase/**
 **/.DS_Store
 .assetsignore
 wrangler.jsonc
