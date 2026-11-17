@@ -34,6 +34,18 @@ The six `priceId` values in `forge/checkout/checkout.js` must exist in the Paddl
 
 For the checkout account-verification and audit-log update, apply pending D1 migrations before deploying: `npx wrangler d1 migrations apply qacrew-forge-billing --remote`. This adds `billing_audit_log` to the existing `BILLING_DB`. It stores checkout-intent outcomes and accepted Paddle webhook outcomes, using a keyed hash for the account identifier; it does not store email addresses, card data, cookies, tokens, or webhook bodies. Entries older than 180 days are removed when the next billing audit row is written. Review the records from the Cloudflare D1 console. The existing `paddle_events`, `paddle_transactions`, and `forge_subscriptions` tables continue to hold webhook/subscription records.
 
+## Forge Team invitations (Sandbox)
+
+The Team subscription owner is the workspace Admin. Starter and Pro remain single-user plans. Team supports five seats including the Admin. From **Portföy → Team üyeleri**, the Admin can create a one-time invitation for a verified email address and choose QA, Developer, PM, or PMO. The invitation link is shown once, can be copied and shared manually, expires after seven days, and only works after the invited email is verified. The Admin can revoke pending invitations. Invited users share the Team workspace and its active Team subscription; they do not receive Admin privileges.
+
+Before deploying Team invitation changes, apply the Supabase migration to the same project as the production Forge auth/workspace tables, then apply pending D1 migrations so the shared Team subscription workspace key is available:
+
+1. In the Supabase SQL Editor, run `supabase/migrations/20261117100000_forge_team_invitations.sql` against the `qacrew-dev` production database.
+2. From the Worker project directory, run `npx wrangler d1 migrations apply qacrew-forge-billing --remote`.
+3. Deploy the Worker and static assets. Paddle remains in Sandbox; no live token, prices, or webhook should be configured for this release.
+
+The Supabase migration removes the old one-user-per-workspace uniqueness rule and adds the invitation table and server-only RPCs. D1 migration `0003_team_billing_workspace.sql` adds the Team workspace reference to subscription rows. Do not deploy the updated Worker before applying the D1 migration: webhook writes now include that column. Verify with separate Admin and invited accounts that both load the same projects, roles differ as selected, links reject a different email or expired/revoked token, and the sixth seat is refused. Existing users with project data cannot switch workspaces by accepting an invitation; they need a data migration flow before joining a Team workspace.
+
 This integration is Sandbox-only. Before enabling live charges, configure a separate live client token, live catalog price IDs, and a live notification destination/secret, then verify production checkout and legal purchase terms. Never mix Sandbox and live credentials.
 
 Do not put secrets in source code, GitHub, client-side config, or a committed `.env` file. For local development, copy `.env.example` to `.dev.vars` and fill it locally; `.dev.vars` is ignored by Git and excluded from Worker assets.
