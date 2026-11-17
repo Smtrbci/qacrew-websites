@@ -39,7 +39,7 @@ async function sessionUser(request, env) {
   const data = await verify(cookie(request), env.SESSION_SECRET);
   if(!data?.email)return null;
   const member=members(env).find(x=>x.email.toLowerCase()===data.email.toLowerCase());
-  if(data.registered){const account=await getRegisteredUser(env,data.email);if(!account)return null;return {...data,role:account.role,workspaceKey:account.workspace_key};}
+  if(data.registered){const account=await getRegisteredUser(env,data.email);if(!account)return null;return {...data,role:account.role,persona:account.persona||null,workspaceKey:account.workspace_key};}
   if(!member&&!data.demo&&data.email.toLowerCase()!==String(env.FORGE_LOGIN_EMAIL||'').toLowerCase())return null;
   return {...data,role:member?.role || (data.demo ? "qa" : "admin")};
 }
@@ -144,9 +144,18 @@ async function writeBillingAudit(env, requestId, eventType, outcome, email, plan
 }
 async function activeSubscription(env, userId) {
   if (!env.BILLING_DB || !userId) return null;
-  return env.BILLING_DB.prepare(
-    "SELECT plan, status, subscription_id, price_id, updated_at FROM forge_subscriptions WHERE user_id = ? AND status IN ('active','trialing') ORDER BY updated_at DESC LIMIT 1"
+  const account = await getRegisteredUser(env, userId);
+  if (account?.workspace_key) {
+    const team = await env.BILLING_DB.prepare(
+      "SELECT user_id, workspace_key, plan, status, subscription_id, price_id, updated_at FROM forge_subscriptions WHERE workspace_key = ? AND plan = 'team' AND status IN ('active','trialing') ORDER BY updated_at DESC LIMIT 1"
+    ).bind(account.workspace_key).first();
+    if (team) return team;
+  }
+  const direct = await env.BILLING_DB.prepare(
+    "SELECT user_id, workspace_key, plan, status, subscription_id, price_id, updated_at FROM forge_subscriptions WHERE user_id = ? AND status IN ('active','trialing') ORDER BY updated_at DESC LIMIT 1"
   ).bind(userId).first();
+  if (direct) return direct;
+  return null;
 }
 async function effectivePlan(env, userId) {
   const subscription = await activeSubscription(env, userId);
@@ -259,7 +268,8 @@ async function acceptPaddleEvent(env, event) {
     const previous = await db.prepare("SELECT user_id, plan, period, price_id FROM paddle_transactions WHERE transaction_id = ?").bind(transactionId).first();
     if (previous) { userId = previous.user_id; if (!picked) picked = { plan: previous.plan, period: previous.period, priceId: previous.price_id }; }
   }
-  if (userId && !await isForgeAccount(userId, env)) userId = "";
+  const account = userId ? await getRegisteredUser(env, userId) : null;
+  if (userId && !account && !await isForgeAccount(userId, env)) userId = "";
   if (userId && (!picked || !BILLING_PRICES[picked.priceId])) userId = "";
   await db.prepare("INSERT OR IGNORE INTO paddle_events (event_id, event_type, occurred_at, processed, received_at) VALUES (?, ?, ?, 0, ?)")
     .bind(eventId, eventType, occurredAt, new Date().toISOString()).run();
@@ -270,12 +280,12 @@ async function acceptPaddleEvent(env, event) {
   }
   const statements = [];
   if (eventType.startsWith("subscription.") && userId && picked && typeof subscriptionId === "string" && /^sub_[a-z\d]{20,40}$/i.test(subscriptionId) && (ACTIVE_SUBSCRIPTION_STATUSES.has(status) || CLOSED_SUBSCRIPTION_STATUSES.has(status))) {
-    statements.push(db.prepare(`INSERT INTO forge_subscriptions (subscription_id,user_id,plan,period,price_id,status,transaction_id,occurred_at,updated_at)
-      SELECT ?,?,?,?,?,?,?,?,?
+    statements.push(db.prepare(`INSERT INTO forge_subscriptions (subscription_id,user_id,workspace_key,plan,period,price_id,status,transaction_id,occurred_at,updated_at)
+      SELECT ?,?,?,?,?,?,?,?,?,?
       WHERE EXISTS (SELECT 1 FROM paddle_events WHERE event_id=? AND processed=0)
-      ON CONFLICT(subscription_id) DO UPDATE SET user_id=excluded.user_id,plan=excluded.plan,period=excluded.period,price_id=excluded.price_id,status=excluded.status,transaction_id=COALESCE(excluded.transaction_id,forge_subscriptions.transaction_id),occurred_at=excluded.occurred_at,updated_at=excluded.updated_at
+      ON CONFLICT(subscription_id) DO UPDATE SET user_id=excluded.user_id,workspace_key=excluded.workspace_key,plan=excluded.plan,period=excluded.period,price_id=excluded.price_id,status=excluded.status,transaction_id=COALESCE(excluded.transaction_id,forge_subscriptions.transaction_id),occurred_at=excluded.occurred_at,updated_at=excluded.updated_at
       WHERE excluded.occurred_at >= forge_subscriptions.occurred_at`)
-      .bind(subscriptionId, userId, picked.plan, picked.period, picked.priceId, status, transactionId, occurredAt, new Date().toISOString(), eventId));
+      .bind(subscriptionId, userId, account?.workspace_key || null, picked.plan, picked.period, picked.priceId, status, transactionId, occurredAt, new Date().toISOString(), eventId));
     if (transactionId && /^txn_[a-z\d]{20,40}$/i.test(transactionId)) {
       statements.push(db.prepare(`INSERT INTO paddle_transactions (transaction_id,user_id,subscription_id,plan,period,price_id,status,event_id,occurred_at)
         SELECT ?,?,?,?,?,?,?,?,? WHERE EXISTS (SELECT 1 FROM paddle_events WHERE event_id=? AND processed=0)
@@ -336,19 +346,123 @@ function supabasePublishableKey(env){return String(env.SUPABASE_PUBLISHABLE_KEY|
 function supabaseAuthHeaders(env){const key=supabasePublishableKey(env);if(!key)throw new Error('Supabase publishable key missing');return {apikey:key,'content-type':'application/json'};}
 async function getRegisteredUser(env,email){
   if(!env.SUPABASE_URL||!env.SUPABASE_SERVICE_ROLE_KEY)return null;
-  const query=new URLSearchParams({email:'eq.'+email,select:'email,workspace_key,role',limit:'1'});
+  const query=new URLSearchParams({email:'eq.'+email,select:'email,workspace_key,role,persona',limit:'1'});
   const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/rest/v1/forge_users?'+query,{headers:supabaseHeaders(env),signal:AbortSignal.timeout(10000)});
   if(!response.ok)throw new Error('Supabase account lookup failed '+response.status);
   return (await response.json())[0]||null;
 }
-async function ensureRegisteredUser(env,email,role='admin'){
+async function ensureRegisteredUser(env,email,role='admin',workspaceKey=null,persona=null){
   if(!['admin','qa','dev','pm','pmo'].includes(role))role='admin';
   const current=await getRegisteredUser(env,email);if(current)return current;
-  const workspaceKey='user:'+crypto.randomUUID();
-  const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/rest/v1/forge_users',{method:'POST',headers:{...supabaseHeaders(env),Prefer:'return=minimal'},body:JSON.stringify({email,workspace_key:workspaceKey,role}),signal:AbortSignal.timeout(10000)});
+  workspaceKey ||= 'user:'+crypto.randomUUID();
+  const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/rest/v1/forge_users',{method:'POST',headers:{...supabaseHeaders(env),Prefer:'return=minimal'},body:JSON.stringify({email,workspace_key:workspaceKey,role,persona:['qa','dev','pm','pmo'].includes(persona)?persona:null}),signal:AbortSignal.timeout(10000)});
   if(response.status===409)return await getRegisteredUser(env,email);
   if(!response.ok)throw new Error('Supabase account profile insert failed '+response.status);
-  return {email,workspace_key:workspaceKey,role};
+  return {email,workspace_key:workspaceKey,role,persona};
+}
+async function supabaseRpc(env,name,payload){
+  const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/rest/v1/rpc/'+name,{method:'POST',headers:supabaseHeaders(env),body:JSON.stringify(payload),signal:AbortSignal.timeout(12000)});
+  const data=await response.json().catch(()=>null);
+  if(!response.ok){const error=new Error(data?.message||'Supabase RPC failed '+response.status);error.status=response.status;error.code=data?.message||data?.code||'';throw error;}
+  return data;
+}
+async function getTeamInvite(env,token,email=''){
+  if(typeof token!=='string'||token.length<32||token.length>160)return null;
+  const params=new URLSearchParams({token_hash:'eq.'+await digest(token),accepted_at:'is.null',revoked_at:'is.null',expires_at:'gt.'+new Date().toISOString(),select:'id,email,workspace_key,role,invited_by,expires_at',limit:'1'});
+  if(email)params.set('email','eq.'+email);
+  const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/rest/v1/forge_team_invites?'+params,{headers:supabaseHeaders(env),signal:AbortSignal.timeout(10000)});
+  if(!response.ok)throw new Error('Team invitation lookup failed '+response.status);
+  return (await response.json())[0]||null;
+}
+async function listWorkspaceUsers(env,workspaceKey){
+  const params=new URLSearchParams({workspace_key:'eq.'+workspaceKey,select:'email,role,persona,created_at',order:'created_at.asc',limit:'6'});
+  const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/rest/v1/forge_users?'+params,{headers:supabaseHeaders(env),signal:AbortSignal.timeout(10000)});
+  if(!response.ok)throw new Error('Team member lookup failed '+response.status);
+  return response.json();
+}
+async function listWorkspaceInvites(env,workspaceKey){
+  const params=new URLSearchParams({workspace_key:'eq.'+workspaceKey,accepted_at:'is.null',revoked_at:'is.null',expires_at:'gt.'+new Date().toISOString(),select:'id,email,role,created_at,expires_at',order:'created_at.desc',limit:'5'});
+  const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/rest/v1/forge_team_invites?'+params,{headers:supabaseHeaders(env),signal:AbortSignal.timeout(10000)});
+  if(!response.ok)throw new Error('Team invite lookup failed '+response.status);
+  return response.json();
+}
+async function teamInvitePreview(request,env){
+  if(request.method!=='POST')return failure(405,'invalid_method','Method not allowed.');
+  if(!originAllowed(request))return failure(403,'invalid_origin','İstek kaynağı geçersiz.');
+  if(!env.SUPABASE_URL||!env.SUPABASE_SERVICE_ROLE_KEY)return failure(503,'team_unavailable','Takım davetleri şu an yapılandırılmamış.');
+  try{
+    const parsed=await bodyJson(request,2048),token=typeof parsed.value?.token==='string'?parsed.value.token:'',invite=await getTeamInvite(env,token);
+    if(!invite)return failure(404,'invite_invalid','Davet bağlantısı geçersiz veya süresi dolmuş.');
+    const subscription=await activeSubscription(env,invite.invited_by);
+    if(subscription?.plan!=='team')return failure(410,'team_subscription_inactive','Bu takım daveti artık etkin değil.');
+    return json({email:invite.email,role:invite.role,expiresAt:invite.expires_at});
+  }catch(error){console.error('Forge invite preview failed:',String(error?.message||error));return failure(503,'team_unavailable','Davet bilgisi şu an alınamadı.');}
+}
+async function teamStatus(env,user){
+  if(!user.registered)return {enabled:false,members:[{email:user.email,role:user.role}],invites:[],usedSeats:1,seats:1};
+  let subscription=await activeSubscription(env,user.email);
+  if(subscription?.plan==='team')user=await promoteTeamOwner(env,user,subscription);
+  const workspaceKey=user.workspaceKey;
+  const teamActive=subscription?.plan==='team';
+  const people=await listWorkspaceUsers(env,workspaceKey);
+  const invites=teamActive&&subscription.user_id===user.email?await listWorkspaceInvites(env,workspaceKey):[];
+  return {enabled:teamActive,owner:teamActive&&subscription.user_id===user.email,plan:subscription?.plan||null,members:people,invites,usedSeats:people.length+invites.length,seats:5,user:{email:user.email,role:user.role,persona:user.persona||null}};
+}
+async function createTeamInvite(request,env,user){
+  if(!user.registered)return failure(403,'registered_account_required','Takım daveti için doğrulanmış Forge hesabı gerekli.');
+  const parsed=await bodyJson(request,4096),body=parsed.value;
+  if(parsed.invalid||parsed.tooLarge||typeof body?.email!=='string'||typeof body?.role!=='string')return failure(400,'invalid_invite','E-posta ve rol gerekli.');
+  const email=body.email.trim().toLowerCase(),role=body.role;
+  if(email.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return failure(400,'invalid_email','Geçerli bir e-posta adresi gir.');
+  if(!['qa','dev','pm','pmo'].includes(role))return failure(400,'invalid_role','QA, Developer, PM veya PMO rolü seç.');
+  if(email===user.email)return failure(400,'self_invite','Kendi hesabına davet gönderemezsin.');
+  try{
+    const subscription=await activeSubscription(env,user.email);
+    if(subscription?.plan!=='team'||subscription.user_id!==user.email)return failure(403,'team_plan_required','Davet göndermek için etkin Team aboneliğinin sahibi olmalısın.');
+    user=await promoteTeamOwner(env,user,subscription);
+    const token=b64url(crypto.getRandomValues(new Uint8Array(32))),tokenHash=await digest(token),inviteId=crypto.randomUUID();
+    await supabaseRpc(env,'forge_create_team_invite',{p_id:inviteId,p_token_hash:tokenHash,p_email:email,p_workspace_key:user.workspaceKey,p_role:role,p_invited_by:user.email});
+    const url=new URL('/forge/app/#register?invite='+encodeURIComponent(token),request.url).toString();
+    return json({invite:{id:inviteId,email,role,expiresAt:new Date(Date.now()+7*86400000).toISOString()},url});
+  }catch(error){
+    const message=String(error?.code||error?.message||'');
+    if(message.includes('team_seats_full'))return failure(409,'team_seats_full','Team planındaki beş koltuk dolu. Önce bekleyen bir daveti iptal et.');
+    if(message.includes('already_member'))return failure(409,'already_member','Bu e-posta ekipte zaten kayıtlı.');
+    if(message.includes('invite_exists'))return failure(409,'invite_exists','Bu e-posta için bekleyen bir davet var.');
+    if(error?.code==='team_plan_required')return failure(403,'team_plan_required','Davet göndermek için etkin Team aboneliğinin sahibi olmalısın.');
+    console.error('Forge team invite create failed:',String(error?.message||error));return failure(503,'team_unavailable','Davet oluşturulamadı. Biraz sonra tekrar dene.');
+  }
+}
+async function revokeTeamInvite(env,user,id){
+  if(!user.registered||! /^[0-9a-f-]{36}$/i.test(id))return failure(400,'invalid_invite','Davet seçimi geçersiz.');
+  const subscription=await activeSubscription(env,user.email);
+  if(subscription?.plan!=='team'||subscription.user_id!==user.email)return failure(403,'team_plan_required','Davetleri yalnız Team yöneticisi değiştirebilir.');
+  const params=new URLSearchParams({id:'eq.'+id,workspace_key:'eq.'+user.workspaceKey,accepted_at:'is.null',revoked_at:'is.null'});
+  const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/rest/v1/forge_team_invites?'+params,{method:'PATCH',headers:{...supabaseHeaders(env),Prefer:'return=minimal'},body:JSON.stringify({revoked_at:new Date().toISOString()}),signal:AbortSignal.timeout(10000)});
+  if(!response.ok)return failure(503,'team_unavailable','Davet iptal edilemedi.');
+  return json({revoked:true});
+}
+async function acceptTeamInvite(env,user,token){
+  if(!user.registered)return failure(401,'unauthorized','Önce giriş yap.');
+  const invite=await getTeamInvite(env,token,user.email);
+  if(!invite)return failure(400,'invite_invalid','Davet bağlantısı geçersiz, süresi dolmuş veya başka bir e-posta için oluşturulmuş.');
+  const subscription=await activeSubscription(env,invite.invited_by);
+  if(subscription?.plan!=='team')return failure(403,'team_subscription_inactive','Bu davet için etkin Team aboneliği bulunamadı.');
+  try{
+    const profile=await supabaseRpc(env,'forge_accept_team_invite',{p_token_hash:await digest(token),p_email:user.email,p_persona:user.persona||null});
+    return json({accepted:true,user:{email:profile.email,role:profile.role}});
+  }catch(error){
+    if(String(error?.code||'').includes('account_has_existing_workspace'))return failure(409,'account_has_existing_workspace','Bu hesapta mevcut bir çalışma alanı var. Önce verilerini Team alanına taşıman gerekir.');
+    if(String(error?.code||'').includes('team_seats_full'))return failure(409,'team_seats_full','Team planındaki beş koltuk dolu.');
+    console.error('Forge team invite accept failed:',String(error?.message||error));return failure(503,'team_unavailable','Davet kabul edilemedi. Biraz sonra tekrar dene.');
+  }
+}
+async function promoteTeamOwner(env,user,subscription){
+  if(!subscription||subscription.plan!=='team'||subscription.user_id!==user.email||user.role==='admin')return user;
+  const params=new URLSearchParams({email:'eq.'+user.email});
+  const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/rest/v1/forge_users?'+params,{method:'PATCH',headers:{...supabaseHeaders(env),Prefer:'return=minimal'},body:JSON.stringify({role:'admin'}),signal:AbortSignal.timeout(10000)});
+  if(!response.ok)throw new Error('Team owner role update failed '+response.status);
+  return {...user,role:'admin'};
 }
 async function handleRegistration(request,env){
   if(request.method!=='POST')return failure(405,'invalid_method','Method not allowed.');
@@ -359,18 +473,21 @@ async function handleRegistration(request,env){
   if(parsed.tooLarge||parsed.invalid||!body||typeof body.email!=='string'||typeof body.password!=='string')return failure(400,'invalid_request','E-posta ve şifre gerekli.');
   const email=body.email.trim().toLowerCase(),password=body.password;
   if(body.legalConsent!==true||body.legalVersion!=='legal_v1_2026-11-16')return failure(400,'legal_consent_required','Kayıt için Kullanım Koşulları ve İade Politikası onayı gerekli.');
-  const role=typeof body.role==='string'?body.role:'qa';
-  if(!['qa','dev','pm','pmo'].includes(role))return failure(400,'invalid_role','QA, Developer, PM veya PMO rolü seç.');
+  const persona=typeof body.persona==='string'?body.persona:(typeof body.role==='string'?body.role:'qa');
+  if(!['qa','dev','pm','pmo'].includes(persona))return failure(400,'invalid_role','QA, Developer, PM veya PMO rolü seç.');
   if(email.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return failure(400,'invalid_email','Geçerli bir e-posta adresi gir.');
   if(password.length<12||password.length>256)return failure(400,'invalid_password','Şifre en az 12, en fazla 256 karakter olmalı.');
   if(email===DEMO_LOGIN.email||email===String(env.FORGE_LOGIN_EMAIL||'').toLowerCase()||members(env,false).some(x=>x.email.toLowerCase()===email))return failure(409,'account_exists','Bu e-posta zaten kayıtlı. Giriş yapmayı dene.');
   try{
+    const invitationToken=typeof body.invitationToken==='string'?body.invitationToken:'';
+    const invitation=invitationToken?await getTeamInvite(env,invitationToken,email):null;
+    if(invitationToken&&!invitation)return failure(400,'invite_invalid','Davet bağlantısı geçersiz, süresi dolmuş veya başka bir e-posta için oluşturulmuş.');
     if(await getRegisteredUser(env,email))return failure(409,'account_exists','Bu e-posta zaten kayıtlı. Giriş yapmayı dene.');
-    const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/auth/v1/signup',{method:'POST',headers:supabaseAuthHeaders(env),body:JSON.stringify({email,password,data:{forge_role:role,forge_legal_consent:{version:body.legalVersion,terms_and_refund_accepted:true,privacy_notice_read:true,marketing_consent:body.marketingConsent===true,accepted_at:new Date().toISOString()}}}),signal:AbortSignal.timeout(15000)});
+    const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/auth/v1/signup',{method:'POST',headers:supabaseAuthHeaders(env),body:JSON.stringify({email,password,data:{forge_role:invitation?.role||'admin',forge_persona:persona,forge_invite_id:invitation?.id||null,forge_legal_consent:{version:body.legalVersion,terms_and_refund_accepted:true,privacy_notice_read:true,marketing_consent:body.marketingConsent===true,accepted_at:new Date().toISOString()}}}),signal:AbortSignal.timeout(15000)});
     const result=await response.json().catch(()=>({}));
     if(!response.ok){if(response.status===429)return failure(429,'email_rate_limited','Doğrulama e-postası sınırına ulaşıldı. Biraz sonra tekrar dene.');if(response.status===422||response.status===400)return failure(409,'account_exists','Bu e-posta ile kayıt açılamadı. Adresi kontrol et veya giriş yapmayı dene.');throw new Error('Supabase Auth signup failed '+response.status);}
     if(result.access_token||result.session)return failure(503,'email_confirmation_disabled','Supabase’te e-posta doğrulamasını etkinleştir.');
-    return json({verificationRequired:true,email},202);
+    return json({verificationRequired:true,email,invitedRole:invitation?.role||null},202);
   }catch(error){console.error('Forge registration failed:',String(error?.message||error));return failure(503,'registration_unavailable','Hesap kaydı başlatılamadı. Biraz sonra tekrar dene.');}
 }
 async function handleRegistrationVerify(request,env){
@@ -380,11 +497,18 @@ async function handleRegistrationVerify(request,env){
   const parsed=await bodyJson(request,4096),body=parsed.value;if(parsed.invalid||parsed.tooLarge||typeof body?.email!=='string'||typeof body?.token!=='string')return failure(400,'invalid_request','E-posta ve doğrulama kodu gerekli.');
   const email=body.email.trim().toLowerCase(),code=body.token.trim();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||!/^\d{6,8}$/.test(code))return failure(400,'invalid_request','E-posta veya 6–8 haneli kod geçersiz.');
   try{
+    const invitationToken=typeof body.invitationToken==='string'?body.invitationToken:'';
+    const invitation=invitationToken?await getTeamInvite(env,invitationToken,email):null;
+    if(invitationToken&&!invitation)return failure(400,'invite_invalid','Davet bağlantısı geçersiz, süresi dolmuş veya başka bir e-posta için oluşturulmuş.');
+    if(invitation){const subscription=await activeSubscription(env,invitation.invited_by);if(subscription?.plan!=='team')return failure(403,'team_subscription_inactive','Takım daveti artık etkin değil. Takım yöneticisinden planı kontrol etmesini iste.');}
     const response=await fetch(String(env.SUPABASE_URL).replace(/\/$/,'')+'/auth/v1/verify',{method:'POST',headers:supabaseAuthHeaders(env),body:JSON.stringify({type:'signup',email,token:code}),signal:AbortSignal.timeout(15000)});
     const result=await response.json().catch(()=>({}));if(!response.ok)return failure(response.status===429?429:400,'invalid_code',response.status===429?'Çok fazla kod isteği. Biraz sonra tekrar dene.':'Kod geçersiz veya süresi dolmuş. Yeni kod iste.');
     const confirmedEmail=String(result.user?.email||'').trim().toLowerCase();if(confirmedEmail!==email||!(result.user?.email_confirmed_at||result.user?.confirmed_at))return failure(400,'email_not_confirmed','E-posta doğrulanamadı. Kodu kontrol edip tekrar dene.');
-    const requestedRole=result.user?.user_metadata?.forge_role||'admin';
-    const profile=await ensureRegisteredUser(env,email,requestedRole),exp=Date.now()+12*60*60*1000,sessionToken=await sign({email,registered:true,exp},env.SESSION_SECRET);
+    const persona=result.user?.user_metadata?.forge_persona||'qa';
+    let profile;
+    if(invitation){profile=await supabaseRpc(env,'forge_accept_team_invite',{p_token_hash:await digest(invitationToken),p_email:email,p_persona:persona});}
+    else profile=await ensureRegisteredUser(env,email,'admin',null,persona);
+    const exp=Date.now()+12*60*60*1000,sessionToken=await sign({email,registered:true,exp},env.SESSION_SECRET);
     return json({user:{email,role:profile.role,demo:false}},200,{'set-cookie':secureCookie(request,sessionToken,12*60*60)});
   }catch(error){console.error('Forge email verification failed:',String(error?.message||error));return failure(503,'verification_unavailable','Doğrulama şu an tamamlanamadı. Biraz sonra tekrar dene.');}
 }
@@ -510,6 +634,7 @@ async function handlePublicTry(request, env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if(url.pathname==='/api/team/invite-preview')return teamInvitePreview(request,env);
     if (url.pathname === "/api/paddle/webhook") return handlePaddleWebhook(request, env);
     if (url.pathname === "/api/billing/checkout-intent") return createCheckoutIntent(request, env);
     if (url.pathname === "/api/forge/subscription") return handleSubscriptionLookup(request, env);
@@ -547,7 +672,7 @@ async function handleWorkspace(request,env){
   const stub=env.WORKSPACE.get(env.WORKSPACE.idFromName('share-index'));
   return stub.fetch(new Request('https://workspace.internal/share/'+token));
  }
- const user=await sessionUser(request,env);if(!user)return failure(401,'unauthorized','Oturum açın / Sign in');
+ let user=await sessionUser(request,env);if(!user)return failure(401,'unauthorized','Oturum açın / Sign in');
  if(user.demo){
   if(request.method!=='GET')return failure(403,'demo_read_only','Demo hesabı salt okunurdur.');
   if(path==='/members')return json({members:[{email:'qa@demo.qacrew.it',role:'qa'},{email:'developer@demo.qacrew.it',role:'dev'},{email:'pm@demo.qacrew.it',role:'pm'}],user});
@@ -557,7 +682,25 @@ async function handleWorkspace(request,env){
  if(!['GET','POST'].includes(request.method))return failure(405,'invalid_method','Unsupported method');
  if(request.method==='POST'&&!originAllowed(request))return failure(403,'invalid_origin','İstek kaynağı geçersiz');
  const key=user.workspaceKey||env.FORGE_WORKSPACE_ID||user.email,stub=env.WORKSPACE.get(env.WORKSPACE.idFromName('workspace:'+key));
- if(path==='/members')return json({members:user.registered?[{email:user.email,role:user.role}]:members(env).map(({email,role})=>({email,role})),user});
+ if(path==='/team'&&request.method==='GET'){
+  try{const status=await teamStatus(env,user);if(status.user){user={...user,...status.user};}return json({...status,user:{email:user.email,role:user.role,persona:user.persona||null}});}
+  catch(error){console.error('Forge team status failed:',String(error?.message||error));return failure(503,'team_unavailable','Takım bilgisi şu an alınamadı.');}
+ }
+ if(path==='/team/invites'&&request.method==='POST')return createTeamInvite(request,env,user);
+ if(path==='/team/invites/revoke'&&request.method==='POST'){
+  const parsed=await bodyJson(request,2048),id=typeof parsed.value?.id==='string'?parsed.value.id:'';
+  if(parsed.invalid||parsed.tooLarge)return failure(400,'invalid_invite','Davet seçimi geçersiz.');
+  return revokeTeamInvite(env,user,id);
+ }
+ if(path==='/team/invites/accept'&&request.method==='POST'){
+  const parsed=await bodyJson(request,2048),token=typeof parsed.value?.token==='string'?parsed.value.token:'';
+  if(parsed.invalid||parsed.tooLarge)return failure(400,'invalid_invite','Davet bağlantısı geçersiz.');
+  return acceptTeamInvite(env,user,token);
+ }
+ if(path==='/members'){
+  if(user.registered){if(request.method==='POST')return failure(405,'invalid_method','Unsupported method');try{const sub=await activeSubscription(env,user.email);if(sub?.plan==='team')user=await promoteTeamOwner(env,user,sub);return json({members:await listWorkspaceUsers(env,user.workspaceKey),user:{email:user.email,role:user.role,persona:user.persona||null}});}catch(error){console.error('Forge team members read failed:',String(error?.message||error));return failure(503,'team_unavailable','Ekip bilgisi şu an alınamadı.');}}
+  return json({members:members(env).map(({email,role})=>({email,role})),user});
+ }
  if(path.startsWith('/github')){try{return await githubWorkspace(request,env,user,path);}catch{return failure(502,'github_unavailable','GitHub bağlantısı kurulamadı. Tekrar deneyin.');}}
  if(path==='/share'&&request.method==='POST'&&env.SUPABASE_URL&&env.SUPABASE_SERVICE_ROLE_KEY){
   const parsed=await bodyJson(request,64000),p=parsed.value;if(parsed.invalid||parsed.tooLarge)return failure(400,'invalid_body','Geçersiz paylaşım isteği');
